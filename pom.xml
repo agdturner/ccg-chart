@@ -4,22 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.leeds.ccg.andyt</groupId>
-    <artifactId>chart</artifactId>
+    <artifactId>agdt-chart</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>chart</name>
+    <name>agdt-chart</name>
     <url>https://github.com/agdturner/chart</url>
     <description>A Java Library for charts.</description>
     <scm>
-        <url>git@github.com:agdturner/chart.git</url>
-        <connection>scm:git:git@github.com:agdturner/chart.git</connection>
-        <developerConnection>scm:git:git@github.com:agdturner/chart</developerConnection>
+        <url>git@github.com:agdturner/agdt-chart.git</url>
+        <connection>scm:git:git@github.com:agdturner/agdt-chart.git</connection>
+        <developerConnection>scm:git:git@github.com:agdturner/agdt-chart</developerConnection>
     </scm>
     <licenses>
         <license>
             <name>Apache License 2.0</name>
-            <url>https://github.com/agdturner/chart/LICENSE.txt</url>
+            <url>https://github.com/agdturner/agdt-chart/LICENSE.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
