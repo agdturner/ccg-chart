@@ -4,22 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.leeds.ccg.andyt</groupId>
-    <artifactId>agdt-chart</artifactId>
+    <artifactId>agdt-java-generic-chart</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>agdt-chart</name>
-    <url>https://github.com/agdturner/chart</url>
+    <name>agdt-java-generic-chart</name>
+    <url>https://github.com/agdturner/agdt-java-generic-chart</url>
     <description>A Java Library for charts.</description>
     <scm>
-        <url>git@github.com:agdturner/agdt-chart.git</url>
-        <connection>scm:git:git@github.com:agdturner/agdt-chart.git</connection>
-        <developerConnection>scm:git:git@github.com:agdturner/agdt-chart</developerConnection>
+        <url>git@github.com:agdturner/agdt-java-generic-chart.git</url>
+        <connection>scm:git:git@github.com:agdturner/agdt-java-generic-chart.git</connection>
+        <developerConnection>scm:git:git@github.com:agdturner/agdt-java-generic-chart</developerConnection>
     </scm>
     <licenses>
         <license>
             <name>Apache License 2.0</name>
-            <url>https://github.com/agdturner/agdt-chart/LICENSE.txt</url>
+            <url>https://github.com/agdturner/agdt-java-generic-chart/LICENSE.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -42,9 +42,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <generic.version>1.0-SNAPSHOT</generic.version>
-        <math.version>0.1-SNAPSHOT</math.version>
-        <data.version>0.1-SNAPSHOT</data.version>
+        <agdt-java-generic.version>1.0.0</agdt-java-generic.version>
+        <!--
+        <agdt-java-generic.version>1.0-SNAPSHOT</agdt-java-generic.version>
+        -->
+        <agdt-java-generic-math.version>0.1-SNAPSHOT</agdt-java-generic-math.version>
+        <agdt-java-generic-data.version>0.1-SNAPSHOT</agdt-java-generic-data.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -52,18 +55,18 @@
     <dependencies>
         <dependency>
             <groupId>uk.ac.leeds.ccg.andyt</groupId>
-            <artifactId>generic</artifactId>
-            <version>${generic.version}</version>
+            <artifactId>agdt-java-generic</artifactId>
+            <version>${agdt-java-generic.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.leeds.ccg.andyt</groupId>
-            <artifactId>math</artifactId>
-            <version>${math.version}</version>
+            <artifactId>agdt-java-generic-math</artifactId>
+            <version>${agdt-java-generic-math.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.leeds.ccg.andyt</groupId>
-            <artifactId>data</artifactId>
-            <version>${data.version}</version>
+            <artifactId>agdt-java-generic-data</artifactId>
+            <version>${agdt-java-generic-data.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -80,10 +83,16 @@
     
     <repositories>
         <repository>
-            <id>math</id>
+            <id>commons-math</id>
             <name>Apache Commons Math</name>
             <url>http://repo.maven.apache.org/maven2/</url>
         </repository>
     </repositories>
     
+    <distributionManagement>
+        <repository>
+            <id>internal</id>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
 </project>
