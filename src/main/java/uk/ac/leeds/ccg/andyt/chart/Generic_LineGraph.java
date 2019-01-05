@@ -198,7 +198,6 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
 
     public static void main(String[] args) {
         Generic_Visualisation.getHeadlessEnvironment();
-
         /*
          * Initialise title and File to write image to
          */
@@ -218,9 +217,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             Generic_Files files = new Generic_Files("data");
             File outdir;
             outdir = files.getOutputDataDir(strings);
-            outdir.mkdirs();
-            file = new File(
-                    outdir,
+            file = new File(outdir,
                     title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {

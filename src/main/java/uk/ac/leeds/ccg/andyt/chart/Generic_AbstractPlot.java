@@ -14,6 +14,8 @@ import java.util.concurrent.Executors;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
 import uk.ac.leeds.ccg.andyt.chart.execution.Generic_Runnable;
+//import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
+//import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
@@ -23,6 +25,8 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 public abstract class Generic_AbstractPlot extends Generic_Runnable
         implements Generic_Drawable_Interface, Runnable {
 
+//    protected Generic_Strings Strings;
+//    protected Generic_Files Files;
     private Object[] data;
     private String format;
     private File file;
