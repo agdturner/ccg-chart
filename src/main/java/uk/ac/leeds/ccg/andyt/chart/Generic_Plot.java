@@ -102,9 +102,9 @@ public class Generic_Plot extends Generic_AbstractPlot {
 //            System.out.println("pj.isCancelled()" + printerJob.isCancelled());
 //            printerJob.setPrintService(printServices[0]);
                 pj.setPrintService(streamPrintService);
-                PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
-                printRequestAttributeSet.add(new Copies(1));
-                pj.print(printRequestAttributeSet);
+                PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+                pras.add(new Copies(1));
+                pj.print(pras);
                 setBufferedImage(Canvas.getBufferedImage());
 //            Rectangle r = Canvas.getBounds();
 

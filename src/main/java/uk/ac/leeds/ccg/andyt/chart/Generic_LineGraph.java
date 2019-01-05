@@ -36,8 +36,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
+import uk.ac.leeds.ccg.andyt.generic.lang.Generic_String;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
@@ -211,8 +214,13 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             // Use defaults
             title = "Example Line Graph";
             System.out.println("Use default title: " + title);
+            Generic_Strings strings = new Generic_Strings();
+            Generic_Files files = new Generic_Files("data");
+            File outdir;
+            outdir = files.getOutputDataDir(strings);
+            outdir.mkdirs();
             file = new File(
-                    new File(System.getProperty("user.dir")),
+                    outdir,
                     title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {

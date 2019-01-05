@@ -20,7 +20,7 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 /**
  * An class for creating 2D plot visualisations.
  */
-public abstract class Generic_AbstractPlot extends Generic_Runnable 
+public abstract class Generic_AbstractPlot extends Generic_Runnable
         implements Generic_Drawable_Interface, Runnable {
 
     private Object[] data;
@@ -96,8 +96,9 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     protected transient ExecutorService executorService;
 
-    public Generic_AbstractPlot(){}
-    
+    public Generic_AbstractPlot() {
+    }
+
     public Generic_AbstractPlot(int runID) {
         super(runID);
     }
@@ -111,6 +112,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         }
         return executorService;
     }
+
     public Object[] getData() {
         return data;
     }
@@ -507,7 +509,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     /**
-     * 
+     *
      * @param executorService
      * @param file
      * @param format
@@ -519,7 +521,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * @param drawOriginLinesOnPlot
      * @param decimalPlacePrecisionForCalculations
      * @param significantDigits
-     * @param roundingMode 
+     * @param roundingMode
      */
     protected void init(
             ExecutorService executorService,
@@ -573,7 +575,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //                    getFormat(),
 //                    getFile());
 //    }
-
     protected void resize(JFrame f) {
         f.pack();
         f.setSize(
@@ -643,7 +644,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     /**
      * Calculates and returns the row and column in the image for the data at
  coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode roundingMode
+ RoundingMode rm
      *
      * @param p
      * @return a Point2D.Double located at pixel(col, row)
@@ -660,7 +661,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     /**
      * Calculates and returns the column in the image for the data with value
- titleTextWidth RoundingMode roundingMode is used.
+ titleTextWidth RoundingMode rm is used.
      *
      * @param x
      * @return the column in the image for the data with value titleTextWidth
@@ -677,13 +678,10 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * titleTextWidth using RoundingMode aRoundingMode
      *
      * @param x
-     * @param titleTextWidth
-     * @param roundingMode
+     * @param rm
      * @return the column in the image for the data with value titleTextWidth
      */
-    public int coordinateToScreenCol(
-            BigDecimal x,
-            RoundingMode roundingMode) {
+    public int coordinateToScreenCol(BigDecimal x, RoundingMode rm) {
         int col = 0;
         BigDecimal theCellWidth = getCellWidth();
         BigDecimal theMinX = getMinX();
@@ -693,12 +691,9 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //                    x.subtract(getMinX()),
 //                    theCellWidth,
 //                    0,
-//                    roundingMode).intValueExact();
+//                    rm).intValueExact();
                 col = Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
-                        x.subtract(theMinX),
-                        theCellWidth,
-                        0,
-                        roundingMode).intValue();
+                        x.subtract(theMinX), theCellWidth, 0, rm).intValue();
             }
         }
         col += getDataStartCol();
@@ -712,10 +707,8 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * @param y
      * @return the row in the image for the data with value titleTextHeight
      */
-    public int coordinateToScreenRow(
-            BigDecimal y) {
-        return coordinateToScreenRow(y,
-                getRoundingMode());
+    public int coordinateToScreenRow(BigDecimal y) {
+        return coordinateToScreenRow(y, getRoundingMode());
     }
 
     /**
@@ -723,12 +716,10 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * titleTextHeight using RoundingMode aRoundingMode
      *
      * @param y
-     * @param aRoundingMode
+     * @param rm
      * @return the row in the image for the data with value titleTextHeight
      */
-    public int coordinateToScreenRow(
-            BigDecimal y,
-            RoundingMode aRoundingMode) {
+    public int coordinateToScreenRow(BigDecimal y, RoundingMode rm) {
         int row = 0;
         BigDecimal theCellHeight = getCellHeight();
         BigDecimal theMinY = getMinY();
@@ -739,7 +730,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
                             y.subtract(theMinY),
                             getCellHeight(),
                             0,
-                            aRoundingMode).intValue();
+                            rm).intValue();
 //                row = getDataHeight() - Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
 //                        y.subtract(getMinY()),
 //                        getCellHeight(),
@@ -755,16 +746,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     /**
      * Calculates and returns the row and column in the image for the data at
  coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode roundingMode
+ RoundingMode rm
      *
      * @param x
-     * @param titleTextWidth
      * @param y
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Point2D coordinateToScreen(
-            BigDecimal x,
-            BigDecimal y) {
+    public Point2D coordinateToScreen(            BigDecimal x,            BigDecimal y) {
         Point2D result = new Point2D.Double();
         //System.out.println("titleTextWidth " + titleTextWidth);
         //System.out.println("titleTextHeight " + titleTextHeight);
@@ -778,7 +766,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     //public abstract void initialiseParameters(Object[] data);
     public void setCellHeight() {
         int theDecimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
-        RoundingMode roundingMode = getRoundingMode();
+        RoundingMode rm = getRoundingMode();
         BigDecimal theMinY = getMinY();
         if (theMinY == null) {
             cellHeight = BigDecimal.valueOf(2);
@@ -788,33 +776,31 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
                     getMaxY().subtract(theMinY),
                     BigDecimal.valueOf(getDataHeight()),
                     theDecimalPlacePrecisionForCalculations,
-                    roundingMode);
+                    rm);
             cellHeightDiv2 = Generic_BigDecimal.divideRoundIfNecessary(
                     cellHeight,
                     BigDecimal.valueOf(2),
                     theDecimalPlacePrecisionForCalculations,
-                    roundingMode);
+                    rm);
         }
     }
 
     public void setCellWidth() {
         int theDecimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
-        RoundingMode roundingMode = getRoundingMode();
+        RoundingMode rm = getRoundingMode();
         BigDecimal theMinX = getMinX();
         if (theMinX == null) {
             cellWidth = BigDecimal.valueOf(2);
             cellWidthDiv2 = BigDecimal.ONE;
         } else {
-            cellWidth = Generic_BigDecimal.divideRoundIfNecessary(
-                    getMaxX().subtract(theMinX),
+            cellWidth = Generic_BigDecimal.divideRoundIfNecessary(getMaxX().subtract(theMinX),
                     BigDecimal.valueOf(getDataWidth()),
                     theDecimalPlacePrecisionForCalculations,
-                    roundingMode);
-            cellWidthDiv2 = Generic_BigDecimal.divideRoundIfNecessary(
-                    cellWidth,
+                    rm);
+            cellWidthDiv2 = Generic_BigDecimal.divideRoundIfNecessary(cellWidth,
                     BigDecimal.valueOf(2),
                     theDecimalPlacePrecisionForCalculations,
-                    roundingMode);
+                    rm);
         }
     }
 
@@ -834,7 +820,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //                        maxY,
 //                        cellHeight,
 //                        0,
-//                        roundingMode).intValueExact()
+//                        rm).intValueExact()
 //                        + dataStartRow;
                     originRow = coordinateToScreenRow(BigDecimal.ZERO);
                 }
