@@ -132,7 +132,8 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
                 decimalPlacePrecisionForDisplay,
                 roundingMode);
         plot.setData(plot.getDefaultData());
-        plot.run();
+        //plot.run();
+        plot.start();
     }
 
     @Override
