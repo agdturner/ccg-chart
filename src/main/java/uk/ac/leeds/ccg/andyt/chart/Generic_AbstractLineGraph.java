@@ -49,38 +49,40 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     private Color[] colours;
     private ArrayList<String> labels;
 
-    protected final void init(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawAxesOnPlot,
-            int ageInterval,
+    /**
+     *
+     * @param es
+     * @param f
+     * @param fmt Formet expecting PNG
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawAxesOnPlot
+     * @param ageInterval
+     * @param startAgeOfEndYearInterval
+     * @param decimalPlacePrecisionForCalculations
+     * @param significantDigits
+     * @param r
+     */
+    protected final void init(ExecutorService es, File f, String fmt,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            int significantDigits,
-            RoundingMode aRoundingMode) {
+            int decimalPlacePrecisionForCalculations, int significantDigits,
+            RoundingMode r) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
-        super.init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                significantDigits,
-                aRoundingMode);
+        super.init(es, f, fmt, title, dataWidth, dataHeight, xAxisLabel, 
+                yAxisLabel, drawAxesOnPlot, 
+                decimalPlacePrecisionForCalculations, significantDigits, r);
     }
 
+    /**
+     * 
+     * @param data 
+     */
     @Override
     public void initialiseParameters(Object[] data) {
         BigDecimal minY;

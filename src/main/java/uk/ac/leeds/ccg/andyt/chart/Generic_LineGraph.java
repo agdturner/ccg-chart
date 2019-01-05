@@ -42,49 +42,51 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of <code>Generic_Plot<\code>
- *
- * If you run this class it will attempt to generate an Bar Chart Visualization
- * of some default data and write it out to file as a PNG.
+ * An implementation of <code>Generic_AbstractLineGraph<\code> to generate a
+ * Line Chart Visualization of some default data and write it out to file as a
+ * PNG.
  */
 public class Generic_LineGraph extends Generic_AbstractLineGraph {
 
     public Generic_LineGraph() {
     }
 
+    /**
+     *
+     * @param es
+     * @param file
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param yMax
+     * @param yPin
+     * @param yIncrement
+     * @param numberOfYAxisTicks
+     * @param decimalPlacePrecisionForCalculations
+     * @param decimalPlacePrecisionForDisplay
+     * @param r
+     */
     public Generic_LineGraph(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
+            ExecutorService es, File file, String format, String title,
+            int dataWidth, int dataHeight,
+            String xAxisLabel, String yAxisLabel,
             BigDecimal yMax,
             BigDecimal yPin,
             BigDecimal yIncrement,
             int numberOfYAxisTicks,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
-            RoundingMode aRoundingMode) {
+            RoundingMode r) {
         setyMax(yMax);
         setyPin(yPin);
         setyIncrement(yIncrement);
         setNumberOfYAxisTicks(numberOfYAxisTicks);
-        init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                false,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+        init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, false, decimalPlacePrecisionForCalculations,
+                decimalPlacePrecisionForDisplay, r);
     }
 
     @Override
@@ -93,10 +95,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         data = getData();
         TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
         maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
-
-        TreeMap<String, Boolean> nonZero;
-        nonZero = (TreeMap<String, Boolean>) data[7];
-
+        TreeMap<String, Boolean> nonZero = null;
+        if (data.length > 7) {
+            nonZero = (TreeMap<String, Boolean>) data[7];
+        }
         Color[] colours;
         colours = getColours();
         int i = 1;
@@ -105,9 +107,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         while (ite.hasNext()) {
             String type;
             type = ite.next();
-
-            if (nonZero.get(type)) {
-
+            if (nonZero == null) {
                 TreeMap<BigDecimal, BigDecimal> map;
                 map = maps.get(type);
                 int j = i;
@@ -116,15 +116,27 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
                 }
                 drawMap(map, colours[j]);
                 i++;
-                
+            } else {
+                if (nonZero.get(type)) {
+                    TreeMap<BigDecimal, BigDecimal> map;
+                    map = maps.get(type);
+                    int j = i;
+                    while (j >= colours.length) {
+                        j -= colours.length;
+                    }
+                    drawMap(map, colours[j]);
+                    i++;
+                }
             }
         }
-
     }
 
-    public void drawMap(
-            TreeMap<BigDecimal, BigDecimal> map,
-            Color c) {
+    /**
+     *
+     * @param map
+     * @param c
+     */
+    public void drawMap(TreeMap<BigDecimal, BigDecimal> map, Color c) {
         int length;
         length = 3;
         int row0 = 0;
@@ -138,10 +150,8 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             x = ite.next();
             BigDecimal y;
             y = map.get(x);
-            int row = coordinateToScreenRow(
-                    y);
-            int col = coordinateToScreenCol(
-                    x);
+            int row = coordinateToScreenRow(y);
+            int col = coordinateToScreenCol(x);
             if (first) {
                 row0 = row;
                 col0 = col;
@@ -153,9 +163,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
 //                drawPlus(col, row, length);
                 drawCross(col, row, length);
                 Line2D line;
-                line = new Line2D.Double(
-                        col0, row0,
-                        col, row);
+                line = new Line2D.Double(col0, row0, col, row);
                 draw(line);
                 row0 = row;
                 col0 = col;
@@ -165,25 +173,23 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
 
     public void drawPlus(int col, int row, int length) {
         Line2D line;
-        line = new Line2D.Double(
-                col, row - length,
-                col, row + length);
+        line = new Line2D.Double(col, row - length, col, row + length);
         draw(line);
-        line = new Line2D.Double(
-                col + length, row,
-                col - length, row);
+        line = new Line2D.Double(col + length, row, col - length, row);
         draw(line);
     }
 
-    public void drawCross(int col, int row, int length) {
+    /**
+     *
+     * @param col
+     * @param row
+     * @param l length of each cross part
+     */
+    public void drawCross(int col, int row, int l) {
         Line2D line;
-        line = new Line2D.Double(
-                col - length, row - length,
-                col + length, row + length);
+        line = new Line2D.Double(col - l, row - l, col + l, row + l);
         draw(line);
-        line = new Line2D.Double(
-                col - length, row + length,
-                col + length, row - length);
+        line = new Line2D.Double(col - l, row + l, col + l, row - l);
         draw(line);
     }
 
@@ -454,7 +460,6 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         xAxisLabels.put(new BigDecimal(53.0d), "2012 September");
         xAxisLabels.put(new BigDecimal(54.0d), "2012 October");
         result[6] = xAxisLabels;
-
         return result;
     }
 
@@ -463,9 +468,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         super.drawTitle(title);
         int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(getAgeInterval()),
-                getCellHeight(),
-                0,
-                getRoundingMode()).intValue();
+                getCellHeight(), 0, getRoundingMode()).intValue();
         setExtraHeightTop(getExtraHeightTop() + barHeight);
     }
 
@@ -474,10 +477,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         data = getData();
 //        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
 //        maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
-        
-        TreeMap<String, Boolean> nonZero2;
-        nonZero2 = (TreeMap<String, Boolean>) data[8];
-        
+        TreeMap<String, Boolean> nonZero2 = null;
+        if (data.length > 8) {
+            nonZero2 = (TreeMap<String, Boolean>) data[8];
+        }
         ArrayList<String> labels;
         labels = getLabels();
         Color[] colours;
@@ -486,10 +489,9 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int newLegendHeight = 0;
         int legendExtraWidthLeft = 0;
         int legendExtraWidthRight = 0;
-        int textHeight = getTextHeight();
-        int legendExtraHeightBottom = textHeight;
+        int th = getTextHeight();
+        int legendExtraHeightBottom = th;
         int legendStartRow = getDataEndRow() + getxAxisHeight();
-
         int symbolRow;
         int symbolCol;
         int row;
@@ -499,22 +501,17 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int legendItemWidth = 0;
         String text = "Legend";
         int textWidth = getTextWidth(text);
-        newLegendHeight += textHeight;
+        newLegendHeight += th;
         row = legendStartRow;
         //col = dataStartCol - yAxisWidth;
-        col = textHeight;
+        col = th;
         legendItemWidth += textWidth;
         newLegendWidth = Math.max(newLegendWidth, legendItemWidth);
 //        System.out.println("row " + row);
 //        System.out.println("col " + col);
         setPaint(Color.DARK_GRAY);
-        drawString(
-                text,
-                col,
-                row);
-
+        drawString(text, col, row);
         row += 2; // gap between "Legend" and first line
-
         int i = 1;
         Iterator<String> ite;
         //ite = maps.keySet().iterator();
@@ -530,30 +527,31 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             }
             String label;
             label = ite.next();
-            
-            if (nonZero2.get(label)) {
-            
-            col = textHeight + symbolWidth + 2;
-            row += textHeight + 2;
-            setPaint(Color.DARK_GRAY);
-
-            drawString(
-                    label,
-                    col,
-                    row);
-            setPaint(colours[j]);
-            Line2D line;
-            line = new Line2D.Double(
-                    textHeight,
-                    row,
-                    col - 2,
-                    row - textHeight);
-            draw(line);
-            newLegendHeight += textHeight + 2;
-            i++;
-            
+            if (nonZero2 == null) {
+                col = th + symbolWidth + 2;
+                row += th + 2;
+                setPaint(Color.DARK_GRAY);
+                drawString(label, col, row);
+                setPaint(colours[j]);
+                Line2D line;
+                line = new Line2D.Double(th, row, col - 2, row - th);
+                draw(line);
+                newLegendHeight += th + 2;
+                i++;
+            } else {
+                if (nonZero2.get(label)) {
+                    col = th + symbolWidth + 2;
+                    row += th + 2;
+                    setPaint(Color.DARK_GRAY);
+                    drawString(label, col, row);
+                    setPaint(colours[j]);
+                    Line2D line;
+                    line = new Line2D.Double(th, row, col - 2, row - th);
+                    draw(line);
+                    newLegendHeight += th + 2;
+                    i++;
+                }
             }
-            
         }
         setLegendHeight(newLegendHeight);
         setImageHeight(getImageHeight() + newLegendHeight);
