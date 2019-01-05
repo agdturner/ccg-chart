@@ -27,16 +27,17 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of
- * <code>Generic_JApplet_AgeGenderBoxPlot<\code>
+ * An implementation of <code>Generic_JApplet_AgeGenderBoxPlot<\code>
  *
- * For generating an Age by Gender Population Box Plot Visualization of some default data and display it on
- * screen.
+ * For generating an Age by Gender Population Box Plot Visualization of some
+ * default data and display it on screen.
  */
 public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 
@@ -93,8 +94,11 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             // Use defaults
             title = "Age Gender Population Box Plot";
             System.out.println("Use default title: " + title);
-            file = new File(
-                    new File(System.getProperty("user.dir")),
+            Generic_Strings strings = new Generic_Strings();
+            Generic_Files files = new Generic_Files("data");
+            File outdir;
+            outdir = files.getOutputDataDir(strings);
+            file = new File(outdir,
                     title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
@@ -253,7 +257,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
          * result[6] = min;
          * result[7] = max;
          */
-        /*
+ /*
          * Draw Male Box Plots
          */
         ite = maleBoxPlotData.entrySet().iterator();
@@ -681,15 +685,15 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         result[1] = maleBoxPlotStatistics;
         return result;
     }
-    
+
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
         int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                    BigDecimal.valueOf(getAgeInterval()),
-                    getCellHeight(),
-                    0,
-                    getRoundingMode()).intValue();
+                BigDecimal.valueOf(getAgeInterval()),
+                getCellHeight(),
+                0,
+                getRoundingMode()).intValue();
         setExtraHeightTop(getExtraHeightTop() + barHeight);
     }
 }

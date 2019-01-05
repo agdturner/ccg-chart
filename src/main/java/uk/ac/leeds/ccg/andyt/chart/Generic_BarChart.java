@@ -171,7 +171,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             // Use defaults
             title = "Example Bar Chart";
             System.out.println("Use default title: " + title);
-                        Generic_Strings strings = new Generic_Strings();
+            Generic_Strings strings = new Generic_Strings();
             Generic_Files files = new Generic_Files("data");
             File outdir;
             outdir = files.getOutputDataDir(strings);
