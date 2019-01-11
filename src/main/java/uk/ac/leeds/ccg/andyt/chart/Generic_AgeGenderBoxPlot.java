@@ -94,12 +94,10 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             // Use defaults
             title = "Age Gender Population Box Plot";
             System.out.println("Use default title: " + title);
-            Generic_Strings strings = new Generic_Strings();
-            Generic_Files files = new Generic_Files("data");
+            Generic_Files files = new Generic_Files();
             File outdir;
-            outdir = files.getOutputDataDir(strings);
-            file = new File(outdir,
-                    title.replace(" ", "_") + "." + format);
+            outdir = files.getOutputDataDir();
+            file = new File(outdir,                    title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
             title = args[0];

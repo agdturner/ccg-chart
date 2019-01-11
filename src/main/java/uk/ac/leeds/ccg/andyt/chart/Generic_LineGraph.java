@@ -18,29 +18,18 @@ package uk.ac.leeds.ccg.andyt.chart;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.io.File;
-import java.lang.Runnable;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
-import uk.ac.leeds.ccg.andyt.generic.lang.Generic_String;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
@@ -213,12 +202,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             // Use defaults
             title = "Example Line Graph";
             System.out.println("Use default title: " + title);
-            Generic_Strings strings = new Generic_Strings();
-            Generic_Files files = new Generic_Files("data");
+            Generic_Files files = new Generic_Files();
             File outdir;
-            outdir = files.getOutputDataDir(strings);
-            file = new File(outdir,
-                    title.replace(" ", "_") + "." + format);
+            outdir = files.getOutputDataDir();
+            file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
             title = args[0];

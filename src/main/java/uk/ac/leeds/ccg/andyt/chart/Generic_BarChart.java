@@ -18,22 +18,15 @@ package uk.ac.leeds.ccg.andyt.chart;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
-import java.lang.Runnable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -41,10 +34,8 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of <code>Generic_Plot<\code>
- *
- * If you run this class it will attempt to generate an Bar Chart Visualization
- * of some default data and write it out to file as a PNG.
+ * A runnable class that attempts to generate Bar Chart Visualization of some
+ * default data and write it out to file as a PNG format file.
  */
 public class Generic_BarChart extends Generic_AbstractBarChart {
 
@@ -171,12 +162,10 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             // Use defaults
             title = "Example Bar Chart";
             System.out.println("Use default title: " + title);
-            Generic_Strings strings = new Generic_Strings();
-            Generic_Files files = new Generic_Files("data");
+            Generic_Files files = new Generic_Files();
             File outdir;
-            outdir = files.getOutputDataDir(strings);
-            file = new File(outdir,
-                    title.replace(" ", "_") + "." + format);
+            outdir = files.getOutputDataDir();
+            file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
             title = args[0];

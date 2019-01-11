@@ -655,7 +655,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param yMax the yMax to set
      */
-    public void setyMax(BigDecimal yMax) {
+    public final void setyMax(BigDecimal yMax) {
         this.yMax = yMax;
     }
 
@@ -669,7 +669,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param yPin the yPin to set
      */
-    public void setyPin(BigDecimal yPin) {
+    public final void setyPin(BigDecimal yPin) {
         this.yPin = yPin;
     }
 
@@ -683,7 +683,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param yIncrement the yIncrement to set
      */
-    public void setyIncrement(BigDecimal yIncrement) {
+    public final void setyIncrement(BigDecimal yIncrement) {
         this.yIncrement = yIncrement;
     }
 
@@ -697,7 +697,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param numberOfYAxisTicks the numberOfYAxisTicks to set
      */
-    public void setNumberOfYAxisTicks(int numberOfYAxisTicks) {
+    public final void setNumberOfYAxisTicks(int numberOfYAxisTicks) {
         this.numberOfYAxisTicks = numberOfYAxisTicks;
     }
 
@@ -711,7 +711,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param xMax the xMax to set
      */
-    public void setxMax(BigDecimal xMax) {
+    public final void setxMax(BigDecimal xMax) {
         this.xMax = xMax;
     }
 
@@ -725,7 +725,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param xPin the xPin to set
      */
-    public void setxPin(BigDecimal xPin) {
+    public final void setxPin(BigDecimal xPin) {
         this.xPin = xPin;
     }
 
@@ -739,7 +739,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param xIncrement the xIncrement to set
      */
-    public void setxIncrement(BigDecimal xIncrement) {
+    public final void setxIncrement(BigDecimal xIncrement) {
         this.xIncrement = xIncrement;
     }
 
@@ -753,7 +753,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param numberOfXAxisTicks the numberOfXAxisTicks to set
      */
-    public void setNumberOfXAxisTicks(int numberOfXAxisTicks) {
+    public final void setNumberOfXAxisTicks(int numberOfXAxisTicks) {
         this.numberOfXAxisTicks = numberOfXAxisTicks;
     }
 
@@ -770,7 +770,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param colours the colours to set
      */
-    public void setColours(Color[] colours) {
+    public final void setColours(Color[] colours) {
         this.colours = colours;
     }
 
@@ -806,7 +806,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param labels the labels to set
      */
-    public void setLabels(ArrayList<String> labels) {
+    public final void setLabels(ArrayList<String> labels) {
         this.labels = labels;
     }
 
@@ -820,7 +820,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * @param xAxisLabels the xAxisLabels to set
      */
-    public void setxAxisLabels(TreeMap<BigDecimal, ?> xAxisLabels) {
+    public final void setxAxisLabels(TreeMap<BigDecimal, ?> xAxisLabels) {
         this.xAxisLabels = xAxisLabels;
     }
 
