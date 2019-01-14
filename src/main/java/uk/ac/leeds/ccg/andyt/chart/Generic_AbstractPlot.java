@@ -66,13 +66,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     private int extraHeightTop;
     private int extraHeightBottom;
     // maxX is the maximum value of x in the data
-    private BigDecimal maxX;
+    BigDecimal maxX;
     // minX is the minimum value of x in the data
-    private BigDecimal minX;
+    BigDecimal minX;
     // maxY is the maximum value of y in the data
-    private BigDecimal maxY;
+    BigDecimal maxY;
     // minY is the minimum value of y in the data
-    private BigDecimal minY;
+    BigDecimal minY;
     private int decimalPlacePrecisionForCalculations;
     private int decimalPlacePrecisionForDisplay;
     private int significantDigits;
@@ -527,7 +527,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * @param significantDigits
      * @param roundingMode
      */
-    protected void init(
+    protected final void init(
             ExecutorService executorService,
             File file,
             String format,
@@ -771,13 +771,12 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     public void setCellHeight() {
         int theDecimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
         RoundingMode rm = getRoundingMode();
-        BigDecimal theMinY = getMinY();
-        if (theMinY == null) {
+        if (minY == null) {
             cellHeight = BigDecimal.valueOf(2);
             cellHeightDiv2 = BigDecimal.ONE;
         } else {
             cellHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                    getMaxY().subtract(theMinY),
+                    getMaxY().subtract(minY),
                     BigDecimal.valueOf(getDataHeight()),
                     theDecimalPlacePrecisionForCalculations,
                     rm);

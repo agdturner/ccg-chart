@@ -34,7 +34,7 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of <code>Generic_AbstractLineGraph<\code> to generate a
+ * An implementation of <code>Generic_AbstractLineGraph</code> to generate a
  * Line Chart Visualization of some default data and write it out to file as a
  * PNG.
  */
@@ -72,10 +72,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode r) {
-        setyMax(yMax);
-        setyPin(yPin);
-        setyIncrement(yIncrement);
-        setNumberOfYAxisTicks(numberOfYAxisTicks);
+        this.yMax = yMax;
+        this.yPin = yPin;
+        this.yIncrement = yIncrement;
+        this.numberOfYAxisTicks = numberOfYAxisTicks;
         init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, false, decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay, r);
@@ -227,28 +227,17 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int decimalPlacePrecisionForCalculations = 10;
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode roundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_LineGraph chart = new Generic_LineGraph(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                yMax,
-                yPin,
-                yIncrement,
-                numberOfYAxisTicks,
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Generic_LineGraph chart = new Generic_LineGraph(es, file, format, title,
+                dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
+                yIncrement, numberOfYAxisTicks,
                 decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay,
                 roundingMode);
         chart.setData(chart.getDefaultData());
         chart.run();
         Future future = chart.future;
-        Generic_Execution.shutdownExecutorService(
-                executorService, future, chart);
+        Generic_Execution.shutdownExecutorService(es, future, chart);
     }
 
     @Override
@@ -276,11 +265,8 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         //int seperationDistanceOfAxisAndData = textHeight;
         int seperationDistanceOfAxisAndData = 2;
         // Draw Y axis
-        int[] yAxisDimensions = drawYAxis(
-                textHeight,
-                scaleTickLength,
-                scaleTickAndTextSeparation,
-                partTitleGap,
+        int[] yAxisDimensions = drawYAxis(textHeight, scaleTickLength,
+                scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         yAxisExtraWidthLeft = yAxisDimensions[0];
 
@@ -308,11 +294,8 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         setDataStartCol(dataStartCol);
         setDataEndCol(dataEndCol);
         // Draw X axis
-        int[] xAxisDimensions = drawXAxis(
-                textHeight,
-                scaleTickLength,
-                scaleTickAndTextSeparation,
-                partTitleGap,
+        int[] xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
+                scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         xAxisExtraWidthLeft = xAxisDimensions[0];
         xAxisExtraWidthRight = xAxisDimensions[1];
@@ -322,7 +305,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             imageWidth += diff;
             dataStartCol += diff;
             dataEndCol += diff;
-            extraWidthLeft = xAxisExtraWidthLeft;
+//            extraWidthLeft = xAxisExtraWidthLeft;
             yAxisWidth += diff;
             setYAxisWidth(yAxisWidth);
 //            setOriginCol();
@@ -402,10 +385,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         maps.put("map2", map2);
         BigDecimal[] minMaxBigDecimal;
         minMaxBigDecimal = Generic_Collections.getMinMaxBigDecimal(map);
-        BigDecimal minY = minMaxBigDecimal[0];
-        BigDecimal maxY = minMaxBigDecimal[1];
-        BigDecimal minX = map.firstKey();
-        BigDecimal maxX = map.lastKey();
+        minY = minMaxBigDecimal[0];
+        maxY = minMaxBigDecimal[1];
+        minX = map.firstKey();
+        maxX = map.lastKey();
         minMaxBigDecimal = Generic_Collections.getMinMaxBigDecimal(map2);
         if (minY.compareTo(minMaxBigDecimal[0]) == 1) {
             minY = minMaxBigDecimal[0];
