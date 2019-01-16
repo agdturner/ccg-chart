@@ -40,6 +40,11 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public class Generic_LineGraph extends Generic_AbstractLineGraph {
 
+    /**
+     * Iff set to true then a line is added to the graph at Y = 0.
+     */
+    boolean drawYZero;
+    
     public Generic_LineGraph() {
     }
 
@@ -66,9 +71,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel,
             BigDecimal yMax,
-            BigDecimal yPin,
+            ArrayList<BigDecimal> yPin,
             BigDecimal yIncrement,
             int numberOfYAxisTicks,
+            boolean drawYZero,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode r) {
@@ -76,6 +82,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         this.yPin = yPin;
         this.yIncrement = yIncrement;
         this.numberOfYAxisTicks = numberOfYAxisTicks;
+        this.drawYZero = drawYZero;
         init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, false, decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay, r);
@@ -194,10 +201,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         File file;
         String format = "PNG";
         if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
+            System.out.println("Expected 2 args: args[0] title; args[1] File."
                     + " Recieved " + args.length + " args.");
             // Use defaults
             title = "Example Line Graph";
@@ -216,13 +220,14 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         String xAxisLabel = "X";
         String yAxisLabel = "Y";
         boolean drawOriginLinesOnPlot = true;
-        int barGap = 1;
-        int xIncrement = 1;
         int numberOfYAxisTicks = 11;
         BigDecimal yMax;
         yMax = null;
-        BigDecimal yPin = BigDecimal.ZERO;
-        BigDecimal yIncrement = BigDecimal.ONE;
+        ArrayList<BigDecimal> yPin;
+        yPin = new ArrayList<>();
+        yPin.add(BigDecimal.ZERO);
+        //BigDecimal yIncrement = BigDecimal.ONE;
+        BigDecimal yIncrement = null;
         //int yAxisStartOfEndInterval = 60;
         int decimalPlacePrecisionForCalculations = 10;
         int decimalPlacePrecisionForDisplay = 3;
@@ -230,7 +235,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         ExecutorService es = Executors.newSingleThreadExecutor();
         Generic_LineGraph chart = new Generic_LineGraph(es, file, format, title,
                 dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
-                yIncrement, numberOfYAxisTicks,
+                yIncrement, numberOfYAxisTicks, true,
                 decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay,
                 roundingMode);
@@ -245,6 +250,14 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         drawOutline();
         drawTitle(getTitle());
         drawAxes();
+        if (drawYZero) {
+            Line2D ab;
+            // Draw Y axis scale to the left side
+            setPaint(Color.LIGHT_GRAY);
+            int zero = coordinateToScreenRow(BigDecimal.ZERO);
+            ab = new Line2D.Double(dataStartCol, zero, dataEndCol, zero);
+            draw(ab);
+        }
         drawData();
         drawLegend();
         Dimension newDim = new Dimension(getImageWidth(), getImageHeight());
@@ -341,7 +354,8 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         maps = new TreeMap<>();
         TreeMap<BigDecimal, BigDecimal> map;
         map = new TreeMap<>();
-        map.put(new BigDecimal(0.0d), new BigDecimal(10.0d));
+        //map.put(new BigDecimal(0.0d), new BigDecimal(10.0d));
+        map.put(new BigDecimal(0.0d), new BigDecimal(-10.0d));
         map.put(new BigDecimal(6.0d), new BigDecimal(11.0d));
         map.put(new BigDecimal(12.0d), new BigDecimal(12.0d));
         map.put(new BigDecimal(18.0d), new BigDecimal(13.0d));

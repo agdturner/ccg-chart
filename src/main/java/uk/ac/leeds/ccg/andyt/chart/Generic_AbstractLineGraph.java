@@ -23,8 +23,10 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 
 /**
@@ -35,7 +37,14 @@ import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 public abstract class Generic_AbstractLineGraph extends Generic_Plot {
 
     protected BigDecimal yMax;
-    protected BigDecimal yPin;
+
+    /**
+     * yPin are a set of values that must appear if possible on the Y axis. The
+     * most important of these is the first in the list, the least important is
+     * the last. It is expected that only those that can fit on the axis will be
+     * included.
+     */
+    protected ArrayList<BigDecimal> yPin;
     protected BigDecimal yIncrement;
     protected int numberOfYAxisTicks;
 
@@ -121,51 +130,63 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         MathContext mc;
         mc = new MathContext(getDecimalPlacePrecisionForCalculations(),
                 RoundingMode.HALF_UP);
-        BigDecimal rowValue;
+        BigDecimal y;
         if (yPin != null) {
-            // Initialise rowValue the lowest value in the
-            int pinCompareToMinY;
-            pinCompareToMinY = yPin.compareTo(minY);
-            if (pinCompareToMinY != 0) {
-                if (pinCompareToMinY == 1) {
-                    int pinCompareToMaxY;
-                    pinCompareToMaxY = yPin.compareTo(maxY);
-                    if (pinCompareToMaxY != 1) {
-                        rowValue = yPin;
-                        while (rowValue.compareTo(minY) != 1) {
-                            rowValue = rowValue.subtract(yIncrement);
-                        }
-                    } else {
-                        throw new UnsupportedOperationException(this.getClass().getName() + ".drawYAxis(int, int, int, int, int)");
-                        //rowValue = minY;
-                    }
-                } else {
-                    setMinY(yPin);
-                    setCellHeight();
-                    rowValue = yPin;
-//                    while (rowValue.compareTo(minY) == -1) {
-//                        rowValue = rowValue.add(yIncrement);
-//                    }
-                }
-            } else {
-                rowValue = minY;
-            }
-        } else {
-            rowValue = minY;
+            BigDecimal maxYPin;
+            BigDecimal minYPin;
+            maxYPin = Generic_Collections.getMax(yPin);
+            minYPin = Generic_Collections.getMin(yPin);
+            setMinY(minYPin.min(minY));
+            setMaxY(maxYPin.max(maxY));
+            setCellHeight();
         }
+//            if (minY.compareTo(BigDecimal.ZERO) > 1) {
+//                rowValue = minY;
+//            }
+//            // Initialise rowValue the lowest value
+//            int minYPin_CompareTo_minY;
+//            minYPin_CompareTo_minY = minYPin.compareTo(minY);
+//            if (minYPin_CompareTo_minY != 0) {
+//                if (minYPin_CompareTo_minY == 1) {
+//                    int minYPin_CompareTo_MaxY;
+//                    minYPin_CompareTo_MaxY = minYPin.compareTo(maxY);
+//                    if (minYPin_CompareTo_MaxY != 1) {
+//                        rowValue = minYPin;
+//                        while (rowValue.compareTo(minY) != 1) {
+//                            rowValue = rowValue.subtract(yIncrement);
+//                        }
+//                    } else {
+//                        throw new UnsupportedOperationException(this.getClass().getName() + ".drawYAxis(int, int, int, int, int)");
+//                        //rowValue = minY;
+//                    }
+//                } else {
+//                    setMinY(yPin);
+//                    setCellHeight();
+//                    rowValue = yPin;
+////                    while (rowValue.compareTo(minY) == -1) {
+////                        rowValue = rowValue.add(yIncrement);
+////                    }
+//                }
+//            } else {
+//                rowValue = minY;
+//            }
+//        } else {
+//            rowValue = minY;
+//        }
+        y = minY;
         if (yIncrement != null) {
-            if (rowValue != null) {
-                numberOfYAxisTicks = ((maxY.subtract(rowValue)).divide(yIncrement, mc)).intValue() + 1;
+            if (y != null) {
+                numberOfYAxisTicks = ((maxY.subtract(y)).divide(yIncrement, mc)).intValue() + 1;
             } else {
                 numberOfYAxisTicks = ((maxY.subtract(minY)).divide(yIncrement, mc)).intValue() + 1;
-                rowValue = minY;
+                //y = minY;
             }
         } else {
-            if (rowValue != null) {
-                yIncrement = (maxY.subtract(rowValue)).divide(new BigDecimal(numberOfYAxisTicks), mc);
+            if (y != null) {
+                yIncrement = (maxY.subtract(y)).divide(new BigDecimal(numberOfYAxisTicks), mc);
             } else {
                 yIncrement = (maxY.subtract(minY)).divide(new BigDecimal(numberOfYAxisTicks), mc);
-                rowValue = minY;
+                //y = minY;
             }
         }
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
@@ -179,24 +200,46 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
         draw(ab);
         setPaint(Color.GRAY);
-        String text_String;
+        String tickText;
         int textWidth;
         int maxTickTextWidth = 0;
         boolean first = true;
-        int row0 = coordinateToScreenRow(rowValue);
+
+        RoundingMode rm;
+        rm = RoundingMode.HALF_UP;
+
+        int tickTextEndCol;
+        tickTextEndCol = col - scaleTickAndTextSeparation - scaleTickLength;
+        int tickTextStartCol;
+
+        // First add the yPins
+        Iterator<BigDecimal> ite;
+        ite = yPin.iterator();
+        while (ite.hasNext()) {
+            y = ite.next();
+            int row = coordinateToScreenRow(y);
+            tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
+            textWidth = getTextWidth(tickText);
+            tickTextStartCol = tickTextEndCol - textWidth;
+            drawString(tickText, tickTextStartCol, row + (textHeight / 3));
+            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+        }
+
+        y = minY;
+        int row0 = coordinateToScreenRow(y);
         int previousRow = row0;
         for (int i = 0; i < numberOfYAxisTicks; i++) {
-            int row = coordinateToScreenRow(rowValue);
+            int row = coordinateToScreenRow(y);
             System.out.println(row);
             if (row >= dataStartRow) {
                 setPaint(Color.GRAY);
                 ab = new Line2D.Double(col, row, col - scaleTickLength, row);
                 draw(ab);
                 if (first || (previousRow - row) > textHeight) {
-                    text_String = "" + Generic_BigDecimal.roundIfNecessary(
-                            rowValue, 2, RoundingMode.HALF_UP);
-                    textWidth = getTextWidth(text_String);
-                    drawString(text_String,
+                    tickText = "" + Generic_BigDecimal.roundIfNecessary(
+                            y, 2, RoundingMode.HALF_UP);
+                    textWidth = getTextWidth(tickText);
+                    drawString(tickText,
                             col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                             //row);
                             row + (textHeight / 3));
@@ -205,7 +248,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
                     first = false;
                 }
             }
-            rowValue = rowValue.add(yIncrement);
+            y = y.add(yIncrement);
         }
         // <drawEndOfYAxisTick>
         int row = coordinateToScreenRow(maxY);
@@ -213,16 +256,32 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         ab = new Line2D.Double(col, row, col - scaleTickLength, row);
         draw(ab);
         if ((previousRow - row) > textHeight) {
-            text_String = "" + Generic_BigDecimal.roundIfNecessary(maxY, 2,
+            tickText = "" + Generic_BigDecimal.roundIfNecessary(maxY, 2,
                     RoundingMode.HALF_UP);
-            textWidth = getTextWidth(text_String);
-            drawString(text_String,
+            textWidth = getTextWidth(tickText);
+            drawString(tickText,
                     col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                     //row);
                     row + (textHeight / 3));
             maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
         }
         // </drawEndOfYAxisTick>
+        // <drawStartOfYAxisTick>
+        row = coordinateToScreenRow(minY);
+        setPaint(Color.GRAY);
+        ab = new Line2D.Double(col, row, col - scaleTickLength, row);
+        draw(ab);
+        if ((previousRow - row) > textHeight) {
+            tickText = "" + Generic_BigDecimal.roundIfNecessary(maxY, 2,
+                    RoundingMode.HALF_UP);
+            textWidth = getTextWidth(tickText);
+            drawString(tickText,
+                    col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
+                    //row);
+                    row + (textHeight / 3));
+            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+        }
+        // </drawStartOfYAxisTick>
         yAxisExtraWidthLeft += maxTickTextWidth;
         // Y axis label
         setPaint(Color.BLACK);
@@ -251,7 +310,8 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     @Override
     public int[] drawXAxis(int textHeight, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,
-            int seperationDistanceOfAxisAndData) {
+            int seperationDistanceOfAxisAndData
+    ) {
         int[] result = new int[3];
 //        Object[] data = getData();
         BigDecimal colValue;

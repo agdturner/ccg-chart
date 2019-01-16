@@ -44,15 +44,15 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     // dataHeight is the height in pixels of the data section part of the image 
     private int dataHeight;
     // dataStartRow is the top row index of the data section in the image
-    private int dataStartRow;
+    protected int dataStartRow;
     private int dataMiddleRow;
     // dataEndRow is the bottom row index of the data section in the image
-    private int dataEndRow;
+    protected int dataEndRow;
     // dataStartCol is the left column index of the data section in the image
-    private int dataStartCol;
+    protected int dataStartCol;
     //public int dataMiddleCol;
     // dataEndCol is the right column index of the data section in the image
-    private int dataEndCol;
+    protected int dataEndCol;
     // xAxisHeight is the height in pixels of the x axis
     private int xAxisHeight;
     // yAxisWidth is the width in pixels of the y axis
