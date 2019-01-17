@@ -47,7 +47,7 @@ public class Generic_JApplet_AgeGenderLineChart extends Generic_AbstractAgeGende
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode roundingMode) {
-        _Generic_Plot = new Generic_AgeGenderLineChart(
+        Plot = new Generic_AgeGenderLineChart(
                 null,
                 file,
                 format,
@@ -129,7 +129,7 @@ public class Generic_JApplet_AgeGenderLineChart extends Generic_AbstractAgeGende
 
     @Override
     public void setOriginCol() {
-        ((Generic_AgeGenderLineChart) _Generic_Plot).setOriginCol();
+        ((Generic_AgeGenderLineChart) Plot).setOriginCol();
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 }

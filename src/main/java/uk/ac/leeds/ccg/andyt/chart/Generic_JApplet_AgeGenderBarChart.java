@@ -49,7 +49,7 @@ public class Generic_JApplet_AgeGenderBarChart extends Generic_AbstractAgeGender
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode roundingMode) {
-        _Generic_Plot = new Generic_AgeGenderBarChart(
+        Plot = new Generic_AgeGenderBarChart(
                 null,
                 file,
                 format,
@@ -129,6 +129,6 @@ public class Generic_JApplet_AgeGenderBarChart extends Generic_AbstractAgeGender
 
     @Override
     public void setOriginCol() {
-        ((Generic_AgeGenderBarChart) _Generic_Plot).setOriginCol();
+        ((Generic_AgeGenderBarChart) Plot).setOriginCol();
     }
 }

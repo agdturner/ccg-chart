@@ -41,8 +41,9 @@ public class Generic_Plot extends Generic_AbstractPlot {
     public Generic_Canvas Canvas;
     public Future future;
 
-    public Generic_Plot(){}
-    
+    public Generic_Plot() {
+    }
+
     public Generic_Plot(int ID) {
         super(ID);
     }
@@ -168,10 +169,10 @@ public class Generic_Plot extends Generic_AbstractPlot {
 //    }
     @Override
     public void initialiseParameters(Object[] data) {
-        setMaxX(new BigDecimal(((BigDecimal) data[1]).toString()));
-        setMinX(new BigDecimal(((BigDecimal) data[2]).toString()));
-        setMaxY(new BigDecimal(((BigDecimal) data[3]).toString()));
-        setMinY(new BigDecimal(((BigDecimal) data[4]).toString()));
+        maxX = new BigDecimal(((BigDecimal) data[1]).toString());
+        minX = new BigDecimal(((BigDecimal) data[2]).toString());
+        maxY = new BigDecimal(((BigDecimal) data[3]).toString());
+        minY = new BigDecimal(((BigDecimal) data[4]).toString());
         setCellHeight();
         setCellWidth();
         setOriginRow();

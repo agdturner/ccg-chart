@@ -100,7 +100,7 @@ public abstract class Generic_AbstractAgeGenderPlotApplet extends Generic_Abstra
             int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result;
-        result = ((Generic_AbstractAgeGenderPlot) _Generic_Plot).drawYAxis(
+        result = ((Generic_AbstractAgeGenderPlot) Plot).drawYAxis(
                 interval,
                 textHeight,
                 startAgeOfEndYearInterval,
@@ -125,7 +125,7 @@ public abstract class Generic_AbstractAgeGenderPlotApplet extends Generic_Abstra
             int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result;
-        result = ((Generic_AbstractAgeGenderPlot) _Generic_Plot).drawXAxis(
+        result = ((Generic_AbstractAgeGenderPlot) Plot).drawXAxis(
                 textHeight,
                 scaleTickLength,
                 scaleTickAndTextSeparation,

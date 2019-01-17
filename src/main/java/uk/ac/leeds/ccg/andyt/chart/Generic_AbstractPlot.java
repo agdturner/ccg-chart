@@ -343,44 +343,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         this.extraHeightBottom = extraHeightBottom;
     }
 
-    public final BigDecimal getMaxX() {
-        if (maxX == null) {
-            return new BigDecimal("0");
-        }
-        return maxX;
-    }
-
-    protected void setMaxX(BigDecimal maxX) {
-        this.maxX = maxX;
-    }
-
-    public final BigDecimal getMinX() {
-//        if (minX == null) {
-//            return new BigDecimal("0");
-//        }
-        return minX;
-    }
-
-    protected void setMinX(BigDecimal minX) {
-        this.minX = minX;
-    }
-
-    public BigDecimal getMaxY() {
-        return maxY;
-    }
-
-    protected void setMaxY(BigDecimal maxY) {
-        this.maxY = maxY;
-    }
-
-    public BigDecimal getMinY() {
-        return minY;
-    }
-
-    protected void setMinY(BigDecimal minY) {
-        this.minY = minY;
-    }
-
     public int getDecimalPlacePrecisionForCalculations() {
         return decimalPlacePrecisionForCalculations;
     }
@@ -629,26 +591,25 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     public BigDecimal dataRowToYCoordinate(double row) {
         BigDecimal result = BigDecimal.ONE; // default value
-        BigDecimal theMinY = getMinY();
-        if (theMinY != null) {
-            result = BigDecimal.valueOf(getDataHeight() - row).multiply(getCellHeight()).add(theMinY);
+        if (minY != null) {
+            result = BigDecimal.valueOf(getDataHeight() - row)
+                    .multiply(getCellHeight()).add(minY);
         }
         return result;
     }
 
     public BigDecimal dataColToXCoordinate(double col) {
         BigDecimal result = BigDecimal.ONE; // default value
-        BigDecimal theMinX = getMinX();
-        if (theMinX != null) {
-            result = BigDecimal.valueOf(col).multiply(getCellWidth()).add(theMinX);
+        if (minX != null) {
+            result = BigDecimal.valueOf(col).multiply(getCellWidth()).add(minX);
         }
         return result;
     }
 
     /**
      * Calculates and returns the row and column in the image for the data at
- coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode rm
+     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
+     * RoundingMode rm
      *
      * @param p
      * @return a Point2D.Double located at pixel(col, row)
@@ -665,7 +626,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     /**
      * Calculates and returns the column in the image for the data with value
- titleTextWidth RoundingMode rm is used.
+     * titleTextWidth RoundingMode rm is used.
      *
      * @param x
      * @return the column in the image for the data with value titleTextWidth
@@ -688,16 +649,10 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     public int coordinateToScreenCol(BigDecimal x, RoundingMode rm) {
         int col = 0;
         BigDecimal theCellWidth = getCellWidth();
-        BigDecimal theMinX = getMinX();
-        if (theMinX != null) {
+        if (minX != null) {
             if (theCellWidth.compareTo(BigDecimal.ZERO) != 0) {
-//            col = Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
-//                    x.subtract(getMinX()),
-//                    theCellWidth,
-//                    0,
-//                    rm).intValueExact();
                 col = Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
-                        x.subtract(theMinX), theCellWidth, 0, rm).intValue();
+                        x.subtract(minX), theCellWidth, 0, rm).intValue();
             }
         }
         col += getDataStartCol();
@@ -726,20 +681,11 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     public int coordinateToScreenRow(BigDecimal y, RoundingMode rm) {
         int row = 0;
         BigDecimal theCellHeight = getCellHeight();
-        BigDecimal theMinY = getMinY();
-        if (theMinY != null) {
+        if (minY != null) {
             if (theCellHeight != null) {
                 if (theCellHeight.compareTo(BigDecimal.ZERO) != 0) {
                     row = getDataHeight() - Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
-                            y.subtract(theMinY),
-                            getCellHeight(),
-                            0,
-                            rm).intValue();
-//                row = getDataHeight() - Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
-//                        y.subtract(getMinY()),
-//                        getCellHeight(),
-//                        0,
-//                        aRoundingMode).intValueExact();
+                            y.subtract(minY), getCellHeight(), 0, rm).intValue();
                 }
             }
         }
@@ -749,14 +695,14 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     /**
      * Calculates and returns the row and column in the image for the data at
- coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode rm
+     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
+     * RoundingMode rm
      *
      * @param x
      * @param y
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Point2D coordinateToScreen(            BigDecimal x,            BigDecimal y) {
+    public Point2D coordinateToScreen(BigDecimal x, BigDecimal y) {
         Point2D result = new Point2D.Double();
         //System.out.println("titleTextWidth " + titleTextWidth);
         //System.out.println("titleTextHeight " + titleTextHeight);
@@ -769,62 +715,46 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     //public abstract void initialiseParameters(Object[] data);
     public void setCellHeight() {
-        int theDecimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
+        int dp = getDecimalPlacePrecisionForCalculations();
         RoundingMode rm = getRoundingMode();
         if (minY == null) {
             cellHeight = BigDecimal.valueOf(2);
             cellHeightDiv2 = BigDecimal.ONE;
         } else {
             cellHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                    getMaxY().subtract(minY),
-                    BigDecimal.valueOf(getDataHeight()),
-                    theDecimalPlacePrecisionForCalculations,
-                    rm);
+                    maxY.subtract(minY), BigDecimal.valueOf(getDataHeight()),
+                    dp, rm);
             cellHeightDiv2 = Generic_BigDecimal.divideRoundIfNecessary(
-                    cellHeight,
-                    BigDecimal.valueOf(2),
-                    theDecimalPlacePrecisionForCalculations,
-                    rm);
+                    cellHeight, BigDecimal.valueOf(2), dp, rm);
         }
     }
 
     public void setCellWidth() {
-        int theDecimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
+        int dp = getDecimalPlacePrecisionForCalculations();
         RoundingMode rm = getRoundingMode();
-        BigDecimal theMinX = getMinX();
-        if (theMinX == null) {
+        if (minX == null) {
             cellWidth = BigDecimal.valueOf(2);
             cellWidthDiv2 = BigDecimal.ONE;
         } else {
-            cellWidth = Generic_BigDecimal.divideRoundIfNecessary(getMaxX().subtract(theMinX),
-                    BigDecimal.valueOf(getDataWidth()),
-                    theDecimalPlacePrecisionForCalculations,
-                    rm);
+            cellWidth = Generic_BigDecimal.divideRoundIfNecessary(
+                    maxX.subtract(minX), BigDecimal.valueOf(getDataWidth()),
+                    dp, rm);
             cellWidthDiv2 = Generic_BigDecimal.divideRoundIfNecessary(cellWidth,
-                    BigDecimal.valueOf(2),
-                    theDecimalPlacePrecisionForCalculations,
-                    rm);
+                    BigDecimal.valueOf(2), dp, rm);
         }
     }
 
     public void setOriginRow() {
         int theDataEndRow = getDataEndRow();
-        BigDecimal theMaxY = getMaxY();
-        if (theMaxY == null) {
+        if (maxY == null) {
             originRow = theDataEndRow;
         } else {
-            if (theMaxY.compareTo(BigDecimal.ZERO) == 0) {
+            if (maxY.compareTo(BigDecimal.ZERO) == 0) {
                 originRow = theDataEndRow;
             } else {
                 if (cellHeight.compareTo(BigDecimal.ZERO) == 0) {
                     originRow = theDataEndRow;
                 } else {
-//                originRow = Generic_BigDecimal.divideRoundIfNecessary(
-//                        maxY,
-//                        cellHeight,
-//                        0,
-//                        rm).intValueExact()
-//                        + dataStartRow;
                     originRow = coordinateToScreenRow(BigDecimal.ZERO);
                 }
             }
@@ -896,18 +826,14 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //        draw(new Line2D.Double(point, point));
         // draw as an x cross
         int crossLength = 4;
-        Point2D a = new Point2D.Double(
-                (int) point.getX() - crossLength,
+        Point2D a = new Point2D.Double((int) point.getX() - crossLength,
                 (int) point.getY() - crossLength);
-        Point2D b = new Point2D.Double(
-                (int) point.getX() + crossLength,
+        Point2D b = new Point2D.Double((int) point.getX() + crossLength,
                 (int) point.getY() + crossLength);
         draw(new Line2D.Double(a, b));
-        Point2D c = new Point2D.Double(
-                (int) point.getX() - crossLength,
+        Point2D c = new Point2D.Double((int) point.getX() - crossLength,
                 (int) point.getY() + crossLength);
-        Point2D d = new Point2D.Double(
-                (int) point.getX() + crossLength,
+        Point2D d = new Point2D.Double((int) point.getX() + crossLength,
                 (int) point.getY() - crossLength);
         draw(new Line2D.Double(c, d));
 //        // draw as an x cross
@@ -928,12 +854,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //        draw(new Line2D.Double(c, d));
     }
 
-    public void drawString(
-            String text,
-            int col,
-            int row) {
-//        g2.drawString(text, col, row);
-//        g2image.drawString(text, col, row);
+    public void drawString(String text, int col, int row) {
         if (g2 != null) {
             g2.drawString(text, col, row);
         }
@@ -942,13 +863,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         }
     }
 
-    public void fillRect(
-            int col,
-            int row,
-            int width,
-            int height) {
-//        g2.fillRect(col, row, width, height);
-//        g2image.fillRect(col, row, width, height);
+    public void fillRect(int col, int row, int width, int height) {
         if (g2 != null) {
             g2.fillRect(col, row, width, height);
         }
@@ -958,8 +873,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     public void draw(Rectangle2D aRectangle2D) {
-//        g2.draw(aRectangle2D);
-//        g2image.draw(aRectangle2D);
         if (g2 != null) {
             g2.draw(aRectangle2D);
         }
@@ -969,8 +882,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     public void transform(AffineTransform aAffineTransform) {
-//        g2.transform(aAffineTransform);
-//        g2image.transform(aAffineTransform);
         if (g2 != null) {
             g2.transform(aAffineTransform);
         }
@@ -980,8 +891,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     public void setTransform(AffineTransform aAffineTransform) {
-//        g2.setTransform(aAffineTransform);
-//        g2image.setTransform(aAffineTransform);
         if (g2 != null) {
             g2.setTransform(aAffineTransform);
         }
@@ -1002,18 +911,11 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         return 2;
     }
 
-    public void drawAxes(
-            int interval,
-            int startAgeOfEndYearInterval) {
-        drawAxes(
-                this,
-                interval,
-                startAgeOfEndYearInterval);
+    public void drawAxes(int interval, int startAgeOfEndYearInterval) {
+        drawAxes(this, interval, startAgeOfEndYearInterval);
     }
 
-    public void drawAxes(
-            Generic_AbstractPlot plot,
-            int interval,
+    public void drawAxes(Generic_AbstractPlot plot, int interval,
             int startAgeOfEndYearInterval) {
         int yAxisExtraWidthLeft;
 //        int yAxisExtraHeightTop = 0;
@@ -1027,13 +929,10 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         int textHeight = getTextHeight();
         int seperationDistanceOfAxisAndData = textHeight;
         // Draw Y axis
-        int[] yAxisDimensions = plot.drawYAxis(
-                interval,
-                textHeight,
-                startAgeOfEndYearInterval,
-                scaleTickLength,
-                scaleTickAndTextSeparation,
-                partTitleGap,
+        int[] yAxisDimensions;
+        yAxisDimensions = plot.drawYAxis(interval, textHeight,
+                startAgeOfEndYearInterval, scaleTickLength,
+                scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         yAxisExtraWidthLeft = yAxisDimensions[0];
         if (yAxisExtraWidthLeft > extraWidthLeft) {
@@ -1046,11 +945,9 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         }
         yAxisWidth = yAxisExtraWidthLeft;
         // Draw X axis
-        int[] xAxisDimensions = plot.drawXAxis(
-                textHeight,
-                scaleTickLength,
-                scaleTickAndTextSeparation,
-                partTitleGap,
+        int[] xAxisDimensions;
+        xAxisDimensions = plot.drawXAxis(textHeight, scaleTickLength,
+                scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         xAxisExtraWidthLeft = xAxisDimensions[0];
         xAxisExtraWidthRight = xAxisDimensions[1];
@@ -1074,20 +971,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         }
     }
 
-    public abstract int[] drawXAxis(
-            int textHeight,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public abstract int[] drawXAxis(int textHeight, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData);
 
-    public abstract int[] drawYAxis(
-            int interval,
-            int textHeight,
-            int startOfEndInterval,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public abstract int[] drawYAxis(int interval, int textHeight,
+            int startOfEndInterval, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData);
 
     public void drawOutline() {
@@ -1106,8 +996,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      *
      * @param title
      */
-    public void drawTitle(
-            String title) {
+    public void drawTitle(String title) {
         setPaint(Color.BLACK);
         int oldExtraHeightTop = extraHeightTop;
         int textHeight = getTextHeight();
@@ -1144,10 +1033,10 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 //        System.out.println("imageHeight " + imageHeight);
     }
 
-    public int getTextWidth(String text_String) {
-        char[] text_charArray = text_String.toCharArray();
-        int result = fontMetrics.charsWidth(text_charArray, 0, text_charArray.length);
-        return result;
+    public int getTextWidth(String text) {
+        char[] c = text.toCharArray();
+        int r = fontMetrics.charsWidth(c, 0, c.length);
+        return r;
     }
 
     public int getTextHeight() {
@@ -1157,25 +1046,16 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         return fontMetrics.getHeight();
     }
 
-    public void writeText(
-            String text,
-            double angle,
-            int startCol,
-            int startRow) {
+    public void writeText(String text, double angle, int startCol, int startRow) {
         // Store the current transform to return the graphics environment to
         AffineTransform currentTransform = null;
         if (g2 != null) {
             currentTransform = g2.getTransform();
         }
         AffineTransform newTransform = AffineTransform.getRotateInstance(
-                angle,
-                startCol,
-                startRow);
+                angle, startCol, startRow);
         transform(newTransform);
-        drawString(
-                text,
-                startCol,
-                startRow);
+        drawString(text, startCol, startRow);
         if (currentTransform != null) {
             setTransform(currentTransform);
         }
@@ -1186,9 +1066,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     public Dimension draw() {
         drawOutline();
         drawTitle(getTitle());
-        drawAxes(
-                getAgeInterval(),
-                getStartAgeOfEndYearInterval());
+        drawAxes(getAgeInterval(), getStartAgeOfEndYearInterval());
         drawData();
         Dimension newDim = new Dimension(getImageWidth(), getImageHeight());
         return newDim;

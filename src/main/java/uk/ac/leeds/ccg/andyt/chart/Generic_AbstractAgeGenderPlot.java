@@ -64,12 +64,10 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
 
     @Override
     public void initialiseParameters(Object[] data) {
-        BigDecimal maxX = new BigDecimal(((BigDecimal) data[2]).toString());
-        setMaxX(maxX);
-        setMinX(maxX.negate());
-        BigDecimal maxY = BigDecimal.valueOf(getStartAgeOfEndYearInterval() + getAgeInterval());
-        setMaxY(maxY);
-        setMinY(BigDecimal.ZERO);
+        maxX = new BigDecimal(((BigDecimal) data[2]).toString());
+        minX = maxX.negate();
+        maxY = BigDecimal.valueOf(getStartAgeOfEndYearInterval() + getAgeInterval());
+        minY = BigDecimal.ZERO;
         setCellHeight();
         setCellWidth();
         setOriginRow();
@@ -164,9 +162,9 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         String text;
         int maxTickTextWidth = 0;
         int col = getDataStartCol();
-        int miny_int = getMinY().intValue();
+        int miny_int = minY.intValue();
         //for (int i = miny_int; i <= startAgeOfEndYearInterval; i += increment) {
-        for (int i = miny_int; i <= getMaxY().intValue(); i += increment) {
+        for (int i = miny_int; i <= maxY.intValue(); i += increment) {
 
             // int row = coordinateToScreenRow(BigDecimal.valueOf(i));
             int row = coordinateToScreenRow(BigDecimal.valueOf(i)) - barHeightdiv2;
@@ -226,25 +224,20 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
         int xAxisExtraWidthRight = 0;
-        int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData +
-                scaleTickLength + scaleTickAndTextSeparation + textHeight;
+        int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData
+                + scaleTickLength + scaleTickAndTextSeparation + textHeight;
         int dataStartCol = getDataStartCol();
         //int originRow = getOriginRow();
         int dataEndRow = getDataEndRow();
         int dataEndCol = getDataEndCol();
         int originCol = getOriginCol();
-        BigDecimal maxX = getMaxX();
         int significantDigits = getSignificantDigits();
         RoundingMode roundingMode = getRoundingMode();
         Line2D ab;
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
         // draw XAxis Line
-        ab = new Line2D.Double(
-                dataStartCol,
-                row,
-                dataEndCol,
-                row);
+        ab = new Line2D.Double(dataStartCol, row, dataEndCol, row);
         draw(ab);
         // Add ticks and labels
         // origin tick and label
@@ -262,9 +255,9 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
                 originCol - (textWidth / 2),
                 textRow);
         // Left end scale tick and label
-        int decimalPlacePrecisionForDisplay =
-                Generic_BigDecimal.getDecimalPlacePrecision(
-                maxX, significantDigits);
+        int decimalPlacePrecisionForDisplay
+                = Generic_BigDecimal.getDecimalPlacePrecision(
+                        maxX, significantDigits);
         if (maxX != null) {
             text_String = Generic_BigDecimal.roundIfNecessary(
                     maxX,
@@ -296,7 +289,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         // Right end scale tick and label
         //text_String = maxX.toBigInteger().toString();
         text_String = Generic_BigDecimal.roundIfNecessary(
-                getMaxX(),
+                maxX,
                 decimalPlacePrecisionForDisplay,
                 roundingMode).toPlainString();
         textWidth = getTextWidth(text_String);

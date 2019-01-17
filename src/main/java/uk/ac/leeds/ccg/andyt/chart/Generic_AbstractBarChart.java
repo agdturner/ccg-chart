@@ -36,7 +36,6 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
 
     private int xAxisIncrement;
     private int numberOfYAxisTicks;
-    private BigDecimal yMax;
     private BigDecimal yPin;
     private BigDecimal yAxisIncrement;
     private int barWidth;
@@ -83,26 +82,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         map = (TreeMap<Integer, Integer>) intervalCountsAndLabels[0];
 
         BigDecimal[] minmMaxBigDecimal = (BigDecimal[]) data[1];
-        BigDecimal minX = minmMaxBigDecimal[0];
-        setMinX(minX);
+        minX = minmMaxBigDecimal[0];
         BigDecimal intervalWidth = (BigDecimal) data[2];
-        BigDecimal maxX;
         maxX = new BigDecimal(map.lastKey()).multiply(intervalWidth);
-        setMaxX(maxX);
         int[] minMax = Generic_Collections.getMinMaxInteger(map);
-        BigDecimal minY = BigDecimal.ZERO;
-        setMinY(minY);
-        BigDecimal maxY = BigDecimal.valueOf(minMax[1]);
-        BigDecimal yMax = getyMax();
-        if (yMax == null) {
-            setMaxY(maxY);
-        } else {
-            if (maxY.compareTo(yMax) == 1) {
-                setMaxY(maxY);
-            } else {
-                setMaxY(yMax);
-            }
-        }
+        minY = BigDecimal.ZERO;
+        maxY = BigDecimal.valueOf(minMax[1]);
         setCellHeight();
         setCellWidth();
         setOriginRow();
@@ -176,16 +161,7 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         mc = new MathContext(
                 getDecimalPlacePrecisionForCalculations(),
                 RoundingMode.HALF_UP);
-
-        BigDecimal yMax;
-        yMax = getyMax();
-
         BigDecimal rowValue;
-        BigDecimal minY;
-        minY = getMinY();
-        BigDecimal maxY;
-        maxY = getMaxY();
-
         BigDecimal pin;
         BigDecimal yIncrement;
         pin = getyPin();
@@ -654,19 +630,4 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
     public void setBarGap(int barGap) {
         this.barGap = barGap;
     }
-
-    /**
-     * @return the yMax
-     */
-    public BigDecimal getyMax() {
-        return yMax;
-    }
-
-    /**
-     * @param yMax the yMax to set
-     */
-    public void setyMax(BigDecimal yMax) {
-        this.yMax = yMax;
-    }
-
 }

@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -45,8 +46,26 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
      * included.
      */
     protected ArrayList<BigDecimal> yPin;
+
+    /**
+     * If this is set, this is the distance desired between Y axis ticks.
+     */
     protected BigDecimal yIncrement;
+
+    /**
+     * The number of Y axis ticks wanted in total (other than yPins).
+     */
     protected int numberOfYAxisTicks;
+
+    /**
+     * The number of Y axis ticks wanted that are greater than zero.
+     */
+    protected int numberOfYAxisTicksGT0;
+
+    /**
+     * The number of Y axis ticks wanted that are less than zero.
+     */
+    protected int numberOfYAxisTicksLT0;
 
     protected TreeMap<BigDecimal, ?> xAxisLabels;
     protected BigDecimal xMax;
@@ -127,17 +146,18 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     public int[] drawYAxis(int textHeight, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
+        RoundingMode rm;
+        rm = RoundingMode.HALF_UP;
         MathContext mc;
-        mc = new MathContext(getDecimalPlacePrecisionForCalculations(),
-                RoundingMode.HALF_UP);
+        mc = new MathContext(getDecimalPlacePrecisionForCalculations(), rm);
         BigDecimal y;
         if (yPin != null) {
             BigDecimal maxYPin;
             BigDecimal minYPin;
             maxYPin = Generic_Collections.getMax(yPin);
             minYPin = Generic_Collections.getMin(yPin);
-            setMinY(minYPin.min(minY));
-            setMaxY(maxYPin.max(maxY));
+            minY = minYPin.min(minY);
+            maxY =maxYPin.max(maxY);
             setCellHeight();
         }
 //            if (minY.compareTo(BigDecimal.ZERO) > 1) {
@@ -173,20 +193,23 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
 //        } else {
 //            rowValue = minY;
 //        }
-        y = minY;
-        if (yIncrement != null) {
-            if (y != null) {
-                numberOfYAxisTicks = ((maxY.subtract(y)).divide(yIncrement, mc)).intValue() + 1;
-            } else {
-                numberOfYAxisTicks = ((maxY.subtract(minY)).divide(yIncrement, mc)).intValue() + 1;
-                //y = minY;
-            }
+        boolean hasPositives;
+        hasPositives = maxY.compareTo(BigDecimal.ZERO) == 1;
+        boolean hasNegatives;
+        hasNegatives = minY.compareTo(BigDecimal.ZERO) == -1;
+        /**
+         * If yIncrement is not set, then set it. If it is set, then set 
+         * numberOfYAxisTicksGT0 and numberOfXAxisTicksGT0
+         */
+        if (yIncrement == null) {
+            yIncrement = (maxY.subtract(minY)).divide(
+                    new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
         } else {
-            if (y != null) {
-                yIncrement = (maxY.subtract(y)).divide(new BigDecimal(numberOfYAxisTicks), mc);
-            } else {
-                yIncrement = (maxY.subtract(minY)).divide(new BigDecimal(numberOfYAxisTicks), mc);
-                //y = minY;
+            if (hasPositives) {
+                numberOfYAxisTicksGT0 = ((maxY).divide(yIncrement, mc)).intValue() + 1;
+            }
+            if (hasNegatives) {
+                numberOfYAxisTicksLT0 = ((minY).divide(yIncrement, mc)).negate().intValue() + 1;
             }
         }
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
@@ -205,19 +228,18 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         int maxTickTextWidth = 0;
         boolean first = true;
 
-        RoundingMode rm;
-        rm = RoundingMode.HALF_UP;
-
         int tickTextEndCol;
         tickTextEndCol = col - scaleTickAndTextSeparation - scaleTickLength;
         int tickTextStartCol;
 
-        // First add the yPins
+        BitSet rows = new BitSet();
+        // Add the yPins that fit
         Iterator<BigDecimal> ite;
         ite = yPin.iterator();
         while (ite.hasNext()) {
             y = ite.next();
             int row = coordinateToScreenRow(y);
+            // Check that this can be added
             tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
             textWidth = getTextWidth(tickText);
             tickTextStartCol = tickTextEndCol - textWidth;

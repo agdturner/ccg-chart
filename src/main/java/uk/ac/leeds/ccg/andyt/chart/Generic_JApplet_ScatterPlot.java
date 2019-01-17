@@ -45,7 +45,7 @@ public class Generic_JApplet_ScatterPlot extends Generic_AbstractPlotApplet {
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode roundingMode) {
-        _Generic_Plot = new Generic_ScatterPlot(
+        Plot = new Generic_ScatterPlot(
                 null,
                 file,
                 format,
@@ -128,7 +128,7 @@ public class Generic_JApplet_ScatterPlot extends Generic_AbstractPlotApplet {
             int scaleTickAndTextSeparation,
             int partTitleGap,
             int seperationDistanceOfAxisAndData) {
-        int[] result = ((Generic_ScatterPlot) _Generic_Plot).drawXAxis(
+        int[] result = ((Generic_ScatterPlot) Plot).drawXAxis(
                 textHeight,
                 scaleTickLength,
                 scaleTickAndTextSeparation,
@@ -146,7 +146,7 @@ public class Generic_JApplet_ScatterPlot extends Generic_AbstractPlotApplet {
             int scaleTickAndTextSeparation,
             int partTitleGap,
             int seperationDistanceOfAxisAndData) {
-        int[] result = ((Generic_ScatterPlot) _Generic_Plot).drawYAxis(
+        int[] result = ((Generic_ScatterPlot) Plot).drawYAxis(
                 interval,
                 textHeight,
                 startAgeOfEndYearInterval,
@@ -159,8 +159,8 @@ public class Generic_JApplet_ScatterPlot extends Generic_AbstractPlotApplet {
 
     @Override
     public void setOriginCol() {
-        ((Generic_ScatterPlot) _Generic_Plot).setOriginCol();
-//        setOriginCol(_Generic_Plot.coordinateToScreenCol(BigDecimal.ZERO));
+        ((Generic_ScatterPlot) Plot).setOriginCol();
+//        setOriginCol(Plot.coordinateToScreenCol(BigDecimal.ZERO));
 //        System.out.println("originCol " + originCol);
 //        
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {

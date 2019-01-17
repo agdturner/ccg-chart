@@ -33,12 +33,12 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public abstract class Generic_AbstractPlotApplet extends JApplet {
 
-    Generic_Plot _Generic_Plot;
+    Generic_Plot Plot;
 
     public void run(JFrame f) {
         initPaint(f);
         // This is done twice as the image grows to accomodate the X axis label that sticks out
-        paint(_Generic_Plot.getG2());
+        paint(Plot.getG2());
         resize(f);
         /*
          * To show/not show the JFrame on screen and dispose/not disposed of it 
@@ -51,13 +51,12 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
         /*
          * Save the image to a File 
          */
-        Generic_Visualisation.saveImage(
-                null,
-                _Generic_Plot,
-                _Generic_Plot.getBufferedImage(),
+        Generic_Visualisation.saveImage(null,
+                Plot,
+                Plot.getBufferedImage(),
                 10000,
-                _Generic_Plot.getFormat(),
-                _Generic_Plot.getFile());            
+                Plot.getFormat(),
+                Plot.getFile());            
     }
     
     @Override
@@ -101,7 +100,7 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
         super.paint(g);
         initG2Image();
         initG2();
-        _Generic_Plot.draw();
+        Plot.draw();
     }
 
     public void initG2() {
@@ -133,11 +132,11 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
 //    public abstract void drawData();
 
     public void draw(Line2D l) {
-        _Generic_Plot.draw(l);
+        Plot.draw(l);
     }
 
 //    public void drawTitle(String t) {
-//        _Generic_Plot.drawTitle(t);
+//        Plot.drawTitle(t);
 //    }
     /**
      * The title is draw above the data area and centred on the whole width of
@@ -148,7 +147,7 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
     //@Override
     public void drawTitle(
             String title) {
-        _Generic_Plot.drawTitle(title);
+        Plot.drawTitle(title);
 //        setPaint(Color.BLACK);
 //        int oldExtraHeightTop = getExtraHeightTop();
 //        int textHeight = getTextHeight();
@@ -194,17 +193,17 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
     }
 
     public void drawOutline() {
-        _Generic_Plot.drawOutline();
+        Plot.drawOutline();
     }
 
     public void setPaint(Color c) {
-        _Generic_Plot.setPaint(c);
+        Plot.setPaint(c);
     }
 
     public void drawAxes(
             int ageInterval,
             int startAgeOfEndYearInterval) {
-        _Generic_Plot.drawAxes(
+        Plot.drawAxes(
                 ageInterval,
                 startAgeOfEndYearInterval);
     }
@@ -229,7 +228,7 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
 //        int scaleTickLength = 5;
 //        int scaleTickAndTextSeparation = 3;
 //        int partTitleGap = 2;
-//        int textHeight = _Generic_Plot.getTextHeight();
+//        int textHeight = Plot.getTextHeight();
 //
 //        // Draw Y axis
 //        int[] yAxisDimensions = drawYAxis(
@@ -240,15 +239,15 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
 //                scaleTickAndTextSeparation,
 //                partTitleGap);
 //        yAxisExtraWidthLeft = yAxisDimensions[0];
-//        if (yAxisExtraWidthLeft > _Generic_Plot.extraWidthLeft) {
-//            int diff = yAxisExtraWidthLeft - _Generic_Plot.extraWidthLeft;
-//            _Generic_Plot.imageWidth += diff;
-//            _Generic_Plot.dataStartCol += diff;
-//            _Generic_Plot.dataEndCol += diff;
-//            _Generic_Plot.extraWidthLeft = yAxisExtraWidthLeft;
+//        if (yAxisExtraWidthLeft > Plot.extraWidthLeft) {
+//            int diff = yAxisExtraWidthLeft - Plot.extraWidthLeft;
+//            Plot.imageWidth += diff;
+//            Plot.dataStartCol += diff;
+//            Plot.dataEndCol += diff;
+//            Plot.extraWidthLeft = yAxisExtraWidthLeft;
 //            setOriginCol();
 //        }
-//        _Generic_Plot.yAxisWidth = yAxisExtraWidthLeft;
+//        Plot.yAxisWidth = yAxisExtraWidthLeft;
 //
 //        // Draw X axis
 //        int[] xAxisDimensions = drawXAxis(
@@ -259,39 +258,39 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
 //        xAxisExtraWidthLeft = xAxisDimensions[0];
 //        xAxisExtraWidthRight = xAxisDimensions[1];
 //        xAxisExtraHeightBottom = xAxisDimensions[2];
-//        if (xAxisExtraWidthLeft > _Generic_Plot.extraWidthLeft) {
-//            int diff = xAxisExtraWidthLeft - _Generic_Plot.dataStartCol;
-//            _Generic_Plot.imageWidth += diff;
-//            _Generic_Plot.dataStartCol += diff;
-//            _Generic_Plot.dataEndCol += diff;
-//            _Generic_Plot.extraWidthLeft = xAxisExtraWidthLeft;
+//        if (xAxisExtraWidthLeft > Plot.extraWidthLeft) {
+//            int diff = xAxisExtraWidthLeft - Plot.dataStartCol;
+//            Plot.imageWidth += diff;
+//            Plot.dataStartCol += diff;
+//            Plot.dataEndCol += diff;
+//            Plot.extraWidthLeft = xAxisExtraWidthLeft;
 //            setOriginCol();
 //        }
-//        if (xAxisExtraWidthRight > _Generic_Plot.extraWidthRight) {
-//            _Generic_Plot.imageWidth += xAxisExtraWidthRight - _Generic_Plot.extraWidthRight;
-//            _Generic_Plot.extraWidthRight = xAxisExtraWidthRight;
+//        if (xAxisExtraWidthRight > Plot.extraWidthRight) {
+//            Plot.imageWidth += xAxisExtraWidthRight - Plot.extraWidthRight;
+//            Plot.extraWidthRight = xAxisExtraWidthRight;
 //        }
-//        _Generic_Plot.xAxisHeight = xAxisExtraHeightBottom;
-//        if (xAxisExtraHeightBottom > _Generic_Plot.extraHeightBottom) {
-//            _Generic_Plot.imageHeight += xAxisExtraHeightBottom - _Generic_Plot.extraHeightBottom;
-//            _Generic_Plot.extraHeightBottom = xAxisExtraHeightBottom;
+//        Plot.xAxisHeight = xAxisExtraHeightBottom;
+//        if (xAxisExtraHeightBottom > Plot.extraHeightBottom) {
+//            Plot.imageHeight += xAxisExtraHeightBottom - Plot.extraHeightBottom;
+//            Plot.extraHeightBottom = xAxisExtraHeightBottom;
 //        }
 //    }
     //@Override
 
 //    public void initData() {
-//        if (_Generic_Plot.getData() == null) {
+//        if (Plot.getData() == null) {
 //            Object[] data = getDefaultData();
-//            _Generic_Plot.setData(data);
+//            Plot.setData(data);
 //            initialiseParameters(data);
 //        }
 //    }
     public Object[] getData() {
-        return _Generic_Plot.getData();
+        return Plot.getData();
     }
 
     protected void setData(Object[] data) {
-        _Generic_Plot.setData(data);
+        Plot.setData(data);
     }
 
     /**
@@ -332,7 +331,7 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
 
     //public abstract void initialiseParameters(Object[] data);
     public void initialiseParameters(Object[] data) {
-        this._Generic_Plot.initialiseParameters(data);
+        this.Plot.initialiseParameters(data);
     }
 
     public void fillRect(
@@ -340,347 +339,347 @@ public abstract class Generic_AbstractPlotApplet extends JApplet {
             int y,
             int width,
             int height) {
-        _Generic_Plot.fillRect(x, y, width, height);
+        Plot.fillRect(x, y, width, height);
     }
 
     public void draw(
             Rectangle2D r) {
-        _Generic_Plot.draw(r);
+        Plot.draw(r);
     }
 
     public void draw(Point2D p) {
-        _Generic_Plot.draw(p);
+        Plot.draw(p);
     }
 
     public void drawString(String s, int col, int row) {
-        _Generic_Plot.drawString(s, col, row);
+        Plot.drawString(s, col, row);
     }
 
     public int getTextWidth(String s) {
-        return _Generic_Plot.getTextWidth(s);
+        return Plot.getTextWidth(s);
     }
 
     public int getTextHeight() {
-        return _Generic_Plot.getTextHeight();
+        return Plot.getTextHeight();
     }
 
     public void writeText(String s, double angle, int col, int row) {
-        _Generic_Plot.writeText(s, angle, col, row);
+        Plot.writeText(s, angle, col, row);
     }
 
     public Graphics2D getG2image() {
-        return _Generic_Plot.getG2image();
+        return Plot.getG2image();
     }
 
     public void setG2image(Graphics2D g2image) {
-        _Generic_Plot.setG2image(g2image);
+        Plot.setG2image(g2image);
     }
 
     public Graphics2D getG2() {
-        return _Generic_Plot.getG2();
+        return Plot.getG2();
     }
 
     public void setG2(Graphics2D g2) {
-        _Generic_Plot.setG2(g2);
+        Plot.setG2(g2);
     }
 
     public FontMetrics getFontMetrics() {
-        return _Generic_Plot.getFontMetrics();
+        return Plot.getFontMetrics();
     }
 
     public void setFontMetrics(FontMetrics fontMetrics) {
-        _Generic_Plot.setFontMetrics(fontMetrics);
+        Plot.setFontMetrics(fontMetrics);
     }
     
     public String getTitle() {
-        return _Generic_Plot.getTitle();
+        return Plot.getTitle();
     }
 
     protected void setTitle(String title) {
-        _Generic_Plot.setTitle(title);
+        Plot.setTitle(title);
     }
 
     public int getImageWidth() {
-        return _Generic_Plot.getImageWidth();
+        return Plot.getImageWidth();
     }
 
     protected void setImageWidth(int imageWidth) {
-        _Generic_Plot.setImageWidth(imageWidth);
+        Plot.setImageWidth(imageWidth);
     }
 
     public int getImageHeight() {
-        return _Generic_Plot.getImageHeight();
+        return Plot.getImageHeight();
     }
 
     protected void setImageHeight(int imageHeight) {
-        _Generic_Plot.setImageHeight(imageHeight);
+        Plot.setImageHeight(imageHeight);
     }
 
     public int getDataWidth() {
-        return _Generic_Plot.getDataWidth();
+        return Plot.getDataWidth();
     }
 
     protected void setDataWidth(int dataWidth) {
-        _Generic_Plot.setDataWidth(dataWidth);
+        Plot.setDataWidth(dataWidth);
     }
 
     public int getDataHeight() {
-        return _Generic_Plot.getDataHeight();
+        return Plot.getDataHeight();
     }
 
     protected void setDataHeight(int dataHeight) {
-        _Generic_Plot.setDataHeight(dataHeight);
+        Plot.setDataHeight(dataHeight);
     }
 
     public int getDataStartRow() {
-        return _Generic_Plot.getDataStartRow();
+        return Plot.getDataStartRow();
     }
 
     protected void setDataStartRow(int dataStartRow) {
-        _Generic_Plot.setDataStartRow(dataStartRow);
+        Plot.setDataStartRow(dataStartRow);
     }
 
     public int getDataMiddleRow() {
-        return _Generic_Plot.getDataMiddleRow();
+        return Plot.getDataMiddleRow();
     }
 
     protected void setDataMiddleRow(int dataMiddleRow) {
-        _Generic_Plot.setDataMiddleRow(dataMiddleRow);
+        Plot.setDataMiddleRow(dataMiddleRow);
     }
 
     public int getDataEndRow() {
-        return _Generic_Plot.getDataEndRow();
+        return Plot.getDataEndRow();
     }
 
     protected void setDataEndRow(int dataEndRow) {
-        _Generic_Plot.setDataEndRow(dataEndRow);
+        Plot.setDataEndRow(dataEndRow);
     }
 
     public int getDataStartCol() {
-        return _Generic_Plot.getDataStartCol();
+        return Plot.getDataStartCol();
     }
 
     protected void setDataStartCol(int dataStartCol) {
-        _Generic_Plot.setDataStartCol(dataStartCol);
+        Plot.setDataStartCol(dataStartCol);
     }
 
     public int getDataEndCol() {
-        return _Generic_Plot.getDataEndCol();
+        return Plot.getDataEndCol();
     }
 
     protected void setDataEndCol(int dataEndCol) {
-        _Generic_Plot.setDataEndCol(dataEndCol);
+        Plot.setDataEndCol(dataEndCol);
     }
 
     public int getxAxisHeight() {
-        return _Generic_Plot.getxAxisHeight();
+        return Plot.getxAxisHeight();
     }
 
     protected void setxAxisHeight(int xAxisHeight) {
-        _Generic_Plot.setxAxisHeight(xAxisHeight);
+        Plot.setxAxisHeight(xAxisHeight);
     }
 
     public int getyAxisWidth() {
-        return _Generic_Plot.getyAxisWidth();
+        return Plot.getyAxisWidth();
     }
 
     protected void setyAxisWidth(int yAxisWidth) {
-        _Generic_Plot.setyAxisWidth(yAxisWidth);
+        Plot.setyAxisWidth(yAxisWidth);
     }
 
     public String getxAxisLabel() {
-        return _Generic_Plot.getxAxisLabel();
+        return Plot.getxAxisLabel();
     }
 
     protected void setxAxisLabel(String xAxisLabel) {
-        _Generic_Plot.setxAxisLabel(xAxisLabel);
+        Plot.setxAxisLabel(xAxisLabel);
     }
 
     public String getyAxisLabel() {
-        return _Generic_Plot.getyAxisLabel();
+        return Plot.getyAxisLabel();
     }
 
     protected void setyAxisLabel(String yAxisLabel) {
-        _Generic_Plot.setyAxisLabel(yAxisLabel);
+        Plot.setyAxisLabel(yAxisLabel);
     }
 
     public int getExtraWidthLeft() {
-        return _Generic_Plot.getExtraWidthLeft();
+        return Plot.getExtraWidthLeft();
     }
 
     protected void setExtraWidthLeft(int extraWidthLeft) {
-        _Generic_Plot.setExtraWidthLeft(extraWidthLeft);
+        Plot.setExtraWidthLeft(extraWidthLeft);
     }
 
     public int getExtraWidthRight() {
-        return _Generic_Plot.getExtraWidthRight();
+        return Plot.getExtraWidthRight();
     }
 
     protected void setExtraWidthRight(int extraWidthRight) {
-        _Generic_Plot.setExtraWidthRight(extraWidthRight);
+        Plot.setExtraWidthRight(extraWidthRight);
     }
 
     public int getExtraHeightTop() {
-        return _Generic_Plot.getExtraHeightTop();
+        return Plot.getExtraHeightTop();
     }
 
     protected void setExtraHeightTop(int extraHeightTop) {
-        _Generic_Plot.setExtraHeightTop(extraHeightTop);
+        Plot.setExtraHeightTop(extraHeightTop);
     }
 
     public int getExtraHeightBottom() {
-        return _Generic_Plot.getExtraHeightBottom();
+        return Plot.getExtraHeightBottom();
     }
 
     protected void setExtraHeightBottom(int extraHeightBottom) {
-        _Generic_Plot.setExtraHeightBottom(extraHeightBottom);
+        Plot.setExtraHeightBottom(extraHeightBottom);
     }
 
     public BigDecimal getMaxX() {
-        return _Generic_Plot.getMaxX();
+        return Plot.maxX;
     }
 
     protected void setMaxX(BigDecimal maxX) {
-        _Generic_Plot.setMaxX(maxX);
+        Plot.maxX = maxX;
     }
 
     public BigDecimal getMinX() {
-        return _Generic_Plot.getMinX();
+        return Plot.minX;
     }
 
     protected void setMinX(BigDecimal minX) {
-        _Generic_Plot.setMinX(minX);
+        Plot.minX = minX;
     }
 
     public BigDecimal getMaxY() {
-        return _Generic_Plot.getMaxY();
+        return Plot.maxY;
     }
 
     protected void setMaxY(BigDecimal maxY) {
-        _Generic_Plot.setMaxY(maxY);
+        Plot.maxY =maxY;
     }
 
     public BigDecimal getMinY() {
-        return _Generic_Plot.getMinY();
+        return Plot.minY;
     }
 
     protected void setMinY(BigDecimal minY) {
-        _Generic_Plot.setMinY(minY);
+        Plot.minY =minY;
     }
 
     public int getDecimalPlacePrecisionForCalculations() {
-        return _Generic_Plot.getDecimalPlacePrecisionForCalculations();
+        return Plot.getDecimalPlacePrecisionForCalculations();
     }
 
-    protected void setDecimalPlacePrecisionForCalculations(int decimalPlacePrecisionForCalculations) {
-        _Generic_Plot.setDecimalPlacePrecisionForCalculations(decimalPlacePrecisionForCalculations);
+    protected void setDecimalPlacePrecisionForCalculations(int dp) {
+        Plot.setDecimalPlacePrecisionForCalculations(dp);
     }
 
     public int getDecimalPlacePrecisionForDisplay() {
-        return _Generic_Plot.getDecimalPlacePrecisionForDisplay();
+        return Plot.getDecimalPlacePrecisionForDisplay();
     }
 
-    protected void setDecimalPlacePrecisionForDisplay(int decimalPlacePrecisionForDisplay) {
-        _Generic_Plot.setDecimalPlacePrecisionForDisplay(decimalPlacePrecisionForDisplay);
+    protected void setDecimalPlacePrecisionForDisplay(int dp) {
+        Plot.setDecimalPlacePrecisionForDisplay(dp);
     }
 
     public int getSignificantDigits() {
-        return _Generic_Plot.getSignificantDigits();
+        return Plot.getSignificantDigits();
     }
 
     protected void setSignificantDigits(int significantDigits) {
-        this.setSignificantDigits(significantDigits);
+        Plot.setSignificantDigits(significantDigits);
     }
     
     public RoundingMode getRoundingMode() {
-        return _Generic_Plot.getRoundingMode();
+        return Plot.getRoundingMode();
     }
 
-    protected void setRoundingMode(RoundingMode roundingMode) {
-        _Generic_Plot.setRoundingMode(roundingMode);
+    protected void setRoundingMode(RoundingMode rm) {
+        Plot.setRoundingMode(rm);
     }
     
     public BigDecimal getCellHeight() {
-        return _Generic_Plot.getCellHeight();
+        return Plot.getCellHeight();
     }
 
     protected void setCellHeight(BigDecimal cellHeight) {
-        _Generic_Plot.setCellHeight(cellHeight);
+        Plot.setCellHeight(cellHeight);
     }
 
     protected void setCellHeight() {
-        _Generic_Plot.setCellHeight();
+        Plot.setCellHeight();
     }
 
     public BigDecimal getCellWidth() {
-        return _Generic_Plot.getCellWidth();
+        return Plot.getCellWidth();
     }
 
     protected void setCellWidth(BigDecimal cellWidth) {
-        _Generic_Plot.setCellWidth(cellWidth);
+        Plot.setCellWidth(cellWidth);
     }
 
     public void setCellWidth() {
-        _Generic_Plot.setCellWidth();
+        Plot.setCellWidth();
     }
 
     protected int getOriginRow() {
-        return _Generic_Plot.getOriginRow();
+        return Plot.getOriginRow();
     }
 
     public void setOriginRow(int originRow) {
-        _Generic_Plot.setOriginRow(originRow);
+        Plot.setOriginRow(originRow);
     }
 
     protected void setOriginRow() {
-        _Generic_Plot.setOriginRow();
+        Plot.setOriginRow();
     }
 
     public int getOriginCol() {
-        return _Generic_Plot.getOriginCol();
+        return Plot.getOriginCol();
     }
 
     protected void setOriginCol(int originCol) {
-        _Generic_Plot.setOriginCol(originCol);
+        Plot.setOriginCol(originCol);
     }
 
     public boolean isAddLegend() {
-        return _Generic_Plot.isAddLegend();
+        return Plot.isAddLegend();
     }
 
     public void setAddLegend(boolean addLegend) {
-        _Generic_Plot.setAddLegend(addLegend);
+        Plot.setAddLegend(addLegend);
     }
 
     public int getLegendHeight() {
-        return _Generic_Plot.getLegendHeight();
+        return Plot.getLegendHeight();
     }
 
     protected void setLegendHeight(int legendHeight) {
-        _Generic_Plot.setLegendHeight(legendHeight);
+        Plot.setLegendHeight(legendHeight);
     }
 
     public int getLegendWidth() {
-        return _Generic_Plot.getLegendWidth();
+        return Plot.getLegendWidth();
     }
 
     protected void setLegendWidth(int legendWidth) {
-        _Generic_Plot.setLegendWidth(legendWidth);
+        Plot.setLegendWidth(legendWidth);
     }
 
     public int getAgeInterval() {
-        return _Generic_Plot.getAgeInterval();
+        return Plot.getAgeInterval();
     }
 
     protected void setAgeInterval(int ageInterval) {
-        _Generic_Plot.setAgeInterval(ageInterval);
+        Plot.setAgeInterval(ageInterval);
     }
 
     public int getStartAgeOfEndYearInterval() {
-        return _Generic_Plot.getStartAgeOfEndYearInterval();
+        return Plot.getStartAgeOfEndYearInterval();
     }
 
     protected void setStartAgeOfEndYearInterval(int startAgeOfEndYearInterval) {
-        _Generic_Plot.setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
+        Plot.setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
     }
 }

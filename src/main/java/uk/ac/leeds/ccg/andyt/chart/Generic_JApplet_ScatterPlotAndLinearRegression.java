@@ -45,7 +45,7 @@ public class Generic_JApplet_ScatterPlotAndLinearRegression extends Generic_JApp
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode aRoundingMode) {
-        _Generic_Plot = new Generic_ScatterPlotAndLinearRegression(
+        Plot = new Generic_ScatterPlotAndLinearRegression(
                 null,
                 file,
                 format,

@@ -47,7 +47,7 @@ public class Generic_JApplet_AgeGenderBoxPlot extends Generic_AbstractAgeGenderP
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode roundingMode) {
-        _Generic_Plot = new Generic_AgeGenderBoxPlot(
+        Plot = new Generic_AgeGenderBoxPlot(
                 null,
                 file,
                 format,
@@ -130,6 +130,6 @@ public class Generic_JApplet_AgeGenderBoxPlot extends Generic_AbstractAgeGenderP
 
     @Override
     public void setOriginCol() {
-        ((Generic_AgeGenderBoxPlot) _Generic_Plot).setOriginCol();
+        ((Generic_AgeGenderBoxPlot) Plot).setOriginCol();
     }
 }

@@ -78,7 +78,6 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             RoundingMode rm) {
         setBarGap(barGap);
         setxIncrement(xIncrement);
-        setyMax(yMax);
         setnumberOfYAxisTicks(numberOfYAxisTicks);
         setyPin(yPin);
         setyIncrement(yIncrement);
