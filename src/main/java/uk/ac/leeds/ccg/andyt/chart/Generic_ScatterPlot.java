@@ -124,7 +124,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
 
     @Override
     public void drawData() {
-        drawPoints(Color.DARK_GRAY, getData());
+        drawPoints(Color.DARK_GRAY, data);
     }
 
     /**
@@ -135,14 +135,10 @@ public class Generic_ScatterPlot extends Generic_Plot {
      * @return
      */
     @Override
-    public int[] drawXAxis(
-            int textHeight,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawXAxis(int textHeight, int scaleTickLength, 
+            int scaleTickAndTextSeparation,            int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[3];
-        int significantDigits = getSignificantDigits();
         int xAxisExtraWidthLeft = 0;
         int xAxisExtraWidthRight = 0;
         //int seperationDistanceOfAxisAndData = partTitleGap;
@@ -151,25 +147,16 @@ public class Generic_ScatterPlot extends Generic_Plot {
         int xAxisExtraHeightBottom = scaleTickLength + scaleTickAndTextSeparation + seperationDistanceOfAxisAndData;
 //                    row + scaleTickLength + (textHeight / 3));;
         setPaint(Color.LIGHT_GRAY);
-        int originRow = getOriginRow();
-        int dataStartRow = getDataStartRow();
-        int dataStartCol = getDataStartCol();
-        int dataEndRow = getDataEndRow();
-        int dataEndCol = getDataEndCol();
         // Draw X axis below the data
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
-        Line2D ab = new Line2D.Double(
-                dataStartCol,
-                row,
-                dataEndCol,
+        Line2D ab = new Line2D.Double(dataStartCol, row, dataEndCol,
                 row);
         draw(ab);
         /*
          * Draw X axis ticks and labels below the X axis
          */
         int increment = textHeight;
-        int dataWidth = getDataWidth();
         while (((dataWidth * textHeight) + 4) / increment > dataWidth) {
             increment += textHeight;
         }
@@ -178,10 +165,10 @@ public class Generic_ScatterPlot extends Generic_Plot {
         int textWidth;
         double angle;
         // From the origin right
-        int startCol = getOriginCol();
+        int startCol = originCol;
         //int startCol = getDataStartCol();
         RoundingMode roundingMode = getRoundingMode();
-        for (int col = startCol; col <= getDataEndCol(); col += increment) {
+        for (int col = startCol; col <= dataEndCol; col += increment) {
             if (col >= dataStartCol) {
                 ab = new Line2D.Double(
                         col,
@@ -193,7 +180,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
                 if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
-                //text_String = "" + x.stripTrailingZeros().toPlainString();
+                    //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
                     text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
@@ -225,7 +212,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
                 if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
-                //text_String = "" + x.stripTrailingZeros().toPlainString();
+                    //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
                     text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
@@ -238,10 +225,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
                 textWidth = getTextWidth(text_String);
                 xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
                 angle = Math.PI / 2;
-                writeText(
-                        text_String,
-                        angle,
-                        col - (textHeight / 3),
+                writeText(text_String, angle, col - (textHeight / 3),
                         row + scaleTickAndTextSeparation + scaleTickLength);
 //                    row + scaleTickLength + (textHeight / 3));
             }
@@ -252,7 +236,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
         xAxisExtraWidthLeft += textHeight / 2;
         // Add the X axis label
         setPaint(Color.BLACK);
-        text_String = getxAxisLabel();
+        text_String = xAxisLabel;
         textWidth = getTextWidth(text_String);
         xAxisExtraHeightBottom += partTitleGap;
         // Calculate if the xAxisLabel will require the imageWidth to increase.
@@ -279,7 +263,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
                 draw(ab);
             }
         }
-        if (!isAddLegend()) {
+        if (addLegend) {
             xAxisExtraHeightBottom += (2 * textHeight);
         }
         result[0] = xAxisExtraWidthLeft;
@@ -306,24 +290,12 @@ public class Generic_ScatterPlot extends Generic_Plot {
         int text_Width;
         int row;
         int increment;
-        int significantDigits = getSignificantDigits();
         RoundingMode roundingMode = getRoundingMode();
-        int originRow = getOriginRow();
-        int originCol = getOriginCol();
-        int dataStartRow = getDataStartRow();
-        int dataEndRow = getDataEndRow();
-        int dataStartCol = getDataStartCol();
-        int dataEndCol = getDataEndCol();
-        int dataHeight = getDataHeight();
         // Draw Y axis to left of data
         //setOriginCol();
         setPaint(Color.GRAY);
         int col = dataStartCol - seperationDistanceOfAxisAndData;
-        ab = new Line2D.Double(
-                col,
-                dataEndRow,
-                col,
-                dataStartRow);
+        ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
         draw(ab);
         /*
          * Draw Y axis ticks and labels to left of Y axis
@@ -392,15 +364,12 @@ public class Generic_ScatterPlot extends Generic_Plot {
         yAxisExtraWidthLeft += scaleTickLength + scaleTickAndTextSeparation + yAxisMaxLabelWidth;
         // Add the Y axis label
         setPaint(Color.BLACK);
-        text_String = getyAxisLabel();
+        text_String = yAxisLabel;
         text_Width = getTextWidth(text_String);
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
         double angle = 3.0d * Math.PI / 2.0d;
-        writeText(
-                text_String,
-                angle,
-                3 * textHeight / 2,
-                getDataMiddleRow() + (text_Width / 2));
+        writeText(text_String, angle, 3 * textHeight / 2,
+                dataMiddleRow + (text_Width / 2));
         // Draw line on origin
         if (isDrawOriginLinesOnPlot()) {
             if (originCol <= dataEndCol && originCol >= dataStartCol) {
@@ -654,7 +623,7 @@ public class Generic_ScatterPlot extends Generic_Plot {
 
     @Override
     public void setOriginCol() {
-        setOriginCol(coordinateToScreenCol(BigDecimal.ZERO));
+        originCol = coordinateToScreenCol(BigDecimal.ZERO);
 //        System.out.println("originCol " + originCol);
 //        
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {

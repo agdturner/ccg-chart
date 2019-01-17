@@ -30,12 +30,10 @@ import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
 
 /**
- * An implementation of
- * <code>Generic_JApplet_AgeGenderLineChart<\code>
+ * An implementation of <code>Generic_JApplet_AgeGenderLineChart<\code>
  *
- * If you run this class it will attempt to generate an Age by Gender
- * Population Line Chart Visualization of some default data and display it on
- * screen.
+ * If you run this class it will attempt to generate an Age by Gender Population
+ * Line Chart Visualization of some default data and display it on screen.
  */
 public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
 
@@ -135,7 +133,6 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
     }
 
     public void drawLineChartUsingMeanAndStandardDeviation() {
-        Object[] data = getData();
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
         TreeMap<Integer, Object[]> femaleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[0];
@@ -267,7 +264,6 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
     }
 
     public void drawLineChartUsingMinQ1MedianQ3Max() {
-        Object[] data = getData();
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
         TreeMap<Integer, Object[]> femaleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[0];
@@ -323,7 +319,7 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
              */
             secondOrderStats = (BigDecimal[]) stats[1];
             min = firstOrderStats[6];
-                    q1 = firstOrderStats[3];
+            q1 = firstOrderStats[3];
             median = firstOrderStats[2];
             q3 = firstOrderStats[4];
             max = firstOrderStats[7];
@@ -424,7 +420,7 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
              */
             secondOrderStats = (BigDecimal[]) stats[1];
             min = firstOrderStats[6];
-                    q1 = firstOrderStats[3];
+            q1 = firstOrderStats[3];
             median = firstOrderStats[2];
             q3 = firstOrderStats[4];
             max = firstOrderStats[7];
@@ -614,11 +610,8 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
 //        int startAgeOfEndYearInterval = getStartAgeOfEndYearInterval();
 //        int decimalPlacePrecisionForCalculations = getDecimalPlacePrecisionForCalculations();
         RoundingMode roundingMode = getRoundingMode();
-        return getDefaultData(
-                ageInterval,
-                startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                roundingMode);
+        return getDefaultData(ageInterval, startAgeOfEndYearInterval,
+                decimalPlacePrecisionForCalculations, roundingMode);
     }
 
     /**
@@ -830,11 +823,11 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
             pop = female9800.get(age);
             maxValue = Generic_BigDecimal.max(maxValue, pop);
             values.add(pop);
-            BigDecimal[] boxPlotStatistics =
-                    Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
+            BigDecimal[] boxPlotStatistics
+                    = Generic_Statistics.getSummaryStatistics_0(
+                            values,
+                            decimalPlacePrecisionForCalculations,
+                            roundingMode);
             femaleBoxPlotStatistics.put(age, boxPlotStatistics);
         }
         maxValue = BigDecimal.ZERO;

@@ -30,12 +30,11 @@ import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of
- * <code>Generic_AgeGenderBarChart<\code>
+ * An implementation of <code>Generic_AgeGenderBarChart</code>
  *
- * If you run this class it will attempt to generate an Age by Gender
- * Population Bar Chart Visualization of some default data and write it out 
- * to file as a PNG.
+ * If you run this class it will attempt to generate an Age by Gender Population
+ * Bar Chart Visualization of some default data and write it out to file as a
+ * PNG.
  */
 public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
 
@@ -76,16 +75,13 @@ public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
 
     @Override
     public void drawData() {
-        drawBarChart(getData(), getAgeInterval());
+        drawBarChart(getAgeInterval());
     }
 
-    public void drawBarChart(
-            Object[] data,
-            int ageInterval) {
+    public void drawBarChart(int ageInterval) {
         setPaint(Color.DARK_GRAY);
         RoundingMode roundingMode = getRoundingMode();
         BigDecimal cellWidth = getCellWidth();
-        int originCol = getOriginCol();
         TreeMap<Long, BigDecimal> femaleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[0];
         TreeMap<Long, BigDecimal> maleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[1];
         Iterator<Map.Entry<Long, BigDecimal>> ite;
@@ -117,7 +113,7 @@ public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
         ite = femaleAgeInYearsPopulationCount_TreeMap.entrySet().iterator();
         while (ite.hasNext()) {
             entry = ite.next();
-            
+
             // For some reason sometimes we get a Integer instead of a Long!
             if (!(entry.getKey() instanceof Long)) {
                 System.out.println(entry.getKey());
@@ -126,7 +122,7 @@ public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
             } else {
                 age = entry.getKey();
             }
-            
+
             population = entry.getValue();
             int barWidth = Generic_BigDecimal.divideRoundIfNecessary(
                     population,
@@ -158,7 +154,7 @@ public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
         ite = maleAgeInYearsPopulationCount_TreeMap.entrySet().iterator();
         while (ite.hasNext()) {
             entry = ite.next();
-            
+
             // For some reason sometimes we get a Integer instead of a Long!
             if (!(entry.getKey() instanceof Long)) {
                 System.out.println(entry.getKey());
@@ -465,15 +461,13 @@ public class Generic_AgeGenderBarChart extends Generic_AbstractAgeGenderPlot {
         //result[3] = maxCount;
         return result;
     }
-    
+
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
         int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                    BigDecimal.valueOf(getAgeInterval()),
-                    getCellHeight(),
-                    0,
-                    getRoundingMode()).intValue();
-        setExtraHeightTop(getExtraHeightTop() + barHeight);
+                BigDecimal.valueOf(getAgeInterval()), getCellHeight(),
+                0, getRoundingMode()).intValue();
+        extraHeightTop += barHeight;
     }
 }

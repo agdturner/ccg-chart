@@ -97,7 +97,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             Generic_Files files = new Generic_Files();
             File outdir;
             outdir = files.getOutputDataDir();
-            file = new File(outdir,                    title.replace(" ", "_") + "." + format);
+            file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
             title = args[0];
@@ -140,7 +140,6 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
     }
 
     public void drawBoxplots() {
-        Object[] data = getData();
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
         TreeMap<Integer, BigDecimal[]> femaleBoxPlotData = (TreeMap<Integer, BigDecimal[]>) data[0];
@@ -325,11 +324,9 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
     public Object[] getDefaultData() {
         int ageInterval = 5;
         int startAgeOfEndYearInterval = 70;//95;
-        int decimalPlacePrecisionForCalculations = 10;
+        decimalPlacePrecisionForCalculations = 10;
         RoundingMode roundingMode = RoundingMode.HALF_UP;
-        Object[] data = getDefaultData(
-                ageInterval,
-                startAgeOfEndYearInterval,
+        Object[] data = getDefaultData(ageInterval, startAgeOfEndYearInterval,
                 decimalPlacePrecisionForCalculations,
                 roundingMode);
         return data;
@@ -689,10 +686,8 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
     public void drawTitle(String title) {
         super.drawTitle(title);
         int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(getAgeInterval()),
-                getCellHeight(),
-                0,
+                BigDecimal.valueOf(getAgeInterval()), getCellHeight(), 0,
                 getRoundingMode()).intValue();
-        setExtraHeightTop(getExtraHeightTop() + barHeight);
+        extraHeightTop += barHeight;
     }
 }

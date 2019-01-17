@@ -32,12 +32,8 @@ import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of
- * <code>Generic_JApplet_ScatterPlotAndLinearRegression<\code>
- *
- * If you run this class it will attempt to generate an Age by Gender
- * Population Line Chart Visualization of some default data and display it on
- * screen.
+ * If you run this class it will attempt to generate an
+ * ScatterPlotAndLinearRegression.
  */
 public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot {
 
@@ -125,47 +121,6 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     @Override
     public void drawData() {
         double[][] dataAsDoubleArray = getDataAsDoubleArray(
-                (ArrayList<Generic_XYNumericalData>) getData()[0]);
-        drawYEqualsXLineData(dataAsDoubleArray);
-        /*
-         * regressionParameters[0] is the y axis intercept;
-         * regressionParameters[1] is the change in y relative to x (gradient or
-         * slope); regressionParameters[2] is the rank correlation coefficient
-         * (RSquare); regressionParameters[3] is data[0].length.
-         */
-        double[] regressionParameters = getSimpleRegressionParameters(
-                dataAsDoubleArray);
-        drawRegressionLine(
-                regressionParameters,
-                dataAsDoubleArray);
-        drawPoints(
-                Color.DARK_GRAY,
-                getData());
-        //if (addLegend) {
-        drawLegend(
-                regressionParameters);
-        //}
-    }
-
-    @Override
-    public Object[] getDefaultData() {
-        return new Generic_ScatterPlot().getDefaultData();
-    }
-
-    @Override
-    public Dimension draw() {
-        drawOutline();
-        drawTitle(getTitle());
-        //System.out.println("dataStartCol " + dataStartCol);
-        drawAxes(0, 0);
-        drawPoints(
-                Color.DARK_GRAY,
-                getData());
-        Object[] data = getData();
-        if (data == null) {
-            data = getDefaultData();
-        }
-        double[][] dataAsDoubleArray = getDataAsDoubleArray(
                 (ArrayList<Generic_XYNumericalData>) data[0]);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
@@ -176,13 +131,44 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
          */
         double[] regressionParameters = getSimpleRegressionParameters(
                 dataAsDoubleArray);
-        drawRegressionLine(
-                regressionParameters,
-                dataAsDoubleArray);
-        //if (addLegend) {
-        drawLegend(
-                regressionParameters);
-        Dimension newDim = new Dimension(getImageWidth(), getImageHeight());
+        drawRegressionLine(regressionParameters, dataAsDoubleArray);
+        drawPoints(Color.DARK_GRAY, data);
+        if (addLegend) {
+            drawLegend(regressionParameters);
+        }
+    }
+
+    @Override
+    public Object[] getDefaultData() {
+        return new Generic_ScatterPlot().getDefaultData();
+    }
+
+    @Override
+    public Dimension draw() {
+        drawOutline();
+        drawTitle(title);
+        //System.out.println("dataStartCol " + dataStartCol);
+        drawAxes(0, 0);
+        if (data == null) {
+            data = getDefaultData();
+        }
+        drawPoints(Color.DARK_GRAY, data);
+        double[][] dataAsDoubleArray = getDataAsDoubleArray(
+                (ArrayList<Generic_XYNumericalData>) data[0]);
+        drawYEqualsXLineData(dataAsDoubleArray);
+        /*
+         * regressionParameters[0] is the y axis intercept;
+         * regressionParameters[1] is the change in y relative to x (gradient or
+         * slope); regressionParameters[2] is the rank correlation coefficient
+         * (RSquare); regressionParameters[3] is data[0].length.
+         */
+        double[] regressionParameters;
+        regressionParameters = getSimpleRegressionParameters(dataAsDoubleArray);
+        drawRegressionLine(regressionParameters, dataAsDoubleArray);
+        if (addLegend) {
+            drawLegend(regressionParameters);
+        }
+        Dimension newDim = new Dimension(imageWidth, imageHeight);
         return newDim;
     }
 
@@ -484,7 +470,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         int textHeight = getTextHeight();
         int legendExtraHeightBottom = textHeight;
 
-        int legendStartRow = getDataEndRow() + getxAxisHeight();
+        int legendStartRow = dataEndRow + xAxisHeight;
 //        int legendStartRow = this.dataEndRow + this.xAxisHeight / 2;
         int symbolRow;
         int row;
@@ -626,35 +612,30 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         newLegendWidth = Math.max(newLegendWidth, legendItemWidth);
         newLegendHeight += (2 * textHeight);
 
-        int imageWidth = getImageWidth();
-        int dataWidth = getDataWidth();
-        int extraWidthLeft = getExtraWidthLeft();
-        if (newLegendWidth > getLegendWidth()) {
+        if (newLegendWidth > legendWidth) {
             //int diff = newLegendWidth - legendWidth;
             if (newLegendWidth > imageWidth) {
-                setImageWidth(newLegendWidth);
-                setExtraWidthRight(newLegendWidth - extraWidthLeft - dataWidth);
+                imageWidth = newLegendWidth;
+                extraWidthRight = (newLegendWidth - extraWidthLeft - dataWidth);
             }
-            setLegendWidth(newLegendWidth);
+            legendWidth = newLegendWidth;
         }
-        int extraHeightBottom = getExtraHeightBottom();
-        if (newLegendHeight > getLegendHeight()) {
+        if (newLegendHeight > legendHeight) {
             //int diff = newLegendHeight - legendHeight;
             //int heightForLegend = legendStartRow - dataStartRow + newLegendHeight;
-            int newExtraHeightBottom = newLegendHeight + getxAxisHeight();
+            int newExtraHeightBottom = newLegendHeight + xAxisHeight;
             if (newExtraHeightBottom > extraHeightBottom) {
                 int diff2 = newExtraHeightBottom - extraHeightBottom;
-                setExtraHeightBottom(newExtraHeightBottom);
-                setImageHeight(getImageHeight() + diff2);
+                extraHeightBottom = newExtraHeightBottom;
+                imageHeight = imageHeight + diff2;
             }
-            setLegendHeight(newLegendHeight);
+            legendHeight = newLegendHeight;
         }
 //        result[0] = legendExtraWidthLeft;
 //        result[1] = legendExtraWidthRight;
 //        result[2] = legendExtraHeightBottom;
 
 //        return result;
-
     }
 
     protected double[][] getDataAsDoubleArray(ArrayList<Generic_XYNumericalData> theGeneric_XYNumericalData) {
@@ -775,7 +756,6 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         // maxxy stores the x at maxy
         double maxxy = (m * maxy) + c;
 
-
         if (maxxy < maxx) {
             result[0][1] = maxxy;
         } else {
@@ -798,8 +778,6 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         } else {
             result[0][0] = minxy;
         }
-
-
 
         if (Double.isNaN(result[1][0])) {
             if (Double.isNaN(result[0][0])) {
@@ -836,7 +814,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
      *
      *
      * @param data
-     * @return 
+     * @return
      */
     public static double[][] getYEqualsXLineData(
             double[][] data) {

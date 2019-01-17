@@ -44,7 +44,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
      * Iff set to true then a line is added to the graph at Y = 0.
      */
     boolean drawYZero;
-    
+
     public Generic_LineGraph() {
     }
 
@@ -62,22 +62,17 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
      * @param yPin
      * @param yIncrement
      * @param numberOfYAxisTicks
+     * @param drawYZero
      * @param decimalPlacePrecisionForCalculations
      * @param decimalPlacePrecisionForDisplay
      * @param r
      */
-    public Generic_LineGraph(
-            ExecutorService es, File file, String format, String title,
-            int dataWidth, int dataHeight,
-            String xAxisLabel, String yAxisLabel,
-            BigDecimal yMax,
-            ArrayList<BigDecimal> yPin,
-            BigDecimal yIncrement,
-            int numberOfYAxisTicks,
-            boolean drawYZero,
+    public Generic_LineGraph(ExecutorService es, File file, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, BigDecimal yMax, ArrayList<BigDecimal> yPin,
+            BigDecimal yIncrement, int numberOfYAxisTicks, boolean drawYZero,
             int decimalPlacePrecisionForCalculations,
-            int decimalPlacePrecisionForDisplay,
-            RoundingMode r) {
+            int decimalPlacePrecisionForDisplay, RoundingMode r) {
         this.yMax = yMax;
         this.yPin = yPin;
         this.yIncrement = yIncrement;
@@ -90,8 +85,6 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
 
     @Override
     public void drawData() {
-        Object[] data;
-        data = getData();
         TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
         maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
         TreeMap<String, Boolean> nonZero = null;
@@ -248,7 +241,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
     @Override
     public Dimension draw() {
         drawOutline();
-        drawTitle(getTitle());
+        drawTitle(title);
         drawAxes();
         if (drawYZero) {
             Line2D ab;
@@ -260,7 +253,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         }
         drawData();
         drawLegend();
-        Dimension newDim = new Dimension(getImageWidth(), getImageHeight());
+        Dimension newDim = new Dimension(imageWidth, imageHeight);
         return newDim;
     }
 
@@ -282,17 +275,6 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
                 scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         yAxisExtraWidthLeft = yAxisDimensions[0];
-
-        int extraWidthLeft;
-        extraWidthLeft = getExtraWidthLeft();
-        int imageWidth;
-        imageWidth = getImageWidth();
-        int dataStartCol;
-        dataStartCol = getDataStartCol();
-        int dataEndCol;
-        dataEndCol = getDataEndCol();
-        int yAxisWidth;
-        yAxisWidth = getyAxisWidth();
         if (yAxisExtraWidthLeft > extraWidthLeft) {
             int diff = yAxisExtraWidthLeft - extraWidthLeft;
             imageWidth += diff;
@@ -304,8 +286,6 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             setYAxisWidth(yAxisWidth);
         }
         //setYAxisWidth(yAxisExtraWidthLeft);
-        setDataStartCol(dataStartCol);
-        setDataEndCol(dataEndCol);
         // Draw X axis
         int[] xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
                 scaleTickAndTextSeparation, partTitleGap,
@@ -323,26 +303,15 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
             setYAxisWidth(yAxisWidth);
 //            setOriginCol();
         }
-        setDataStartCol(dataStartCol);
-        setDataEndCol(dataEndCol);
-        int extraWidthRight;
-        extraWidthRight = getExtraWidthRight();
         if (xAxisExtraWidthRight > extraWidthRight) {
             imageWidth += xAxisExtraWidthRight - extraWidthRight;
             extraWidthRight = xAxisExtraWidthRight;
-            setExtraWidthRight(extraWidthRight);
         }
-        setImageWidth(imageWidth);
-        setxAxisHeight(xAxisExtraHeightBottom);
-        int extraHeightBottom;
-        extraHeightBottom = getExtraHeightBottom();
-        int imageHeight;
-        imageHeight = getImageHeight();
+        xAxisHeight = xAxisExtraHeightBottom;
         if (xAxisExtraHeightBottom > extraHeightBottom) {
             int diff = xAxisExtraHeightBottom - extraHeightBottom;
             imageHeight += diff;
-            setImageHeight(imageHeight);
-            setExtraHeightBottom(xAxisExtraHeightBottom);
+            extraHeightBottom = xAxisExtraHeightBottom;
         }
     }
 
@@ -458,12 +427,10 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(getAgeInterval()),
                 getCellHeight(), 0, getRoundingMode()).intValue();
-        setExtraHeightTop(getExtraHeightTop() + barHeight);
+        extraHeightTop += barHeight;
     }
 
     protected void drawLegend() {
-        Object[] data;
-        data = getData();
 //        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
 //        maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
         TreeMap<String, Boolean> nonZero2 = null;
@@ -480,7 +447,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int legendExtraWidthRight = 0;
         int th = getTextHeight();
         int legendExtraHeightBottom = th;
-        int legendStartRow = getDataEndRow() + getxAxisHeight();
+        int legendStartRow = dataEndRow + xAxisHeight;
         int symbolRow;
         int symbolCol;
         int row;
@@ -542,7 +509,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
                 }
             }
         }
-        setLegendHeight(newLegendHeight);
-        setImageHeight(getImageHeight() + newLegendHeight);
+        legendHeight = newLegendHeight;
+        imageHeight += newLegendHeight;
     }
 }

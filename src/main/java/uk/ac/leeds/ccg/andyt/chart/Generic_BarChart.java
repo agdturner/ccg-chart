@@ -67,20 +67,16 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, //Ignored
-            int barGap,
-            int xIncrement,
-            BigDecimal yMax,
-            BigDecimal yPin,
-            BigDecimal yIncrement,
-            int numberOfYAxisTicks,
+            int barGap, int xIncrement, BigDecimal yMax, BigDecimal yPin,
+            BigDecimal yIncrement, int numberOfYAxisTicks,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode rm) {
-        setBarGap(barGap);
-        setxIncrement(xIncrement);
-        setnumberOfYAxisTicks(numberOfYAxisTicks);
-        setyPin(yPin);
-        setyIncrement(yIncrement);
+        this.barGap = barGap;
+        this.xAxisIncrement = xIncrement;
+        this.numberOfYAxisTicks = numberOfYAxisTicks;
+        this.yPin = yPin;
+        this.yAxisIncrement = yIncrement;
         init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot,
                 decimalPlacePrecisionForCalculations,
@@ -90,12 +86,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
 
     @Override
     public void drawData() {
-        Object[] data;
-        data = getData();
         setPaint(Color.DARK_GRAY);
-        RoundingMode roundingMode = getRoundingMode();
-        BigDecimal cellWidth = getCellWidth();
-
         Object[] intervalCountsAndLables;
         intervalCountsAndLables = (Object[]) data[0];
         TreeMap<Integer, Integer> counts;
@@ -115,9 +106,6 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
         Map.Entry<Integer, Integer> entry;
         Integer interval;
         Integer count;
-        int barGap = 1;
-        int barWidth;
-        barWidth = getBarWidth();
         // Draw bars
         ite = counts.entrySet().iterator();
         while (ite.hasNext()) {
@@ -128,7 +116,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             int row = coordinateToScreenRow(
                     //new BigDecimal(count).multiply(cellHeight));
                     new BigDecimal(count));
-            int barHeight = getDataEndRow() - row;
+            int barHeight = dataEndRow - row;
             if (barHeight == 0) {
                 barHeight = 1;
                 row -= 1;
@@ -216,13 +204,11 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
     @Override
     public Dimension draw() {
         drawOutline();
-        drawTitle(getTitle());
+        drawTitle(title);
         drawAxes(2);
-//        drawAxes(
-//                getAgeInterval(),
-//                getStartAgeOfEndYearInterval());
+//        drawAxes(getAgeInterval(), getStartAgeOfEndYearInterval());
         drawData();
-        Dimension newDim = new Dimension(getImageWidth(), getImageHeight());
+        Dimension newDim = new Dimension(imageWidth, imageHeight);
         return newDim;
     }
 
@@ -247,17 +233,6 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
                 partTitleGap,
                 seperationDistanceOfAxisAndData);
         yAxisExtraWidthLeft = yAxisDimensions[0];
-
-        int extraWidthLeft;
-        extraWidthLeft = getExtraWidthLeft();
-        int imageWidth;
-        imageWidth = getImageWidth();
-        int dataStartCol;
-        dataStartCol = getDataStartCol();
-        int dataEndCol;
-        dataEndCol = getDataEndCol();
-        int yAxisWidth;
-        yAxisWidth = getyAxisWidth();
         if (yAxisExtraWidthLeft > extraWidthLeft) {
             int diff = yAxisExtraWidthLeft - extraWidthLeft;
             imageWidth += diff;
@@ -269,14 +244,10 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             setYAxisWidth(yAxisWidth);
         }
         //setYAxisWidth(yAxisExtraWidthLeft);
-        setDataStartCol(dataStartCol);
-        setDataEndCol(dataEndCol);
         // Draw X axis
-        int[] xAxisDimensions = drawXAxis(
-                textHeight,
-                scaleTickLength,
-                scaleTickAndTextSeparation,
-                partTitleGap,
+        int[] xAxisDimensions;
+        xAxisDimensions = drawXAxis(textHeight, scaleTickLength, 
+                scaleTickAndTextSeparation, partTitleGap, 
                 seperationDistanceOfAxisAndData);
         xAxisExtraWidthLeft = xAxisDimensions[0];
         xAxisExtraWidthRight = xAxisDimensions[1];
@@ -291,29 +262,14 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
             setYAxisWidth(yAxisWidth);
 //            setOriginCol();
         }
-        setDataStartCol(dataStartCol);
-        setDataEndCol(dataEndCol);
-        int extraWidthRight;
-        extraWidthRight = getExtraWidthRight();
         if (xAxisExtraWidthRight > extraWidthRight) {
             imageWidth += xAxisExtraWidthRight - extraWidthRight;
             extraWidthRight = xAxisExtraWidthRight;
-            setExtraWidthRight(extraWidthRight);
         }
-        setImageWidth(imageWidth);
-        int xAxisHeight;
-        xAxisHeight = getxAxisHeight();
         xAxisHeight += xAxisExtraHeightBottom;
-        setxAxisHeight(xAxisHeight);
-        int extraHeightBottom;
-        extraHeightBottom = getExtraHeightBottom();
-        int imageHeight;
-        imageHeight = getImageHeight();
         if (xAxisExtraHeightBottom > extraHeightBottom) {
             int diff = xAxisExtraHeightBottom - extraHeightBottom;
             imageHeight += diff;
-            setImageHeight(imageHeight);
-            setExtraHeightBottom(xAxisExtraHeightBottom);
         }
     }
 
@@ -322,7 +278,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
         Object[] result;
         result = new Object[3];
         BigDecimal intervalWidth;
-        intervalWidth = new BigDecimal(getxIncrement());
+        intervalWidth = new BigDecimal(xAxisIncrement);
         TreeMap<String, BigDecimal> map;
         map = new TreeMap<>();
         map.put("A", new BigDecimal(0.0d));
@@ -358,7 +314,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
         //BigDecimal max = minMaxBigDEcimal[1];
 
         MathContext mc;
-        mc = new MathContext(getDecimalPlacePrecisionForCalculations(), getRoundingMode());
+        mc = new MathContext(decimalPlacePrecisionForCalculations, getRoundingMode());
 
         intervalCountsLabelsMins = Generic_Collections.getIntervalCountsLabelsMins(
                 min, intervalWidth, map, mc);
@@ -376,6 +332,6 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
                 getCellHeight(),
                 0,
                 getRoundingMode()).intValue();
-        setExtraHeightTop(getExtraHeightTop() + barHeight);
+        extraHeightTop += barHeight;
     }
 }

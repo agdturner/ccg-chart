@@ -34,43 +34,24 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
  */
 public abstract class Generic_AbstractBarChart extends Generic_Plot {
 
-    private int xAxisIncrement;
-    private int numberOfYAxisTicks;
-    private BigDecimal yPin;
-    private BigDecimal yAxisIncrement;
-    private int barWidth;
-    private int barGap;
+    protected int xAxisIncrement;
+    protected int numberOfYAxisTicks;
+    protected BigDecimal yPin;
+    protected BigDecimal yAxisIncrement;
+    protected int barWidth;
+    protected int barGap;
 
-    protected final void init(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawAxesOnPlot,
-            int ageInterval,
+    protected final void init(ExecutorService es, File file, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            int significantDigits,
-            RoundingMode aRoundingMode) {
+            int decimalPlacePrecisionForCalculations, int significantDigits,
+            RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
-        super.init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                significantDigits,
-                aRoundingMode);
+        super.init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawAxesOnPlot,
+                decimalPlacePrecisionForCalculations, significantDigits, rm);
     }
 
     @Override
@@ -107,18 +88,18 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         if (barWidth < 1) {
             barWidth = 1;
         }
-        
+
         int xIncrement;
-        xIncrement = getxIncrement();
+        xIncrement = xAxisIncrement;
         if (xIncrement == 0) {
             xIncrement = 1;
-            setxIncrement(xIncrement);
+            xAxisIncrement = xIncrement;
         }
     }
 
     @Override
     public void setOriginCol() {
-        setOriginCol(getDataStartCol());
+        originCol = dataStartCol;
         //setOriginCol((getDataStartCol() + getDataEndCol()) / 2);
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {
 //            originCol = dataStartCol;
@@ -140,6 +121,8 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
     /**
      * Draws the Y axis.
      *
+     * @param textHeight
+     * @param scaleTickLength
      * @param pin This is a value that should appear on the Yaxis
      * @param seperationDistanceOfAxisAndData
      * @param partTitleGap
@@ -150,16 +133,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
      * image is high
      */
     //@Override
-    public int[] drawYAxis(
-            int textHeight,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawYAxis(int textHeight, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
         MathContext mc;
-        mc = new MathContext(
-                getDecimalPlacePrecisionForCalculations(),
+        mc = new MathContext(decimalPlacePrecisionForCalculations,
                 RoundingMode.HALF_UP);
         BigDecimal rowValue;
         BigDecimal pin;
@@ -214,17 +193,11 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
 
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
                 + seperationDistanceOfAxisAndData;
-        int col = getDataStartCol() - seperationDistanceOfAxisAndData;
-        int dataStartRow = getDataStartRow();
-        int dataEndRow = getDataEndRow();
+        int col = dataStartCol - seperationDistanceOfAxisAndData;
         Line2D ab;
         // Draw Y axis scale to the left side
         setPaint(Color.GRAY);
-        ab = new Line2D.Double(
-                col,
-                dataEndRow,
-                col,
-                dataStartRow);
+        ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
         draw(ab);
         setPaint(Color.GRAY);
         String text_String;
@@ -236,17 +209,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         for (int i = 0; i < numberOfTicks; i++) {
             int row = coordinateToScreenRow(rowValue);
             setPaint(Color.GRAY);
-            ab = new Line2D.Double(
-                    col,
-                    row,
-                    col - scaleTickLength,
-                    row);
+            ab = new Line2D.Double(col, row, col - scaleTickLength, row);
             draw(ab);
             if (first || (previousRow - row) > textHeight) {
                 text_String = "" + rowValue;
                 textWidth = getTextWidth(text_String);
-                drawString(
-                        text_String,
+                drawString(text_String,
                         col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                         //row);
                         row + (textHeight / 3));
@@ -259,17 +227,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         // <drawEndOfYAxisTick>
         int row = coordinateToScreenRow(maxY);
         setPaint(Color.GRAY);
-        ab = new Line2D.Double(
-                col,
-                row,
-                col - scaleTickLength,
-                row);
+        ab = new Line2D.Double(col, row, col - scaleTickLength, row);
         draw(ab);
         if ((previousRow - row) > textHeight) {
             text_String = "" + rowValue;;
             textWidth = getTextWidth(text_String);
-            drawString(
-                    text_String,
+            drawString(                    text_String,
                     col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                     //row);
                     row + (textHeight / 3));
@@ -279,15 +242,10 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         yAxisExtraWidthLeft += maxTickTextWidth;
         // Y axis label
         setPaint(Color.BLACK);
-        String yAxisLabel = getyAxisLabel();
         textWidth = getTextWidth(yAxisLabel);
         double angle = 3.0d * Math.PI / 2.0d;
         col = 3 * textHeight / 2;
-        writeText(
-                yAxisLabel,
-                angle,
-                col,
-                getDataMiddleRow() + (textWidth / 2));
+        writeText(yAxisLabel, angle, col, dataMiddleRow + (textWidth / 2));
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
         result[0] = yAxisExtraWidthLeft;
         return result;
@@ -304,15 +262,11 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
      * xAxisExtraHeightBottom.
      */
     @Override
-    public int[] drawXAxis(
-            int textHeight,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawXAxis(int textHeight, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
 //        MathContext mc;
 //        mc = new MathContext(getDecimalPlacePrecisionForCalculations(), getRoundingMode());               
-        Object[] data = getData();
         Object[] intervalCountsLabelsMins;
         intervalCountsLabelsMins = (Object[]) data[0];
         TreeMap<Integer, Integer> counts;
@@ -327,8 +281,7 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
 //            xIncrement = 1;
 //            setxIncrement(xIncrement);
 //        }
-        int xAxisTickIncrement = getxIncrement();
-        int dataStartCol = getDataStartCol();        
+        int xAxisTickIncrement = xAxisIncrement;
         int xIncrementWidth = coordinateToScreenCol(
                 BigDecimal.valueOf(xAxisTickIncrement)) - dataStartCol;
         int[] result = new int[3];
@@ -339,8 +292,6 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         int xAxisExtraWidthRight = extraAxisLength;
         int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData
                 + scaleTickLength + scaleTickAndTextSeparation;
-        int dataEndRow = getDataEndRow();
-        int dataEndCol = getDataEndCol();
         Line2D ab;
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
@@ -357,8 +308,8 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         int textWidth;
         int maxWidth = 0;
         double angle = 3.0d * Math.PI / 2.0d;
-        int colCenterer = getBarGap() + getBarWidth() / 2;
-        int col = getDataStartCol() + colCenterer;
+        int colCenterer = barGap + barWidth / 2;
+        int col = dataStartCol + colCenterer;
         int previousCol = col;
         boolean first = true;
         Iterator<Integer> ite2;
@@ -396,10 +347,9 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         textRow += maxWidth + partTitleGap + textHeight;
         xAxisExtraHeightBottom += partTitleGap + textHeight;
         setPaint(Color.BLACK);
-        text_String = getxAxisLabel();
+        text_String = xAxisLabel;
         textWidth = getTextWidth(text_String);
-        drawString(
-                text_String,
+        drawString(text_String,
                 (dataEndCol - dataStartCol) / 2 + dataStartCol - textWidth / 2,
                 textRow);
         int endOfAxisLabelCol = (dataEndCol - dataStartCol) / 2 + dataStartCol + textWidth / 2 + 1; // Add one to cover rounding issues.
@@ -559,14 +509,6 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
 //        result[2] = xAxisExtraHeightBottom;
 //        return result;
 //    }
-    public int getxIncrement() {
-        return xAxisIncrement;
-    }
-
-    public void setxIncrement(int xIncrement) {
-        this.xAxisIncrement = xIncrement;
-    }
-
     public int getnumberOfYAxisTicks() {
         return numberOfYAxisTicks;
     }
@@ -601,33 +543,5 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
      */
     public void setyIncrement(BigDecimal yIncrement) {
         this.yAxisIncrement = yIncrement;
-    }
-
-    /**
-     * @return the barWidth
-     */
-    public int getBarWidth() {
-        return barWidth;
-    }
-
-    /**
-     * @param barWidth the barWidth to set
-     */
-    public void setBarWidth(int barWidth) {
-        this.barWidth = barWidth;
-    }
-
-    /**
-     * @return the barGap
-     */
-    public int getBarGap() {
-        return barGap;
-    }
-
-    /**
-     * @param barGap the barGap to set
-     */
-    public void setBarGap(int barGap) {
-        this.barGap = barGap;
     }
 }

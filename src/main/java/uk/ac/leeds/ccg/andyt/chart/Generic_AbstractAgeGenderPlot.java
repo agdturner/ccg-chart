@@ -77,7 +77,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
     @Override
     public void setOriginCol() {
 //        originCol = dataStartCol;
-        setOriginCol((getDataStartCol() + getDataEndCol()) / 2);
+        originCol = ((dataStartCol + dataEndCol) / 2);
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {
 //            originCol = dataStartCol;
 //            //originCol = dataStartCol - dataEndCol / 2;
@@ -100,6 +100,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
      *
      * @param seperationDistanceOfAxisAndData
      * @param partTitleGap
+     * @param startAgeOfEndYearInterval
      * @param scaleTickAndTextSeparation
      * @return an int[] result for setting display parameters where: result[0] =
      * yAxisExtraWidthLeft;
@@ -107,19 +108,12 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
      * image is high
      */
     @Override
-    public int[] drawYAxis(
-            int interval,
-            int textHeight,
-            int startAgeOfEndYearInterval,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawYAxis(int interval, int textHeight,
+            int startAgeOfEndYearInterval, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
         int yAxisExtraWidthLeft = 0;
-        int originCol = getOriginCol();
-        int dataStartRow = getDataStartRow();
-        int dataEndRow = getDataEndRow();
         Line2D ab;
         // Draw origin
         if (isDrawOriginLinesOnPlot()) {
@@ -155,13 +149,12 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         int barHeightdiv2 = barHeight / 2;
 
         int increment = interval;
-        int dataHeight = getDataHeight();
         while (((startAgeOfEndYearInterval * textHeight) + 4) / increment > dataHeight) {
             increment += interval;
         }
         String text;
         int maxTickTextWidth = 0;
-        int col = getDataStartCol();
+        int col = dataStartCol;
         int miny_int = minY.intValue();
         //for (int i = miny_int; i <= startAgeOfEndYearInterval; i += increment) {
         for (int i = miny_int; i <= maxY.intValue(); i += increment) {
@@ -190,15 +183,10 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         yAxisExtraWidthLeft += scaleTickLength + scaleTickAndTextSeparation + maxTickTextWidth;
         // Y axis label
         setPaint(Color.BLACK);
-        String yAxisLabel = getyAxisLabel();
         int textWidth = getTextWidth(yAxisLabel);
         double angle = 3.0d * Math.PI / 2.0d;
         col = 3 * textHeight / 2;
-        writeText(
-                yAxisLabel,
-                angle,
-                col,
-                getDataMiddleRow() + (textWidth / 2));
+        writeText(yAxisLabel, angle, col, dataMiddleRow + (textWidth / 2));
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
         result[0] = yAxisExtraWidthLeft;
         return result;
@@ -226,11 +214,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         int xAxisExtraWidthRight = 0;
         int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData
                 + scaleTickLength + scaleTickAndTextSeparation + textHeight;
-        int dataStartCol = getDataStartCol();
         //int originRow = getOriginRow();
-        int dataEndRow = getDataEndRow();
-        int dataEndCol = getDataEndCol();
-        int originCol = getOriginCol();
         int significantDigits = getSignificantDigits();
         RoundingMode roundingMode = getRoundingMode();
         Line2D ab;
@@ -322,20 +306,15 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         setPaint(Color.DARK_GRAY);
         text_String = "Female";
         textWidth = getTextWidth(text_String);
-        drawString(
-                text_String,
-                ((dataEndCol + originCol) / 2) - (textWidth / 2),
-                textRow);
+        drawString(text_String,
+                ((dataEndCol + originCol) / 2) - (textWidth / 2), textRow);
         textRow += textHeight + partTitleGap;
         xAxisExtraHeightBottom += textHeight + partTitleGap;
         setPaint(Color.BLACK);
-        text_String = getxAxisLabel();
+        text_String = xAxisLabel;
 //        text_String = "Population";
         textWidth = getTextWidth(text_String);
-        drawString(
-                text_String,
-                originCol - (textWidth / 2),
-                textRow);
+        drawString(text_String, originCol - (textWidth / 2), textRow);
         xAxisExtraHeightBottom += textHeight;
         result[0] = xAxisExtraWidthLeft;
         result[1] = xAxisExtraWidthRight;

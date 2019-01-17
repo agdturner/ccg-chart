@@ -24,7 +24,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
@@ -126,7 +125,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
 
     @Override
     public void setOriginCol() {
-        setOriginCol(getDataStartCol());
+        originCol = dataStartCol;
     }
 
     /**
@@ -149,7 +148,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         RoundingMode rm;
         rm = RoundingMode.HALF_UP;
         MathContext mc;
-        mc = new MathContext(getDecimalPlacePrecisionForCalculations(), rm);
+        mc = new MathContext(decimalPlacePrecisionForCalculations, rm);
         BigDecimal y;
         if (yPin != null) {
             BigDecimal maxYPin;
@@ -214,9 +213,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         }
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
                 + seperationDistanceOfAxisAndData;
-        int col = getDataStartCol() - seperationDistanceOfAxisAndData;
-        int dataStartRow = getDataStartRow();
-        int dataEndRow = getDataEndRow();
+        int col = dataStartCol - seperationDistanceOfAxisAndData;
         Line2D ab;
         // Draw Y axis scale to the left side
         setPaint(Color.GRAY);
@@ -307,11 +304,10 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         yAxisExtraWidthLeft += maxTickTextWidth;
         // Y axis label
         setPaint(Color.BLACK);
-        String yAxisLabel = getyAxisLabel();
         textWidth = getTextWidth(yAxisLabel);
         double angle = 3.0d * Math.PI / 2.0d;
         col = 3 * textHeight / 2;
-        writeText(yAxisLabel, angle, col, getDataMiddleRow() + (textWidth / 2));
+        writeText(yAxisLabel, angle, col, dataMiddleRow + (textWidth / 2));
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
         int[] result;
         result = new int[1];
@@ -379,15 +375,12 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
 //            }
 //        }
 
-        int dataStartCol = getDataStartCol();
         int xAxisExtraWidthLeft = 0;
         int extraAxisLength;
         extraAxisLength = 0;
         int xAxisExtraWidthRight = extraAxisLength;
         int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData
                 + scaleTickLength + scaleTickAndTextSeparation;
-        int dataEndRow = getDataEndRow();
-        int dataEndCol = getDataEndCol();
         Line2D ab;
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
@@ -401,7 +394,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         int textWidth;
         int maxWidth = 0;
         double angle = 3.0d * Math.PI / 2.0d;
-        int col = getDataStartCol();
+        int col = dataStartCol;
         int previousCol = col;
         if (xAxisLabels != null) {
             boolean first = true;
@@ -461,7 +454,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
         textRow += maxWidth + partTitleGap + textHeight;
         xAxisExtraHeightBottom += partTitleGap + textHeight;
         setPaint(Color.BLACK);
-        text_String = getxAxisLabel();
+        text_String = xAxisLabel;
         textWidth = getTextWidth(text_String);
         drawString(text_String,
                 (dataEndCol - dataStartCol) / 2 + dataStartCol - textWidth / 2,
