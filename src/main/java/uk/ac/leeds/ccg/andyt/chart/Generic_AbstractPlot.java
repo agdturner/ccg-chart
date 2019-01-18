@@ -30,60 +30,75 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     protected File file;
     protected Graphics2D g2image;
     protected Graphics2D g2;
-    protected BufferedImage _BufferedImage;
-    protected boolean drawOriginLinesOnPlot;
-    protected FontMetrics fontMetrics;
-    protected String title;
-    //public int boundaryThickness;
+    protected BufferedImage bi;
 
     /**
-     * Width of the image to be created.
+     * Metrics to do with the font used for text in the plot.
+     */
+    protected FontMetrics fontMetrics;    
+
+    /**
+     * For controlling if origin lines (lines at Y = 0 or X = 0) are drawn on the plot.
+     */
+    protected boolean drawOriginLinesOnPlot;
+
+    /**
+     * For storing the title for the plot.
+     */
+    protected String title;
+
+    /**
+     * For storing the width of the image to be created.
      */
     protected int imageWidth;
 
     /**
-     * Height of the image to be created.
+     * For storing the height of the image to be created.
      */
     protected int imageHeight;
 
     /**
-     * dataWidth is the width in pixels of the data section part of the image.
+     * For storing the width in pixels of the data section part of the image.
      */
     protected int dataWidth;
 
     /**
-     * dataHeight is the height in pixels of the data section part of the image.
+     * For storing the height in pixels of the data section part of the image.
      */
     protected int dataHeight;
 
     /**
-     * dataStartRow is the top row index of the data section in the image.
+     * For storing the top row index of the data section in the image.
      */
     protected int dataStartRow;
+
+    /**
+     * For storing the middle row index of the data section in the image.
+     */
     protected int dataMiddleRow;
 
     /**
-     * dataEndRow is the bottom row index of the data section in the image.
+     * For storing the bottom row index of the data section in the image.
      */
     protected int dataEndRow;
 
     /**
-     * dataStartCol is the left column index of the data section in the image.
+     * For storing the left column index of the data section in the image.
      */
     protected int dataStartCol;
 
     /**
-     * dataEndCol is the right column index of the data section in the image.
+     * For storing the right column index of the data section in the image.
      */
     protected int dataEndCol;
 
     /**
-     * xAxisHeight is the height in pixels of the x axis.
+     * For storing the height in pixels of the x axis.
      */
     protected int xAxisHeight;
 
     /**
-     * yAxisWidth is the width in pixels of the y axis.
+     * For storing the width in pixels of the y axis.
      */
     protected int yAxisWidth;
 
@@ -97,33 +112,58 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      */
     protected String yAxisLabel;
 
+    /**
+     * For storing the extra width in pixels to the left of the data part of the plot.
+     */
     protected int extraWidthLeft;
+
+    /**
+     * For storing the extra width in pixels to the right of the data part of the plot.
+     */
     protected int extraWidthRight;
+
+    /**
+     * For storing the extra width in pixels above the data part of the plot.
+     */
     protected int extraHeightTop;
+
+    /**
+     * For storing the extra width in pixels below the data part of the plot.
+     */
     protected int extraHeightBottom;
 
     /**
-     * maxX is the maximum value of x in the data area.
+     * For storing the maximum value of x in the data area.
      */
     BigDecimal maxX;
 
     /**
-     * minX is the minimum value of x in the data area.
+     * For storing the minimum value of x in the data area.
      */
     BigDecimal minX;
 
     /**
-     * maxY is the maximum value of y in the data area.
+     * For storing the maximum value of y in the data area.
      */
     BigDecimal maxY;
 
     /**
-     * minY is the minimum value of y in the data area.
+     * For storing the minimum value of y in the data area.
      */
     BigDecimal minY;
 
+    /**
+     * For storing the number of decimal places used in calculations needed for 
+     * the plot.
+     */
     protected int decimalPlacePrecisionForCalculations;
+    
+    /**
+     * For storing the number of decimal places used for numerical values 
+     * displayed on the plot.
+     */
     protected int decimalPlacePrecisionForDisplay;
+    
     protected int significantDigits;
     private RoundingMode roundingMode;
 
@@ -234,12 +274,12 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         this.g2 = g2;
     }
 
-    public BufferedImage getBufferedImage() {
-        return _BufferedImage;
+    public BufferedImage getBi() {
+        return bi;
     }
 
-    public void setBufferedImage(BufferedImage bufferedImage) {
-        this._BufferedImage = bufferedImage;
+    public void setBi(BufferedImage bufferedImage) {
+        this.bi = bufferedImage;
     }
 
     public boolean isDrawOriginLinesOnPlot() {
@@ -394,13 +434,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     public void initG2Image() {
-        _BufferedImage = new BufferedImage(imageWidth, imageHeight,
+        bi = new BufferedImage(imageWidth, imageHeight,
                 BufferedImage.TYPE_INT_ARGB);
-        g2image = (Graphics2D) _BufferedImage.getGraphics();
+        g2image = (Graphics2D) bi.getGraphics();
         g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         //mediaTracker = new MediaTracker(this);
-        //mediaTracker.addImage(_BufferedImage, 0);
+        //mediaTracker.addImage(bi, 0);
     }
 
     public BigDecimal imageRowToYCoordinate(            double row) {

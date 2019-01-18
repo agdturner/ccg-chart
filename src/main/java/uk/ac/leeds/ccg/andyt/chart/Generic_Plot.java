@@ -106,7 +106,7 @@ public class Generic_Plot extends Generic_AbstractPlot {
                 PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
                 pras.add(new Copies(1));
                 pj.print(pras);
-                setBufferedImage(Canvas.getBufferedImage());
+                setBi(Canvas.getBufferedImage());
 //            Rectangle r = Canvas.getBounds();
 
 //            Graphics2D g2 = (Graphics2D) Canvas.getGraphics();

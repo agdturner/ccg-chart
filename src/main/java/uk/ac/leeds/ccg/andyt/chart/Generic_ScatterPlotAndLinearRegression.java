@@ -17,7 +17,6 @@ package uk.ac.leeds.ccg.andyt.chart;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -40,32 +39,32 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     public Generic_ScatterPlotAndLinearRegression() {
     }
 
+    /**
+     *
+     * @param es
+     * @param file
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawOriginLinesOnPlot
+     * @param decimalPlacePrecisionForCalculations
+     * @param decimalPlacePrecisionForDisplay
+     * @param rm
+     */
     public Generic_ScatterPlotAndLinearRegression(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
+            ExecutorService es, File file, String format, String title,
+            int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
-            RoundingMode aRoundingMode) {
-        init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
+            RoundingMode rm) {
+        init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawOriginLinesOnPlot,
                 decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+                decimalPlacePrecisionForDisplay, rm);
     }
 
     public static void main(String[] args) {
@@ -77,18 +76,14 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         File file;
         String format = "PNG";
         if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
+            System.out.println("Expected 2 args: args[0] title; args[1] File."
                     + " Recieved " + args.length + " args.");
             // Use defaults
             title = "Scatter Plot And Linear Regression";
-            System.out.println("Use default title: " + title);
-            file = new File(
-                    new File(System.getProperty("user.dir")),
+            System.out.println("Default title: " + title);
+            file = new File(new File(System.getProperty("user.dir")),
                     title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
+            System.out.println("Default File: " + file.toString());
         } else {
             title = args[0];
             file = new File(args[1]);
@@ -100,44 +95,37 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         boolean drawOriginLinesOnPlot = false;//true;
         int decimalPlacePrecisionForCalculations = 100;
         int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode aRoundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_ScatterPlotAndLinearRegression plot = new Generic_ScatterPlotAndLinearRegression(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+        RoundingMode rm = RoundingMode.HALF_UP;
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Generic_ScatterPlotAndLinearRegression plot;
+        plot = new Generic_ScatterPlotAndLinearRegression(es, file, format,
+                title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
+                drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
+                decimalPlacePrecisionForDisplay, rm);
         plot.run();
     }
 
     @Override
     public void drawData() {
-        double[][] dataAsDoubleArray = getDataAsDoubleArray(
+        double[][] dataD;
+        dataD = getDataAsDoubleArray(
                 (ArrayList<Generic_XYNumericalData>) data[0]);
-        drawYEqualsXLineData(dataAsDoubleArray);
+        drawYEqualsXLineData(dataD);
         /*
-         * regressionParameters[0] is the y axis intercept;
-         * regressionParameters[1] is the change in y relative to x (gradient or
-         * slope); regressionParameters[2] is the rank correlation coefficient
-         * (RSquare); regressionParameters[3] is data[0].length.
+         * rp[0] is the y axis intercept;
+         * rp[1] is the change in y relative to x (gradient or slope);
+         * rp[2] is the rank correlation coefficient (RSquare);
+         * rp[3] is data[0].length.
          */
-        double[] regressionParameters = getSimpleRegressionParameters(
-                dataAsDoubleArray);
-        drawRegressionLine(regressionParameters, dataAsDoubleArray);
+        double[] rp;
+        rp = getSimpleRegressionParameters(dataD);
+        drawRegressionLine(rp, dataD);
         drawPoints(Color.DARK_GRAY, data);
         if (addLegend) {
-            drawLegend(regressionParameters);
+            drawLegend(rp);
         }
     }
-
+    
     @Override
     public Object[] getDefaultData() {
         return new Generic_ScatterPlot().getDefaultData();
@@ -157,16 +145,16 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
                 (ArrayList<Generic_XYNumericalData>) data[0]);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
-         * regressionParameters[0] is the y axis intercept;
-         * regressionParameters[1] is the change in y relative to x (gradient or
-         * slope); regressionParameters[2] is the rank correlation coefficient
-         * (RSquare); regressionParameters[3] is data[0].length.
+         * rp[0] is the y axis intercept;
+         * rp[1] is the change in y relative to x (gradient or
+         * slope); rp[2] is the rank correlation coefficient
+         * (RSquare); rp[3] is data[0].length.
          */
-        double[] regressionParameters;
-        regressionParameters = getSimpleRegressionParameters(dataAsDoubleArray);
-        drawRegressionLine(regressionParameters, dataAsDoubleArray);
+        double[] rp;
+        rp = getSimpleRegressionParameters(dataAsDoubleArray);
+        drawRegressionLine(rp, dataAsDoubleArray);
         if (addLegend) {
-            drawLegend(regressionParameters);
+            drawLegend(rp);
         }
         Dimension newDim = new Dimension(imageWidth, imageHeight);
         return newDim;
@@ -454,13 +442,12 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
 ////        }
 //    }
     /**
-     * @param regressionParameters regressionParameters[0] is the y axis
-     * intercept; regressionParameters[1] is the change in y relative to x
-     * (gradient or slope); regressionParameters[2] is the rank correlation
-     * coefficient (RSquare); regressionParameters[3] is data[0].length.
+     * @param rp rp[0] is the y axis intercept; rp[1] is the change in y
+     * relative to x (gradient or slope); rp[2] is the rank correlation
+     * coefficient (RSquare); rp[3] is data[0].length.
      */
     protected void drawLegend(
-            double[] regressionParameters) {
+            double[] rp) {
 //        int[] result = new int[3];
 
         int newLegendWidth = 0;
@@ -556,10 +543,10 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         // generalise m
         int scale = 4;
         BigDecimal m;
-        if (Double.isNaN(regressionParameters[1])) {
+        if (Double.isNaN(rp[1])) {
             m = BigDecimal.ZERO;
         } else {
-            m = BigDecimal.valueOf(regressionParameters[1]);
+            m = BigDecimal.valueOf(rp[1]);
         }
         RoundingMode roundingMode = getRoundingMode();
         m = m.setScale(scale, roundingMode);
@@ -569,18 +556,18 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
 //                decimalPlacePrecision,
 //                _RoundingMode);
         BigDecimal c;
-        if (Double.isNaN(regressionParameters[0])) {
+        if (Double.isNaN(rp[0])) {
             c = BigDecimal.ZERO;
         } else {
-            c = BigDecimal.valueOf(regressionParameters[0]);
+            c = BigDecimal.valueOf(rp[0]);
         }
         c = c.setScale(scale, roundingMode);
         c = c.stripTrailingZeros();
         BigDecimal rsquare;
-        if (Double.isNaN(regressionParameters[2])) {
+        if (Double.isNaN(rp[2])) {
             rsquare = BigDecimal.ZERO;
         } else {
-            rsquare = BigDecimal.valueOf(regressionParameters[2]);
+            rsquare = BigDecimal.valueOf(rp[2]);
         }
         rsquare = rsquare.setScale(3, roundingMode);
         rsquare = rsquare.stripTrailingZeros();
@@ -638,9 +625,15 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
 //        return result;
     }
 
-    protected double[][] getDataAsDoubleArray(ArrayList<Generic_XYNumericalData> theGeneric_XYNumericalData) {
-        double[][] result = new double[2][theGeneric_XYNumericalData.size()];
-        Iterator<Generic_XYNumericalData> ite = theGeneric_XYNumericalData.iterator();
+    protected double[][] getDataAsDoubleArray() {
+         return getDataAsDoubleArray(
+                 (ArrayList<Generic_XYNumericalData>) data[0]);
+    }
+    
+    protected double[][] getDataAsDoubleArray(
+            ArrayList<Generic_XYNumericalData> d) {
+        double[][] r = new double[2][d.size()];
+        Iterator<Generic_XYNumericalData> ite = d.iterator();
         Generic_XYNumericalData aGeneric_XYNumericalData;
         /*
          * data[0][] are the y values data[1][] are the x values
@@ -648,11 +641,11 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         int n = 0;
         while (ite.hasNext()) {
             aGeneric_XYNumericalData = ite.next();
-            result[0][n] = aGeneric_XYNumericalData.getY().doubleValue();
-            result[1][n] = aGeneric_XYNumericalData.getX().doubleValue();
+            r[0][n] = aGeneric_XYNumericalData.getY().doubleValue();
+            r[1][n] = aGeneric_XYNumericalData.getX().doubleValue();
             n++;
         }
-        return result;
+        return r;
     }
 
     protected void drawYEqualsXLineData(double[][] dataAsDoubleArray) {
@@ -667,11 +660,11 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     }
 
     protected void drawRegressionLine(
-            double[] regressionParameters,
+            double[] rp,
             double[][] dataAsDoubleArray) {
         double[][] regressionLineXYLineData = getXYLineData(
                 dataAsDoubleArray,
-                regressionParameters);
+                rp);
         setPaint(Color.BLACK);
         draw(new Line2D.Double(
                 coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[1][0])),

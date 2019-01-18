@@ -135,8 +135,8 @@ public class Generic_ScatterPlot extends Generic_Plot {
      * @return
      */
     @Override
-    public int[] drawXAxis(int textHeight, int scaleTickLength, 
-            int scaleTickAndTextSeparation,            int partTitleGap,
+    public int[] drawXAxis(int textHeight, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
@@ -272,22 +272,29 @@ public class Generic_ScatterPlot extends Generic_Plot {
         return result;
     }
 
+    /**
+     *
+     * @param interval // ignored
+     * @param textHeight
+     * @param startAgeOfEndYearInterval // ignored
+     * @param scaleTickLength
+     * @param scaleTickAndTextSeparation
+     * @param partTitleGap
+     * @param seperationDistanceOfAxisAndData
+     * @return
+     */
     @Override
-    public int[] drawYAxis(
-            int interval, // ignored
-            int textHeight,
-            int startAgeOfEndYearInterval, // ignored
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawYAxis(int interval, int textHeight,
+            int startAgeOfEndYearInterval, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
                 + seperationDistanceOfAxisAndData;
         Line2D ab;
-        int text_Height = getTextHeight();
-        String text_String;
-        int text_Width;
+        int th = getTextHeight();
+        String text;
+        int tw;
         int row;
         int increment;
         RoundingMode roundingMode = getRoundingMode();
@@ -300,36 +307,32 @@ public class Generic_ScatterPlot extends Generic_Plot {
         /*
          * Draw Y axis ticks and labels to left of Y axis
          */
-        increment = text_Height;
-        while (((dataHeight * text_Height) + 4) / increment > dataHeight) {
-            increment += text_Height;
+        increment = th;
+        while (((dataHeight * th) + 4) / increment > dataHeight) {
+            increment += th;
         }
         int yAxisMaxLabelWidth = 0;
         // From the origin up
         for (row = originRow; row >= dataStartRow; row -= increment) {
             if (row <= dataEndRow) {
-                ab = new Line2D.Double(
-                        col,
-                        row,
-                        col - scaleTickLength,
-                        row);
+                ab = new Line2D.Double(col, row, col - scaleTickLength, row);
                 draw(ab);
                 BigDecimal y = imageRowToYCoordinate(row);
                 if (y.compareTo(BigDecimal.ZERO) == 0 || row == originRow) {
-                    text_String = "0";
+                    text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+                    text = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
                             y,
                             Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
                             roundingMode).toString();
                 }
-                text_Width = getTextWidth(text_String);
-                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, text_Width);
+                tw = getTextWidth(text);
+                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
                 drawString(
-                        text_String,
-                        col - scaleTickAndTextSeparation - scaleTickLength - text_Width,
+                        text,
+                        col - scaleTickAndTextSeparation - scaleTickLength - tw,
                         row + (textHeight / 3));
             }
         }
@@ -344,32 +347,32 @@ public class Generic_ScatterPlot extends Generic_Plot {
                 draw(ab);
                 BigDecimal y = imageRowToYCoordinate(row);
                 if (y.compareTo(BigDecimal.ZERO) == 0 || row == originRow) {
-                    text_String = "0";
+                    text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+                    text = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
                             y,
                             Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
                             roundingMode).toString();
                 }
-                text_Width = getTextWidth(text_String);
-                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, text_Width);
+                tw = getTextWidth(text);
+                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
                 drawString(
-                        text_String,
-                        col - scaleTickAndTextSeparation - scaleTickLength - text_Width,
+                        text,
+                        col - scaleTickAndTextSeparation - scaleTickLength - tw,
                         row + (textHeight / 3));
             }
         }
         yAxisExtraWidthLeft += scaleTickLength + scaleTickAndTextSeparation + yAxisMaxLabelWidth;
         // Add the Y axis label
         setPaint(Color.BLACK);
-        text_String = yAxisLabel;
-        text_Width = getTextWidth(text_String);
+        text = yAxisLabel;
+        tw = getTextWidth(text);
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
         double angle = 3.0d * Math.PI / 2.0d;
-        writeText(text_String, angle, 3 * textHeight / 2,
-                dataMiddleRow + (text_Width / 2));
+        writeText(text, angle, 3 * textHeight / 2,
+                dataMiddleRow + (tw / 2));
         // Draw line on origin
         if (isDrawOriginLinesOnPlot()) {
             if (originCol <= dataEndCol && originCol >= dataStartCol) {
