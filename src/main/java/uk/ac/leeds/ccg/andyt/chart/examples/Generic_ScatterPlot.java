@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.examples;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -26,17 +26,15 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractPlot;
 import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * A class for creating Scatter Plot images.
- *
- * If you run this class it will attempt to generate an Age by Gender Population
- * Line Chart Visualization of some default data and display it on screen.
+ * An example of generating a Scatter Plot visualization.
  */
-public class Generic_ScatterPlot extends Generic_Plot {
+public class Generic_ScatterPlot extends Generic_AbstractPlot {
 
     public Generic_ScatterPlot() {
     }

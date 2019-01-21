@@ -1,4 +1,4 @@
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.core;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -6,14 +6,25 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import javax.print.StreamPrintService;
+import javax.print.StreamPrintServiceFactory;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
 import uk.ac.leeds.ccg.andyt.chart.execution.Generic_Runnable;
+import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 //import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 //import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
@@ -35,10 +46,11 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     /**
      * Metrics to do with the font used for text in the plot.
      */
-    protected FontMetrics fontMetrics;    
+    protected FontMetrics fontMetrics;
 
     /**
-     * For controlling if origin lines (lines at Y = 0 or X = 0) are drawn on the plot.
+     * For controlling if origin lines (lines at Y = 0 or X = 0) are drawn on
+     * the plot.
      */
     protected boolean drawOriginLinesOnPlot;
 
@@ -113,12 +125,14 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     protected String yAxisLabel;
 
     /**
-     * For storing the extra width in pixels to the left of the data part of the plot.
+     * For storing the extra width in pixels to the left of the data part of the
+     * plot.
      */
     protected int extraWidthLeft;
 
     /**
-     * For storing the extra width in pixels to the right of the data part of the plot.
+     * For storing the extra width in pixels to the right of the data part of
+     * the plot.
      */
     protected int extraWidthRight;
 
@@ -135,37 +149,37 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     /**
      * For storing the maximum value of x in the data area.
      */
-    BigDecimal maxX;
+    protected BigDecimal maxX;
 
     /**
      * For storing the minimum value of x in the data area.
      */
-    BigDecimal minX;
+    protected BigDecimal minX;
 
     /**
      * For storing the maximum value of y in the data area.
      */
-    BigDecimal maxY;
+    protected BigDecimal maxY;
 
     /**
      * For storing the minimum value of y in the data area.
      */
-    BigDecimal minY;
+    protected BigDecimal minY;
 
     /**
-     * For storing the number of decimal places used in calculations needed for 
+     * For storing the number of decimal places used in calculations needed for
      * the plot.
      */
     protected int decimalPlacePrecisionForCalculations;
-    
+
     /**
-     * For storing the number of decimal places used for numerical values 
+     * For storing the number of decimal places used for numerical values
      * displayed on the plot.
      */
     protected int decimalPlacePrecisionForDisplay;
-    
+
     protected int significantDigits;
-    private RoundingMode roundingMode;
+    protected RoundingMode roundingMode;
 
     /**
      * cellHeight is for storing the height of a pixel in the data units of y
@@ -209,6 +223,8 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     private Integer startAgeOfEndYearInterval;
 
     protected transient ExecutorService executorService;
+    public Generic_Canvas Canvas;
+    public Future future;
 
     public Generic_AbstractPlot() {
     }
@@ -253,11 +269,19 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     /**
-     *
-     * @param data
+     * @param data The data from which parameters will be initialised.
      */
-    protected abstract void initialiseParameters(Object[] data);
-
+    public void initialiseParameters(Object[] data) {
+        maxX = new BigDecimal(((BigDecimal) data[1]).toString());
+        minX = new BigDecimal(((BigDecimal) data[2]).toString());
+        maxY = new BigDecimal(((BigDecimal) data[3]).toString());
+        minY = new BigDecimal(((BigDecimal) data[4]).toString());
+        setCellHeight();
+        setCellWidth();
+        setOriginRow();
+        setOriginCol();
+    }
+    
     public Graphics2D getG2image() {
         return g2image;
     }
@@ -332,7 +356,6 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         return roundingMode;
     }
 
-
     public BigDecimal getCellHeight() {
         if (cellHeight == null) {
             return new BigDecimal("1");
@@ -364,24 +387,27 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     }
 
     /**
+     * For initialising key variables.
      *
-     * @param es
-     * @param file
-     * @param format
-     * @param title
-     * @param dataWidth
-     * @param dataHeight
-     * @param xAxisLabel
-     * @param yAxisLabel
-     * @param drawOriginLinesOnPlot
-     * @param decimalPlacePrecisionForCalculations
-     * @param significantDigits
-     * @param rm
+     * @param es What {@link #executorService} is set to.
+     * @param file What {@link #file} is set to.
+     * @param format What {@link #format} is set to.
+     * @param title What {@link #title} is set to.
+     * @param dataWidth What {@link #dataWidth} is set to.
+     * @param dataHeight What {@link #dataHeight} is set to.
+     * @param xAxisLabel What {@link #xAxisLabel} is set to.
+     * @param yAxisLabel What {@link #yAxisLabel} is set to.
+     * @param drawOriginLinesOnPlot What {@link #drawOriginLinesOnPlot} is set
+     * to.
+     * @param decimalPlacePrecisionForCalculations What
+     * {@link #decimalPlacePrecisionForCalculations} is set to.
+     * @param significantDigits What {@link #significantDigits} is set to.
+     * @param rm What {@link #roundingMode} is set to.
      */
-    protected final void init(ExecutorService es, File file, String format, 
-            String title, int dataWidth, int dataHeight, String xAxisLabel, 
-            String yAxisLabel, boolean drawOriginLinesOnPlot, 
-            int decimalPlacePrecisionForCalculations, int significantDigits, 
+    protected final void init(ExecutorService es, File file, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawOriginLinesOnPlot,
+            int decimalPlacePrecisionForCalculations, int significantDigits,
             RoundingMode rm) {
         this.executorService = es;
         this.file = file;
@@ -443,13 +469,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         //mediaTracker.addImage(bi, 0);
     }
 
-    public BigDecimal imageRowToYCoordinate(            double row) {
+    public BigDecimal imageRowToYCoordinate(double row) {
         return dataRowToYCoordinate(row - dataStartRow);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight).subtract(halfCellHeight);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight);
     }
 
-    public BigDecimal imageColToXCoordinate(            double col) {
+    public BigDecimal imageColToXCoordinate(double col) {
         return dataColToXCoordinate(col - dataStartCol);
 //        //return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth).add(this.minX);
 //        return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth);
@@ -474,27 +500,26 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     /**
      * Calculates and returns the row and column in the image for the data at
- coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode roundingMode
+     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
+     * RoundingMode roundingMode
      *
-     * @param p
+     * @param p A pixel location as a Point2D.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Generic_XYNumericalData dataPointToCoordinate(
-            Point2D p) {
-        Generic_XYNumericalData result = new Generic_XYNumericalData();
+    public Generic_XYNumericalData dataPointToCoordinate(            Point2D p) {
+        Generic_XYNumericalData r = new Generic_XYNumericalData();
         BigDecimal x = dataRowToYCoordinate(p.getX());
         BigDecimal y = dataColToXCoordinate(p.getY());
-        result.setX(x);
-        result.setY(y);
-        return result;
+        r.setX(x);
+        r.setY(y);
+        return r;
     }
 
     /**
      * Calculates and returns the column in the image for the data with value
- titleTextWidth RoundingMode roundingMode is used.
+     * titleTextWidth RoundingMode roundingMode is used.
      *
-     * @param x
+     * @param x The x value.
      * @return the column in the image for the data with value titleTextWidth
      */
     public int coordinateToScreenCol(BigDecimal x) {
@@ -505,8 +530,8 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * Calculates and returns the column in the image for the data with value
      * titleTextWidth using RoundingMode aRoundingMode
      *
-     * @param x
-     * @param rm
+     * @param x The x value.
+     * @param rm The RoundingMode.
      * @return the column in the image for the data with value titleTextWidth
      */
     public int coordinateToScreenCol(BigDecimal x, RoundingMode rm) {
@@ -526,7 +551,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * Calculates and returns the row in the image for the data with value
      * titleTextHeight. RoundingMode roundingMode is used.
      *
-     * @param y
+     * @param y The y value.
      * @return the row in the image for the data with value titleTextHeight
      */
     public int coordinateToScreenRow(BigDecimal y) {
@@ -537,8 +562,8 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * Calculates and returns the row in the image for the data with value
      * titleTextHeight using RoundingMode aRoundingMode
      *
-     * @param y
-     * @param rm
+     * @param y The y value.
+     * @param rm The RoundingMode.
      * @return the row in the image for the data with value titleTextHeight
      */
     public int coordinateToScreenRow(BigDecimal y, RoundingMode rm) {
@@ -558,22 +583,22 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
 
     /**
      * Calculates and returns the row and column in the image for the data at
- coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
- RoundingMode roundingMode
+     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
+     * RoundingMode roundingMode
      *
-     * @param x
-     * @param y
+     * @param x The x value.
+     * @param y The y value.
      * @return a Point2D.Double located at pixel(col, row)
      */
     public Point2D coordinateToScreen(BigDecimal x, BigDecimal y) {
-        Point2D result = new Point2D.Double();
+        Point2D r = new Point2D.Double();
         //System.out.println("titleTextWidth " + titleTextWidth);
         //System.out.println("titleTextHeight " + titleTextHeight);
         int row = coordinateToScreenRow(y);
         int col = coordinateToScreenCol(x);
-        result.setLocation(col, row);
+        r.setLocation(col, row);
         //System.out.println("result " + result);
-        return result;
+        return r;
     }
 
     //public abstract void initialiseParameters(Object[] data);
@@ -624,7 +649,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * Sets the Y axis width and increases {@link imageWidth} and
      * {@link extraWidthLeft} as appropriate.
      *
-     * @param width
+     * @param width The width to set.
      */
     public void setYAxisWidth(int width) {
         //if (width > 0) {
@@ -646,7 +671,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * Sets the X axis height and increases {@link imageHeight} and
      * {@link extraHeightBottom} as appropriate.
      *
-     * @param height
+     * @param height The height to set.
      */
     public void setXAxisHeight(int height) {
         //if (height > 0) {
@@ -858,7 +883,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * The title is draw above the data area and centred on the whole width of
      * the image.
      *
-     * @param title
+     * @param title The title to be drawn.
      */
     public void drawTitle(String title) {
         setPaint(Color.BLACK);
@@ -943,5 +968,101 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     public Dimension draw(Graphics2D g2) {
         this.g2 = g2;
         return draw();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void run() {
+        try {
+            Canvas = new Generic_Canvas();
+            Canvas.Plot = this;
+            Canvas.Rect = new Rectangle(0, 0, getDataWidth(), getDataHeight());
+            //            Graphics2D g2 = (Graphics2D) Canvas.getGraphics();
+            //            setG2(g2);
+            //            //Canvas.paint(g2);
+            //            Dimension dim = draw();
+            //            Canvas.setDimension(dim);
+            PrinterJob pj = PrinterJob.getPrinterJob();
+            Generic_Printable printable = new Generic_Printable(Canvas);
+            pj.setPrintable(printable);
+            String psMimeType = "application/postscript";
+            FileOutputStream fos = null;
+            //        PrintService[] printServices = PrinterJob.lookupPrintServices();
+            StreamPrintService streamPrintService = null;
+            StreamPrintServiceFactory[] spsf;
+            spsf = PrinterJob.lookupStreamPrintServices(psMimeType);
+            File dir = file.getParentFile();
+            dir.mkdirs();
+            File psFile = new File(dir, file.getName() + ".ps");
+            System.out.println("psFile " + psFile.toString());
+            if (spsf.length > 0) {
+                try {
+                    psFile.createNewFile();
+                    fos = new FileOutputStream(psFile);
+                    streamPrintService = spsf[0].getPrintService(fos);
+                    // streamPrintService can now be set as the service on a PrinterJob
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace(System.err);
+                }
+            }
+            try {
+                //            PrintRequestAttributeSet pras;
+                //            PrintService printService = printerJob.getPrintService();
+                //            PrintServiceAttributeSet psas = printService.getAttributes();
+                //            System.out.println(psas.toString());
+                //            printerJob.print();
+                //            System.out.println("pj.getJobName()" + printerJob.getJobName());
+                //            System.out.println("pj.isCancelled()" + printerJob.isCancelled());
+                //            printerJob.setPrintService(printServices[0]);
+                pj.setPrintService(streamPrintService);
+                PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+                pras.add(new Copies(1));
+                pj.print(pras);
+                setBi(Canvas.getBufferedImage());
+                //            Rectangle r = Canvas.getBounds();
+                //            Graphics2D g2 = (Graphics2D) Canvas.getGraphics();
+                //            setG2(g2);
+                //            //Canvas.paint(g2);
+                //            Dimension dim = draw();
+                //            Canvas.setDimension(dim);
+                //Canvas.setDimension(Canvas.paintAndGetNewDimensions(g2));
+                //Canvas.Rect = new Rectangle(dim);
+                //Canvas.setSize(dataWidth, dataHeight);
+                // Canvas.paint(g2);
+                long delay = 10000;
+                future = Generic_Visualisation.saveImage(executorService, this, Canvas.getBufferedImage(), delay, format, file);
+                //            fileOutputStream.close();
+                //            printerJob.cancel();
+                //            psFile.delete();
+                ////            System.out.println("pj.getJobName() " + printerJob.getJobName());
+                ////            System.out.println("pj.isCancelled() " + printerJob.isCancelled());
+                //        } catch (IOException e) {
+                //            System.err.println(e.getMessage());
+                //            e.printStackTrace(System.err);
+            } catch (PrinterException e) {
+                e.printStackTrace(System.err);
+            } finally {
+                //printerJob.cancel();
+                try {
+                    fos.close();
+                    pj.cancel();
+                    psFile.delete();
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        } catch (OutOfMemoryError e) {
+            long time;
+            //time = 60000L; // 1 minute
+            //time = 120000L;// 2 minutes
+            time = 240000L; // 4 minutes
+            System.out.println("OutOfMemoryError1, waiting " + time / 1000 + " secs " + "before trying Generic_Plot.run again...");
+            Generic_Execution.waitSychronized(this, time); // wait a time
+            System.out.println("...on we go.");
+            run();
+        }
     }
 }

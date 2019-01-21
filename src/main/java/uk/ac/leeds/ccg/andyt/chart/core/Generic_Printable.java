@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.core;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

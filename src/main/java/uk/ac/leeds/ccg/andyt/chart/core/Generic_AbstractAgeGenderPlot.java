@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.core;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -28,7 +28,7 @@ import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
+public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot {
 
     protected final void init(
             ExecutorService executorService,
@@ -98,31 +98,28 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
     /**
      * Draws the Y axis.
      *
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param startAgeOfEndYearInterval
-     * @param scaleTickAndTextSeparation
+     * @param interval -
+     * @param textHeight -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickLength -
+     * @param startAgeOfEndYearInterval -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * yAxisExtraWidthLeft;
-     * @TODO Better handle case when yAxisLabel has a text width wider than
-     * image is high
      */
     @Override
     public int[] drawYAxis(int interval, int textHeight,
             int startAgeOfEndYearInterval, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
-        int[] result = new int[1];
+        int[] r = new int[1];
         int yAxisExtraWidthLeft = 0;
         Line2D ab;
         // Draw origin
         if (isDrawOriginLinesOnPlot()) {
             setPaint(Color.LIGHT_GRAY);
-            ab = new Line2D.Double(
-                    originCol,
-                    dataStartRow,
-                    originCol,
-                    dataEndRow);
+            ab = new Line2D.Double(originCol, dataStartRow, originCol, dataEndRow);
             draw(ab);
         }
 //        // Draw Y axis scale to the left side
@@ -141,9 +138,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
             barHeight = 1;
         } else {
             barHeight = Generic_BigDecimal.divideRoundIfNecessary(
-                    BigDecimal.valueOf(interval),
-                    getCellHeight(),
-                    0,
+                    BigDecimal.valueOf(interval), getCellHeight(), 0,
                     getRoundingMode()).intValue();
         }
         int barHeightdiv2 = barHeight / 2;
@@ -164,17 +159,12 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
             //int row = coordinateToScreenRow(BigDecimal.valueOf(i)) - barHeight;
 
             setPaint(Color.GRAY);
-//            ab = new Line2D.Double(
-//                    col,
-//                    row,
-//                    col - scaleTickLength,
-//                    row);
+//            ab = new Line2D.Double(col, row, col - scaleTickLength, row);
 //            draw(ab);
             //text = "" + i + " - " + (i + increment);
             text = "" + i;
             int textWidth = getTextWidth(text);
-            drawString(
-                    text,
+            drawString(text,
                     col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                     //row);
                     row + (textHeight / 3));
@@ -188,26 +178,25 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         col = 3 * textHeight / 2;
         writeText(yAxisLabel, angle, col, dataMiddleRow + (textWidth / 2));
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
-        result[0] = yAxisExtraWidthLeft;
-        return result;
+        r[0] = yAxisExtraWidthLeft;
+        return r;
     }
 
     /**
      * Draw the X axis.
      *
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param scaleTickAndTextSeparation
+     * @param textHeight -
+     * @param scaleTickLength -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * xAxisExtraWidthLeft; result[1] = xAxisExtraWidthRight; result[2] =
      * xAxisExtraHeightBottom.
      */
     @Override
-    public int[] drawXAxis(
-            int textHeight,
-            int scaleTickLength,
-            int scaleTickAndTextSeparation,
-            int partTitleGap,
+    public int[] drawXAxis(int textHeight, int scaleTickLength,
+            int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
@@ -215,8 +204,6 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         int xAxisExtraHeightBottom = seperationDistanceOfAxisAndData
                 + scaleTickLength + scaleTickAndTextSeparation + textHeight;
         //int originRow = getOriginRow();
-        int significantDigits = getSignificantDigits();
-        RoundingMode roundingMode = getRoundingMode();
         Line2D ab;
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
@@ -228,37 +215,18 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         int textRow = row + scaleTickLength + scaleTickAndTextSeparation + textHeight;
         String text_String = "0";
         int textWidth = getTextWidth(text_String);
-        ab = new Line2D.Double(
-                originCol,
-                row,
-                originCol,
-                row + scaleTickLength);
+        ab = new Line2D.Double(originCol, row, originCol, row + scaleTickLength);
         draw(ab);
-        drawString(
-                text_String,
-                originCol - (textWidth / 2),
-                textRow);
+        drawString(text_String, originCol - (textWidth / 2), textRow);
         // Left end scale tick and label
-        int decimalPlacePrecisionForDisplay
-                = Generic_BigDecimal.getDecimalPlacePrecision(
-                        maxX, significantDigits);
         if (maxX != null) {
-            text_String = Generic_BigDecimal.roundIfNecessary(
-                    maxX,
-                    decimalPlacePrecisionForDisplay,
-                    roundingMode).toPlainString();
+            text_String = Generic_BigDecimal.roundIfNecessary(maxX,
+                    decimalPlacePrecisionForDisplay, roundingMode).toPlainString();
             textWidth = getTextWidth(text_String);
         }
-        ab = new Line2D.Double(
-                dataStartCol,
-                row,
-                dataStartCol,
-                row + scaleTickLength);
+        ab = new Line2D.Double(dataStartCol, row, dataStartCol, row + scaleTickLength);
         draw(ab);
-        drawString(
-                text_String,
-                dataStartCol - (textWidth / 2),
-                textRow);
+        drawString(text_String, dataStartCol - (textWidth / 2), textRow);
         // Add to imageWidth as this label sticks out
         xAxisExtraWidthLeft += (textWidth / 2) + textHeight;
 //        // Check to see if plot needs to grow
@@ -272,21 +240,12 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
 //        }
         // Right end scale tick and label
         //text_String = maxX.toBigInteger().toString();
-        text_String = Generic_BigDecimal.roundIfNecessary(
-                maxX,
-                decimalPlacePrecisionForDisplay,
-                roundingMode).toPlainString();
+        text_String = Generic_BigDecimal.roundIfNecessary(maxX,
+                decimalPlacePrecisionForDisplay, roundingMode).toPlainString();
         textWidth = getTextWidth(text_String);
-        ab = new Line2D.Double(
-                dataEndCol,
-                row,
-                dataEndCol,
-                row + scaleTickLength);
+        ab = new Line2D.Double(dataEndCol, row, dataEndCol, row + scaleTickLength);
         draw(ab);
-        drawString(
-                text_String,
-                dataEndCol - (textWidth / 2),
-                textRow);
+        drawString(text_String, dataEndCol - (textWidth / 2), textRow);
         // Add to imageWidth as this label sticks out
         xAxisExtraWidthRight += (textWidth / 2) + textHeight;
 //        if (xAxisExtraWidthRight > xAxisExtraWidthRight) {
@@ -299,8 +258,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_Plot {
         text_String = "Male";
         textWidth = getTextWidth(text_String);
         xAxisExtraHeightBottom += textHeight + partTitleGap;
-        drawString(
-                text_String,
+        drawString(text_String,
                 ((dataStartCol + originCol) / 2) - (textWidth / 2),
                 textRow);
         setPaint(Color.DARK_GRAY);

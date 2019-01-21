@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.examples;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -26,14 +26,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
 
 /**
- * An implementation of <code>Generic_JApplet_AgeGenderLineChart<\code>
- *
- * If you run this class it will attempt to generate an Age by Gender Population
- * Line Chart Visualization of some default data and display it on screen.
+ * An example of generating an Age by Gender Population Line Chart Visualization.
  */
 public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
 

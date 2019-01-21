@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.core;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -34,7 +34,7 @@ import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Generic_AbstractLineGraph extends Generic_Plot {
+public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
 
     protected BigDecimal yMax;
 
@@ -77,37 +77,37 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
 
     /**
      *
-     * @param es
-     * @param f
-     * @param fmt Formet expecting PNG
-     * @param title
-     * @param dataWidth
-     * @param dataHeight
-     * @param xAxisLabel
-     * @param yAxisLabel
-     * @param drawAxesOnPlot
-     * @param ageInterval
-     * @param startAgeOfEndYearInterval
-     * @param decimalPlacePrecisionForCalculations
-     * @param significantDigits
-     * @param r
+     * @param es -
+     * @param f -
+     * @param fmt Format expecting PNG
+     * @param title -
+     * @param dataWidth -
+     * @param dataHeight -
+     * @param xAxisLabel -
+     * @param yAxisLabel -
+     * @param drawAxesOnPlot -
+     * @param ageInterval -
+     * @param startAgeOfEndYearInterval -
+     * @param decimalPlacePrecisionForCalculations -
+     * @param significantDigits -
+     * @param rm -
      */
     protected final void init(ExecutorService es, File f, String fmt,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval,
             int decimalPlacePrecisionForCalculations, int significantDigits,
-            RoundingMode r) {
+            RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, fmt, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations, significantDigits, r);
+                decimalPlacePrecisionForCalculations, significantDigits, rm);
     }
 
     /**
      *
-     * @param data
+     * @param data -
      */
     @Override
     public void initialiseParameters(Object[] data) {
@@ -131,15 +131,13 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * Draws the Y axis.
      *
-     * @param textHeight
-     * @param scaleTickLength
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param scaleTickAndTextSeparation
+     * @param textHeight -
+     * @param scaleTickLength -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * yAxisExtraWidthLeft;
-     * @TODO Better handle case when yAxisLabel has a text width wider than
-     * image is high
      */
     //@Override
     public int[] drawYAxis(int textHeight, int scaleTickLength,
@@ -318,9 +316,11 @@ public abstract class Generic_AbstractLineGraph extends Generic_Plot {
     /**
      * Draw the X axis.
      *
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param scaleTickAndTextSeparation
+     * @param textHeight -
+     * @param scaleTickLength -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * xAxisExtraWidthLeft; result[1] = xAxisExtraWidthRight; result[2] =
      * xAxisExtraHeightBottom.

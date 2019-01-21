@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.examples;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -27,53 +27,46 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
+import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An implementation of <code>Generic_JApplet_AgeGenderBoxPlot<\code>
- *
- * For generating an Age by Gender Population Box Plot Visualization of some
- * default data and display it on screen.
+ * An example of generating an Age by Gender Population Box Plot Visualization.
  */
 public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 
     public Generic_AgeGenderBoxPlot() {
     }
 
-    public Generic_AgeGenderBoxPlot(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawOriginLinesOnPlot,
-            int ageInterval,
-            int startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            int decimalPlacePrecisionForDisplay,
-            RoundingMode aRoundingMode) {
-        init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                ageInterval,
-                startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+    /**
+     *
+     * @param es
+     * @param f
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawOriginLinesOnPlot
+     * @param ageInterval
+     * @param startAgeOfEndYearInterval
+     * @param decimalPlacePrecisionForCalculations
+     * @param decimalPlacePrecisionForDisplay
+     * @param rm
+     */
+    public Generic_AgeGenderBoxPlot(ExecutorService es, File f, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
+            int startAgeOfEndYearInterval, int decimalPlacePrecisionForCalculations,
+            int decimalPlacePrecisionForDisplay, RoundingMode rm) {
+        init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawOriginLinesOnPlot, ageInterval,
+                startAgeOfEndYearInterval, decimalPlacePrecisionForCalculations,
+                decimalPlacePrecisionForDisplay, rm);
     }
 
     public static void main(String[] args) {
@@ -86,10 +79,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         File file;
         String format = "PNG";
         if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
+            System.out.println("Expected 2 args: args[0] title; args[1] File."
                     + " Recieved " + args.length + " args.");
             // Use defaults
             title = "Age Gender Population Box Plot";
@@ -112,23 +102,13 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         int startAgeOfEndYearInterval = 70;//95;
         int decimalPlacePrecisionForCalculations = 10;
         int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode roundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_AgeGenderBoxPlot plot = new Generic_AgeGenderBoxPlot(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                ageInterval,
-                startAgeOfEndYearInterval,
+        RoundingMode rm = RoundingMode.HALF_UP;
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Generic_AgeGenderBoxPlot plot = new Generic_AgeGenderBoxPlot(es, file,
+                format, title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
+                drawOriginLinesOnPlot, ageInterval, startAgeOfEndYearInterval,
                 decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                roundingMode);
+                decimalPlacePrecisionForDisplay, rm);
         plot.setData(plot.getDefaultData());
         //plot.run();
         plot.start();
@@ -142,8 +122,10 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
     public void drawBoxplots() {
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
-        TreeMap<Integer, BigDecimal[]> femaleBoxPlotData = (TreeMap<Integer, BigDecimal[]>) data[0];
-        TreeMap<Integer, BigDecimal[]> maleBoxPlotData = (TreeMap<Integer, BigDecimal[]>) data[1];
+        TreeMap<Integer, BigDecimal[]> femaleBoxPlotData;
+        femaleBoxPlotData = (TreeMap<Integer, BigDecimal[]>) data[0];
+        TreeMap<Integer, BigDecimal[]> maleBoxPlotData;
+        maleBoxPlotData = (TreeMap<Integer, BigDecimal[]>) data[1];
 
         Iterator<Map.Entry<Integer, BigDecimal[]>> ite;
         Map.Entry<Integer, BigDecimal[]> entry;
@@ -169,9 +151,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 //                0,
 //                getRoundingMode()).intValueExact()) - 4;
         int boxHeight = (Generic_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(ageInterval),
-                getCellHeight(),
-                0,
+                BigDecimal.valueOf(ageInterval), getCellHeight(), 0,
                 getRoundingMode()).intValue()) - 4;
         int whiskerHeight = boxHeight / 2;
 
@@ -188,14 +168,10 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 
             // Calculate plot drawing metrics
 //            int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
-//                    stats[4].subtract(stats[3]),
-//                    cellWidth,
-//                    0,
+//                    stats[4].subtract(stats[3]), cellWidth, 0,
 //                    getRoundingMode()).intValueExact();
             int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
-                    stats[4].subtract(stats[3]),
-                    cellWidth,
-                    0,
+                    stats[4].subtract(stats[3]), cellWidth, 0,
                     getRoundingMode()).intValue();
 
             int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age + 1)) + 2;
@@ -218,7 +194,8 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 
             // Draw max line
             int maxCol = coordinateToScreenCol(stats[7]);
-            abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col, boxMiddleRow);
+            abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col,
+                    boxMiddleRow);
             draw(abLine2D);
             abLine2D = new Line2D.Double(
                     maxCol, boxMiddleRow + (whiskerHeight / 2),
@@ -226,23 +203,17 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             draw(abLine2D);
             // Draw box after drawing min and max lines to neaten overlaps
             setPaint(Color.WHITE);
-            fillRect(
-                    q1Col,
-                    boxTopRow,
-                    boxWidth,
-                    boxHeight);
+            fillRect(q1Col, boxTopRow, boxWidth, boxHeight);
             setPaint(Color.DARK_GRAY);
-            Rectangle2D r2 = new Rectangle2D.Double(
-                    q1Col,
-                    boxTopRow,
-                    boxWidth,
-                    boxHeight);
+            Rectangle2D r2;
+            r2 = new Rectangle2D.Double(q1Col, boxTopRow, boxWidth, boxHeight);
             setPaint(Color.DARK_GRAY);
             draw(r2);
 
             // Draw median line
             int medianCol = coordinateToScreenCol(stats[2]);
-            abLine2D = new Line2D.Double(medianCol, boxTopRow, medianCol, boxBottomRow);
+            abLine2D = new Line2D.Double(medianCol, boxTopRow, medianCol,
+                    boxBottomRow);
             draw(abLine2D);
         }
         /*
@@ -266,9 +237,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
 
             // Calculate plot drawing metrics
             int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
-                    stats[4].subtract(stats[3]),
-                    getCellWidth(),
-                    0,
+                    stats[4].subtract(stats[3]), getCellWidth(), 0,
                     getRoundingMode()).intValueExact();
             int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age + 1)) + 2;
             //int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age));
@@ -282,8 +251,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             int minCol = coordinateToScreenCol(stats[6].negate());
             abLine2D = new Line2D.Double(minCol, boxMiddleRow, q1Col, boxMiddleRow);
             draw(abLine2D);
-            abLine2D = new Line2D.Double(
-                    minCol, boxMiddleRow + (whiskerHeight / 2),
+            abLine2D = new Line2D.Double(minCol, boxMiddleRow + (whiskerHeight / 2),
                     minCol, boxMiddleRow - (whiskerHeight / 2));
             draw(abLine2D);
 
@@ -292,24 +260,16 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             int maxCol = coordinateToScreenCol(stats[7].negate());
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col, boxMiddleRow);
             draw(abLine2D);
-            abLine2D = new Line2D.Double(
-                    maxCol, boxMiddleRow + (whiskerHeight / 2),
+            abLine2D = new Line2D.Double(maxCol, boxMiddleRow + (whiskerHeight / 2),
                     maxCol, boxMiddleRow - (whiskerHeight / 2));
             draw(abLine2D);
 
             // Draw box after drawing min and max lines to neaten overlaps
             setPaint(Color.DARK_GRAY);
-            Rectangle2D r2 = new Rectangle2D.Double(
-                    q3Col,
-                    boxTopRow,
-                    boxWidth,
-                    boxHeight);
+            Rectangle2D r2;
+            r2 = new Rectangle2D.Double(q3Col, boxTopRow, boxWidth, boxHeight);
             setPaint(Color.WHITE);
-            fillRect(
-                    q3Col,
-                    boxTopRow,
-                    boxWidth,
-                    boxHeight);
+            fillRect(q3Col, boxTopRow, boxWidth, boxHeight);
             setPaint(Color.DARK_GRAY);
             draw(r2);
 
@@ -325,10 +285,9 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         int ageInterval = 5;
         int startAgeOfEndYearInterval = 70;//95;
         decimalPlacePrecisionForCalculations = 10;
-        RoundingMode roundingMode = RoundingMode.HALF_UP;
+        RoundingMode rm = RoundingMode.HALF_UP;
         Object[] data = getDefaultData(ageInterval, startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                roundingMode);
+                decimalPlacePrecisionForCalculations, rm);
         return data;
     }
 
@@ -339,127 +298,111 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
      * @param malePopAge0
      * @return
      */
-    private static Object[] getPopulationData(
-            int femalePopAge0,
-            int malePopAge0) {
+    private static Object[] getPopulationData(int femalePopAge0, int malePopAge0) {
         Object[] result = new Object[2];
-        TreeMap<Integer, BigDecimal> femaleAgeInYearsPopulationCount_TreeMap = new TreeMap<>();
-        TreeMap<Integer, BigDecimal> maleAgeInYearsPopulationCount_TreeMap = new TreeMap<>();
-        BigDecimal population_BigDecimal;
-        BigDecimal change_BigDecimal;
+        TreeMap<Integer, BigDecimal> femaleData = new TreeMap<>();
+        TreeMap<Integer, BigDecimal> maleData = new TreeMap<>();
+        BigDecimal pop;
+        BigDecimal change;
         int age;
-        population_BigDecimal = new BigDecimal("" + femalePopAge0);
-        change_BigDecimal = new BigDecimal("0.94");
+        pop = new BigDecimal("" + femalePopAge0);
+        change = new BigDecimal("0.94");
         for (age = 0; age < 5; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.95");
+        change = new BigDecimal("0.95");
         for (age = 5; age < 10; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.96");
+        change = new BigDecimal("0.96");
         for (age = 10; age < 15; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.97");
+        change = new BigDecimal("0.97");
         for (age = 15; age < 20; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.99");
+        change = new BigDecimal("0.99");
         for (age = 20; age < 60; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.97");
+        change = new BigDecimal("0.97");
         for (age = 60; age < 80; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.75");
+        change = new BigDecimal("0.75");
         for (age = 80; age < 100; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            femaleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        population_BigDecimal = new BigDecimal("" + malePopAge0);
-        change_BigDecimal = new BigDecimal("0.93");
+        pop = new BigDecimal("" + malePopAge0);
+        change = new BigDecimal("0.93");
         for (age = 0; age < 5; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.94");
+        change = new BigDecimal("0.94");
         for (age = 5; age < 10; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.95");
+        change = new BigDecimal("0.95");
         for (age = 10; age < 15; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.96");
+        change = new BigDecimal("0.96");
         for (age = 15; age < 20; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.98");
+        change = new BigDecimal("0.98");
         for (age = 20; age < 60; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.7");
+        change = new BigDecimal("0.7");
         for (age = 60; age < 70; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.5");
+        change = new BigDecimal("0.5");
         for (age = 70; age < 100; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            maleData.put(age, pop);
+            pop = pop.multiply(change);
         }
-        Integer maxAge = 99;
-        BigDecimal maxCount = new BigDecimal("" + Math.max(femalePopAge0, malePopAge0));
-        result[0] = femaleAgeInYearsPopulationCount_TreeMap;
-        result[1] = maleAgeInYearsPopulationCount_TreeMap;
-        //result[2] = maxAge;
-        //result[3] = maxCount;
+//        Integer maxAge = 99;
+//        BigDecimal maxCount;
+//        maxCount = new BigDecimal("" + Math.max(femalePopAge0, malePopAge0));
+        result[0] = femaleData;
+        result[1] = maleData;
+//        result[2] = maxAge;
+//        result[3] = maxCount;
         return result;
     }
 
     /**
      * Returns a sample dataset.
      *
-     * @param roundingMode
+     * @param ageInterval Age interval.
+     * @param rm
      * @param startAgeOfEndYearInterval
      * @param decimalPlacePrecisionForCalculations
      * @return The dataset.
      */
-    public static Object[] getDefaultData(
-            int ageInterval,
+    public static Object[] getDefaultData(int ageInterval,
             int startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            RoundingMode roundingMode) {
+            int decimalPlacePrecisionForCalculations, RoundingMode rm) {
         //int startAgeOfEndYearInterval = getStartAgeOfEndYearInterval();
         Object[] result = new Object[5];
-        TreeMap<Integer, BigDecimal[]> femaleBoxPlotStatistics = new TreeMap<>();
-        TreeMap<Integer, BigDecimal[]> maleBoxPlotStatistics = new TreeMap<>();
+        TreeMap<Integer, BigDecimal[]> femaleBoxPlotStats = new TreeMap<>();
+        TreeMap<Integer, BigDecimal[]> maleBoxPlotStats = new TreeMap<>();
         Object[] data10000 = getPopulationData(10000, 10000);
         TreeMap<Integer, BigDecimal> female10000 = (TreeMap<Integer, BigDecimal>) data10000[0];
         TreeMap<Integer, BigDecimal> male10000 = (TreeMap<Integer, BigDecimal>) data10000[1];
@@ -521,18 +464,15 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             values.add(pop9900);
             values.add(pop9950);
             values.add(pop9800);
-            BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
-            System.out.println(
-                    "Female age " + age);
+            BigDecimal[] boxPlotStats;
+            boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
+                    decimalPlacePrecisionForCalculations, rm);
+            System.out.println("Female age " + age);
             if (age < startAgeOfEndYearInterval) {
-                femaleBoxPlotStatistics.put(age, boxPlotStatistics);
+                femaleBoxPlotStats.put(age, boxPlotStats);
             } else {
-                femaleBoxPlotStatistics.put(
-                        startAgeOfEndYearInterval + ageInterval,
-                        boxPlotStatistics);
+                femaleBoxPlotStats.put(startAgeOfEndYearInterval + ageInterval,
+                        boxPlotStats);
             }
         }
 //maxX = maxValue;
@@ -574,20 +514,18 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             values.add(pop9950);
             values.add(pop9800);
             System.out.println("Male age " + age);
-            BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
+            BigDecimal[] boxPlotStats;
+            boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
+                    decimalPlacePrecisionForCalculations, rm);
             if (age < startAgeOfEndYearInterval) {
-                maleBoxPlotStatistics.put(age, boxPlotStatistics);
+                maleBoxPlotStats.put(age, boxPlotStats);
             } else {
-                maleBoxPlotStatistics.put(
-                        startAgeOfEndYearInterval + ageInterval,
-                        boxPlotStatistics);
+                maleBoxPlotStats.put(startAgeOfEndYearInterval + ageInterval,
+                        boxPlotStats);
             }
         }
-        result[0] = femaleBoxPlotStatistics;
-        result[1] = maleBoxPlotStatistics;
+        result[0] = femaleBoxPlotStats;
+        result[1] = maleBoxPlotStats;
         //minX = maxValue.negate();
         result[2] = maxValue;
         result[3] = BigDecimal.valueOf(100);
@@ -600,12 +538,11 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
      *
      * @return The dataset.
      */
-    private static Object[] getDefaultData(
-            RoundingMode roundingMode,
+    private static Object[] getDefaultData(RoundingMode rm,
             int decimalPlacePrecisionForCalculations) {
         Object[] result = new Object[2];
-        TreeMap<Integer, BigDecimal[]> femaleBoxPlotStatistics = new TreeMap<>();
-        TreeMap<Integer, BigDecimal[]> maleBoxPlotStatistics = new TreeMap<>();
+        TreeMap<Integer, BigDecimal[]> femaleBoxPlotStats = new TreeMap<>();
+        TreeMap<Integer, BigDecimal[]> maleBoxPlotStats = new TreeMap<>();
         Object[] data10000 = getPopulationData(10000, 10000);
         TreeMap<Integer, BigDecimal> female10000 = (TreeMap<Integer, BigDecimal>) data10000[0];
         TreeMap<Integer, BigDecimal> male10000 = (TreeMap<Integer, BigDecimal>) data10000[1];
@@ -645,11 +582,10 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             pop = female9800.get(age);
             maxValue = Generic_BigDecimal.max(maxValue, pop);
             values.add(pop);
-            BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
-            femaleBoxPlotStatistics.put(age, boxPlotStatistics);
+            BigDecimal[] boxPlotStats;
+            boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
+                    decimalPlacePrecisionForCalculations, rm);
+            femaleBoxPlotStats.put(age, boxPlotStats);
         }
         maxValue = BigDecimal.ZERO;
         iterator = ((TreeMap<Integer, BigDecimal>) data10000[0]).keySet().iterator();
@@ -671,14 +607,13 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             pop = male9800.get(age);
             maxValue = Generic_BigDecimal.max(maxValue, pop);
             values.add(pop);
-            BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
-            maleBoxPlotStatistics.put(age, boxPlotStatistics);
+            BigDecimal[] boxPlotStats;
+            boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
+                    decimalPlacePrecisionForCalculations, rm);
+            maleBoxPlotStats.put(age, boxPlotStats);
         }
-        result[0] = femaleBoxPlotStatistics;
-        result[1] = maleBoxPlotStatistics;
+        result[0] = femaleBoxPlotStats;
+        result[1] = maleBoxPlotStats;
         return result;
     }
 

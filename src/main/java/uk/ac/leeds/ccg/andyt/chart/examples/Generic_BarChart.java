@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.examples;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractBarChart;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -34,8 +35,7 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * A runnable class that attempts to generate Bar Chart Visualization of some
- * default data and write it out to file as a PNG format file.
+ * An example of generating a Bar Chart Visualization.
  */
 public class Generic_BarChart extends Generic_AbstractBarChart {
 
@@ -333,5 +333,10 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
                 0,
                 getRoundingMode()).intValue();
         extraHeightTop += barHeight;
+    }
+
+    @Override
+    public int[] drawYAxis(int interval, int textHeight, int startOfEndInterval, int scaleTickLength, int scaleTickAndTextSeparation, int partTitleGap, int seperationDistanceOfAxisAndData) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

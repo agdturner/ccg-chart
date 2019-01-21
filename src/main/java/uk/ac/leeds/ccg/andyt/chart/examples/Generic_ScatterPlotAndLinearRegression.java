@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.examples;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,8 +31,8 @@ import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * If you run this class it will attempt to generate an
- * ScatterPlotAndLinearRegression.
+ * An example of generating a Scatter Plot visualization with a linear 
+ * regression line.
  */
 public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot {
 

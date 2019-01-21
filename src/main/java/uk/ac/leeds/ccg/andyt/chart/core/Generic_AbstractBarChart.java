@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package uk.ac.leeds.ccg.andyt.chart;
+package uk.ac.leeds.ccg.andyt.chart.core;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -32,7 +32,7 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Generic_AbstractBarChart extends Generic_Plot {
+public abstract class Generic_AbstractBarChart extends Generic_AbstractPlot {
 
     protected int xAxisIncrement;
     protected int numberOfYAxisTicks;
@@ -74,15 +74,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         setOriginRow();
         setOriginCol();
 
-        RoundingMode roundingMode = getRoundingMode();
         BigDecimal cellWidth = getCellWidth();
         if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
             barWidth = 1;
         } else {
             barWidth = Generic_BigDecimal.divideRoundIfNecessary(
-                    intervalWidth,
-                    cellWidth,
-                    0,
+                    intervalWidth, cellWidth, 0,
                     roundingMode).intValue() - (2 * barGap);
         }
         if (barWidth < 1) {
@@ -121,16 +118,13 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
     /**
      * Draws the Y axis.
      *
-     * @param textHeight
-     * @param scaleTickLength
-     * @param pin This is a value that should appear on the Yaxis
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param scaleTickAndTextSeparation
+     * @param textHeight -
+     * @param scaleTickLength -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * yAxisExtraWidthLeft;
-     * @TODO Better handle case when yAxisLabel has a text width wider than
-     * image is high
      */
     //@Override
     public int[] drawYAxis(int textHeight, int scaleTickLength,
@@ -230,9 +224,9 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         ab = new Line2D.Double(col, row, col - scaleTickLength, row);
         draw(ab);
         if ((previousRow - row) > textHeight) {
-            text_String = "" + rowValue;;
+            text_String = "" + rowValue;
             textWidth = getTextWidth(text_String);
-            drawString(                    text_String,
+            drawString(text_String,
                     col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
                     //row);
                     row + (textHeight / 3));
@@ -254,9 +248,11 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
     /**
      * Draw the X axis.
      *
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @param scaleTickAndTextSeparation
+     * @param textHeight -
+     * @param scaleTickLength -
+     * @param seperationDistanceOfAxisAndData -
+     * @param partTitleGap -
+     * @param scaleTickAndTextSeparation -
      * @return an int[] result for setting display parameters where: result[0] =
      * xAxisExtraWidthLeft; result[1] = xAxisExtraWidthRight; result[2] =
      * xAxisExtraHeightBottom.
@@ -296,11 +292,7 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
         setPaint(Color.GRAY);
         int row = dataEndRow + seperationDistanceOfAxisAndData;
         // draw XAxis Line
-        ab = new Line2D.Double(
-                dataStartCol,
-                row,
-                dataEndCol + extraAxisLength,
-                row);
+        ab = new Line2D.Double(dataStartCol, row, dataEndCol + extraAxisLength, row);
         draw(ab);
         // Add ticks and labels
         int textRow = row + scaleTickLength + scaleTickAndTextSeparation;
@@ -321,20 +313,12 @@ public abstract class Generic_AbstractBarChart extends Generic_Plot {
             col = coordinateToScreenCol(min) + colCenterer;
             //col = value * xAxisTickIncrement + col0;
             //System.out.println("" + value + ", " + count + ", \"" + label +  "\"");        
-            ab = new Line2D.Double(
-                    col,
-                    row,
-                    col,
-                    row + scaleTickLength);
+            ab = new Line2D.Double(col, row, col, row + scaleTickLength);
             draw(ab);
             if (first || (col - previousCol) > textHeight) {
                 text_String = label;
                 textWidth = getTextWidth(text_String);
-                writeText(
-                        text_String,
-                        angle,
-                        col + (textHeight / 3),
-                        textRow + textWidth);
+                writeText(text_String, angle, col + (textHeight / 3), textRow + textWidth);
 
                 maxWidth = Math.max(maxWidth, textWidth);
                 previousCol = col;
