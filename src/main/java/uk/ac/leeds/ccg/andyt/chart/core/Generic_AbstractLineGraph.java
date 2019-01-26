@@ -154,7 +154,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
             maxYPin = Generic_Collections.getMax(yPin);
             minYPin = Generic_Collections.getMin(yPin);
             minY = minYPin.min(minY);
-            maxY =maxYPin.max(maxY);
+            maxY = maxYPin.max(maxY);
             setCellHeight();
         }
 //            if (minY.compareTo(BigDecimal.ZERO) > 1) {
@@ -195,19 +195,19 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
         boolean hasNegatives;
         hasNegatives = minY.compareTo(BigDecimal.ZERO) == -1;
         /**
-         * If yIncrement is not set, then set it. If it is set, then set 
+         * If yIncrement is not set, then set it. If it is set, then set
          * numberOfYAxisTicksGT0 and numberOfXAxisTicksGT0
          */
         if (yIncrement == null) {
             yIncrement = (maxY.subtract(minY)).divide(
+                    new BigDecimal(numberOfYAxisTicks), mc);
+            initNumberOfYAxisTicksGT0(hasPositives, mc);
+            initNumberOfYAxisTicksLT0(hasNegatives, mc);
+            yIncrement = (maxY.subtract(minY)).divide(
                     new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
         } else {
-            if (hasPositives) {
-                numberOfYAxisTicksGT0 = ((maxY).divide(yIncrement, mc)).intValue() + 1;
-            }
-            if (hasNegatives) {
-                numberOfYAxisTicksLT0 = ((minY).divide(yIncrement, mc)).negate().intValue() + 1;
-            }
+            initNumberOfYAxisTicksGT0(hasPositives, mc);
+            initNumberOfYAxisTicksLT0(hasNegatives, mc);
         }
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
                 + seperationDistanceOfAxisAndData;
@@ -217,89 +217,70 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
         setPaint(Color.GRAY);
         ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
         draw(ab);
-        setPaint(Color.GRAY);
-        String tickText;
         int textWidth;
         int maxTickTextWidth = 0;
-        boolean first = true;
-
         int tickTextEndCol;
         tickTextEndCol = col - scaleTickAndTextSeparation - scaleTickLength;
-        int tickTextStartCol;
-
+        int row;
         BitSet rows = new BitSet();
         // Add the yPins that fit
         Iterator<BigDecimal> ite;
         ite = yPin.iterator();
         while (ite.hasNext()) {
             y = ite.next();
-            int row = coordinateToScreenRow(y);
-            // Check that this can be added
-            tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
-            textWidth = getTextWidth(tickText);
-            tickTextStartCol = tickTextEndCol - textWidth;
-            drawString(tickText, tickTextStartCol, row + (textHeight / 3));
-            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+            row = coordinateToScreenRow(y);
+            // Add Y Axis Mark
+            maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                    maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
         }
 
-        y = minY;
-        int row0 = coordinateToScreenRow(y);
-        int previousRow = row0;
-        for (int i = 0; i < numberOfYAxisTicks; i++) {
-            int row = coordinateToScreenRow(y);
+        // Add a pin at zero
+        if (hasNegatives && hasPositives) {
+            y = BigDecimal.ZERO;
+            row = coordinateToScreenRow(BigDecimal.ZERO);
+            // Add Y Axis Mark
+            maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                    maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+        }
+
+        // Add incremental scale elemnts greater than zero
+        y = yIncrement;
+        for (int i = 0; i < numberOfYAxisTicksGT0; i++) {
+            row = coordinateToScreenRow(y);
             System.out.println(row);
             if (row >= dataStartRow) {
-                setPaint(Color.GRAY);
-                ab = new Line2D.Double(col, row, col - scaleTickLength, row);
-                draw(ab);
-                if (first || (previousRow - row) > textHeight) {
-                    tickText = "" + Generic_BigDecimal.roundIfNecessary(
-                            y, 2, RoundingMode.HALF_UP);
-                    textWidth = getTextWidth(tickText);
-                    drawString(tickText,
-                            col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
-                            //row);
-                            row + (textHeight / 3));
-                    maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
-                    previousRow = row;
-                    first = false;
-                }
+                // Add Y Axis Mark
+                maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                        maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
             }
             y = y.add(yIncrement);
         }
-        // <drawEndOfYAxisTick>
-        int row = coordinateToScreenRow(maxY);
-        setPaint(Color.GRAY);
-        ab = new Line2D.Double(col, row, col - scaleTickLength, row);
-        draw(ab);
-        if ((previousRow - row) > textHeight) {
-            tickText = "" + Generic_BigDecimal.roundIfNecessary(maxY, 2,
-                    RoundingMode.HALF_UP);
-            textWidth = getTextWidth(tickText);
-            drawString(tickText,
-                    col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
-                    //row);
-                    row + (textHeight / 3));
-            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+
+        // drawEndOfYAxisTick
+        row = coordinateToScreenRow(maxY);
+        // Add Y Axis Mark
+        maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+
+        // Add incremental scale elements less than zero
+        y = yIncrement.negate();
+        for (int i = 0; i < numberOfYAxisTicksLT0; i++) {
+            row = coordinateToScreenRow(y);
+            if (row <= dataEndRow) {
+                // Add Y Axis Mark
+                maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                        maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+            }
+            y = y.add(yIncrement.negate());
         }
-        // </drawEndOfYAxisTick>
-        // <drawStartOfYAxisTick>
+
+        // drawStartOfYAxisTick
         row = coordinateToScreenRow(minY);
-        setPaint(Color.GRAY);
-        ab = new Line2D.Double(col, row, col - scaleTickLength, row);
-        draw(ab);
-        if ((previousRow - row) > textHeight) {
-            tickText = "" + Generic_BigDecimal.roundIfNecessary(maxY, 2,
-                    RoundingMode.HALF_UP);
-            textWidth = getTextWidth(tickText);
-            drawString(tickText,
-                    col - scaleTickAndTextSeparation - scaleTickLength - textWidth,
-                    //row);
-                    row + (textHeight / 3));
-            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
-        }
-        // </drawStartOfYAxisTick>
+        maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+
         yAxisExtraWidthLeft += maxTickTextWidth;
+
         // Y axis label
         setPaint(Color.BLACK);
         textWidth = getTextWidth(yAxisLabel);
@@ -307,10 +288,63 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
         col = 3 * textHeight / 2;
         writeText(yAxisLabel, angle, col, dataMiddleRow + (textWidth / 2));
         yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
-        int[] result;
-        result = new int[1];
-        result[0] = yAxisExtraWidthLeft;
-        return result;
+        int[] r;
+        r = new int[1];
+        r[0] = yAxisExtraWidthLeft;
+        return r;
+    }
+
+    /**
+     * 
+     * @param row
+     * @param col
+     * @param scaleTickLength
+     * @param y
+     * @param maxTickTextWidth
+     * @param textHeight
+     * @param rows
+     * @param tickTextEndCol
+     * @param rm
+     * @return 
+     */
+    protected int addYAxisMark(int row, int col, int scaleTickLength,
+            BigDecimal y, int maxTickTextWidth, int textHeight, BitSet rows,
+            int tickTextEndCol, RoundingMode rm) {
+        int r = maxTickTextWidth;
+        //System.out.println(textHeight);
+        int tHDiv3 = textHeight / 3;
+        int tHPlus = 3 * textHeight / 2 ;
+        // Check that this can be added
+        int bitsetRow = (row - dataStartRow + tHDiv3)/ tHPlus;
+        System.out.println(bitsetRow);
+        if (!rows.get(bitsetRow)) {
+            Line2D.Double ab;
+            String tickText;
+            int textWidth;
+            int tickTextStartCol;
+            setPaint(Color.GRAY);
+            ab = new Line2D.Double(col, row, col - scaleTickLength, row);
+            draw(ab);
+            rows.set(bitsetRow, true);
+            tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
+            textWidth = getTextWidth(tickText);
+            tickTextStartCol = tickTextEndCol - textWidth;
+            drawString(tickText, tickTextStartCol, row + tHDiv3);
+            r = Math.max(r, textWidth);
+        }
+        return r;
+    }
+
+    public void initNumberOfYAxisTicksGT0(boolean hasPositives, MathContext mc) {
+        if (hasPositives) {
+            numberOfYAxisTicksGT0 = ((maxY).divide(yIncrement, mc)).intValue() + 1;
+        }
+    }
+
+    public void initNumberOfYAxisTicksLT0(boolean hasNegatives, MathContext mc) {
+        if (hasNegatives) {
+            numberOfYAxisTicksLT0 = ((minY).divide(yIncrement, mc)).negate().intValue() + 1;
+        }
     }
 
     /**

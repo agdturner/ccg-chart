@@ -211,7 +211,9 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int dataHeight = 250;
         String xAxisLabel = "X";
         String yAxisLabel = "Y";
-        boolean drawOriginLinesOnPlot = true;
+        boolean drawYZero;
+//        drawYZero = true;
+        drawYZero = false;
         int numberOfYAxisTicks = 11;
         BigDecimal yMax;
         yMax = null;
@@ -227,7 +229,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         ExecutorService es = Executors.newSingleThreadExecutor();
         Generic_LineGraph chart = new Generic_LineGraph(es, file, format, title,
                 dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
-                yIncrement, numberOfYAxisTicks, true,
+                yIncrement, numberOfYAxisTicks, drawYZero,
                 decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay,
                 roundingMode);
