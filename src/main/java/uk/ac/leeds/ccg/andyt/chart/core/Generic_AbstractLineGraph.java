@@ -154,7 +154,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
             maxYPin = Generic_Collections.getMax(yPin);
             minYPin = Generic_Collections.getMin(yPin);
             minY = minYPin.min(minY);
-            maxY =maxYPin.max(maxY);
+            maxY = maxYPin.max(maxY);
             setCellHeight();
         }
 //            if (minY.compareTo(BigDecimal.ZERO) > 1) {
@@ -194,13 +194,23 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
         hasPositives = maxY.compareTo(BigDecimal.ZERO) == 1;
         boolean hasNegatives;
         hasNegatives = minY.compareTo(BigDecimal.ZERO) == -1;
+
         /**
-         * If yIncrement is not set, then set it. If it is set, then set 
+         * If yIncrement is not set, then set it. If it is set, then set
          * numberOfYAxisTicksGT0 and numberOfXAxisTicksGT0
          */
         if (yIncrement == null) {
-            yIncrement = (maxY.subtract(minY)).divide(
-                    new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
+            if (numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0 == 0) {
+                if (numberOfYAxisTicks == 0) {
+                    int debug = 1;
+                } else {
+                    yIncrement = (maxY.subtract(minY)).divide(
+                            new BigDecimal(numberOfYAxisTicks), mc);
+                }
+            } else {
+                yIncrement = (maxY.subtract(minY)).divide(
+                        new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
+            }
         } else {
             if (hasPositives) {
                 numberOfYAxisTicksGT0 = ((maxY).divide(yIncrement, mc)).intValue() + 1;
