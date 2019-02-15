@@ -239,17 +239,19 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
 
         BitSet rows = new BitSet();
         // Add the yPins that fit
-        Iterator<BigDecimal> ite;
-        ite = yPin.iterator();
-        while (ite.hasNext()) {
-            y = ite.next();
-            int row = coordinateToScreenRow(y);
-            // Check that this can be added
-            tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
-            textWidth = getTextWidth(tickText);
-            tickTextStartCol = tickTextEndCol - textWidth;
-            drawString(tickText, tickTextStartCol, row + (textHeight / 3));
-            maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+        if (yPin != null) {
+            Iterator<BigDecimal> ite;
+            ite = yPin.iterator();
+            while (ite.hasNext()) {
+                y = ite.next();
+                int row = coordinateToScreenRow(y);
+                // Check that this can be added
+                tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
+                textWidth = getTextWidth(tickText);
+                tickTextStartCol = tickTextEndCol - textWidth;
+                drawString(tickText, tickTextStartCol, row + (textHeight / 3));
+                maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
+            }
         }
 
         y = minY;
