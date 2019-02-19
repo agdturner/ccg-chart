@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
-import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
+import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**

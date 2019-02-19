@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
 import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
-import uk.ac.leeds.ccg.andyt.math.stats.Generic_Statistics;
+import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
 
 /**
  * An example of generating an Age by Gender Population Line Chart Visualization.
