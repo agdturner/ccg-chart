@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractBarChart;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
@@ -327,7 +327,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
+        int barHeight = Math_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(getAgeInterval()),
                 getCellHeight(),
                 0,

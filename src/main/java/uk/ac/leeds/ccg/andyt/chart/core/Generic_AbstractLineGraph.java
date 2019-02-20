@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 
 /**
  * An abstract class for creating Age by Gender Population visualisations and
@@ -243,7 +243,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
 //                y = ite.next();
 //                int row = coordinateToScreenRow(y);
 //                // Check that this can be added
-//                tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
+//                tickText = "" + Math_BigDecimal.roundIfNecessary(y, 2, rm);
 //                textWidth = getTextWidth(tickText);
 //                tickTextStartCol = tickTextEndCol - textWidth;
 //                drawString(tickText, tickTextStartCol, row + (textHeight / 3));
@@ -351,7 +351,7 @@ public abstract class Generic_AbstractLineGraph extends Generic_AbstractPlot {
             ab = new Line2D.Double(col, row, col - scaleTickLength, row);
             draw(ab);
             rows.set(bitsetRow, true);
-            tickText = "" + Generic_BigDecimal.roundIfNecessary(y, 2, rm);
+            tickText = "" + Math_BigDecimal.roundIfNecessary(y, 2, rm);
             textWidth = getTextWidth(tickText);
             tickTextStartCol = tickTextEndCol - textWidth;
             drawString(tickText, tickTextStartCol, row + tHDiv3);

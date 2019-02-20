@@ -21,7 +21,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.ExecutorService;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 
 /**
  * An abstract class for creating Age by Gender Population visualisations and
@@ -85,7 +85,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot
 //            if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
 //                originCol = dataStartCol;
 //            } else {
-//                originCol = Generic_BigDecimal.divideRoundIfNecessary(
+//                originCol = Math_BigDecimal.divideRoundIfNecessary(
 //                    BigDecimal.ZERO.subtract(minX),
 //                    cellWidth,
 //                    0,
@@ -137,7 +137,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot
         if (cellHeight.compareTo(BigDecimal.ZERO) == 0) {
             barHeight = 1;
         } else {
-            barHeight = Generic_BigDecimal.divideRoundIfNecessary(
+            barHeight = Math_BigDecimal.divideRoundIfNecessary(
                     BigDecimal.valueOf(interval), getCellHeight(), 0,
                     getRoundingMode()).intValue();
         }
@@ -220,7 +220,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot
         drawString(text_String, originCol - (textWidth / 2), textRow);
         // Left end scale tick and label
         if (maxX != null) {
-            text_String = Generic_BigDecimal.roundIfNecessary(maxX,
+            text_String = Math_BigDecimal.roundIfNecessary(maxX,
                     decimalPlacePrecisionForDisplay, roundingMode).toPlainString();
             textWidth = getTextWidth(text_String);
         }
@@ -240,7 +240,7 @@ public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot
 //        }
         // Right end scale tick and label
         //text_String = maxX.toBigInteger().toString();
-        text_String = Generic_BigDecimal.roundIfNecessary(maxX,
+        text_String = Math_BigDecimal.roundIfNecessary(maxX,
                 decimalPlacePrecisionForDisplay, roundingMode).toPlainString();
         textWidth = getTextWidth(text_String);
         ab = new Line2D.Double(dataEndCol, row, dataEndCol, row + scaleTickLength);

@@ -1,6 +1,15 @@
 package uk.ac.leeds.ccg.andyt.chart.core;
 
-import java.awt.*;
+//import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -27,7 +36,7 @@ import uk.ac.leeds.ccg.andyt.chart.execution.Generic_Runnable;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 //import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 //import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
@@ -539,7 +548,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         BigDecimal theCellWidth = getCellWidth();
         if (minX != null) {
             if (theCellWidth.compareTo(BigDecimal.ZERO) != 0) {
-                col = Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
+                col = Math_BigDecimal.divideRoundToFixedDecimalPlaces(
                         x.subtract(minX), theCellWidth, 0, rm).intValue();
             }
         }
@@ -572,7 +581,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
         if (minY != null) {
             if (theCellHeight != null) {
                 if (theCellHeight.compareTo(BigDecimal.ZERO) != 0) {
-                    row = getDataHeight() - Generic_BigDecimal.divideRoundToFixedDecimalPlaces(
+                    row = getDataHeight() - Math_BigDecimal.divideRoundToFixedDecimalPlaces(
                             y.subtract(minY), getCellHeight(), 0, rm).intValue();
                 }
             }
@@ -608,9 +617,9 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
             cellHeight = BigDecimal.valueOf(2);
             cellHeightDiv2 = BigDecimal.ONE;
         } else {
-            cellHeight = Generic_BigDecimal.divideRoundIfNecessary(maxY.subtract(minY), BigDecimal.valueOf(getDataHeight()),
+            cellHeight = Math_BigDecimal.divideRoundIfNecessary(maxY.subtract(minY), BigDecimal.valueOf(getDataHeight()),
                     dp, roundingMode);
-            cellHeightDiv2 = Generic_BigDecimal.divideRoundIfNecessary(cellHeight, BigDecimal.valueOf(2), dp, roundingMode);
+            cellHeightDiv2 = Math_BigDecimal.divideRoundIfNecessary(cellHeight, BigDecimal.valueOf(2), dp, roundingMode);
         }
     }
 
@@ -620,9 +629,9 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
             cellWidth = BigDecimal.valueOf(2);
             cellWidthDiv2 = BigDecimal.ONE;
         } else {
-            cellWidth = Generic_BigDecimal.divideRoundIfNecessary(maxX.subtract(minX), BigDecimal.valueOf(getDataWidth()),
+            cellWidth = Math_BigDecimal.divideRoundIfNecessary(maxX.subtract(minX), BigDecimal.valueOf(getDataWidth()),
                     dp, roundingMode);
-            cellWidthDiv2 = Generic_BigDecimal.divideRoundIfNecessary(cellWidth,
+            cellWidthDiv2 = Math_BigDecimal.divideRoundIfNecessary(cellWidth,
                     BigDecimal.valueOf(2), dp, roundingMode);
         }
     }

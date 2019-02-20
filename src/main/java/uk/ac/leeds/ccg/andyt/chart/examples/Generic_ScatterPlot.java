@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractPlot;
 import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
@@ -181,9 +181,8 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
-                    text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-                            x,
-                            Generic_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
+                    text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(x,
+                            Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
                             roundingMode).toString();
                 }
                 textWidth = getTextWidth(text_String);
@@ -213,9 +212,8 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
-                    text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-                            x,
-                            Generic_BigDecimal.getDecimalPlacePrecision(
+                    text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(x,
+                            Math_BigDecimal.getDecimalPlacePrecision(
                                     x,
                                     significantDigits),
                             roundingMode).toString();
@@ -321,9 +319,8 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-                            y,
-                            Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
+                    text = "" + Math_BigDecimal.roundStrippingTrailingZeros(y,
+                            Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
                             roundingMode).toString();
                 }
                 tw = getTextWidth(text);
@@ -349,9 +346,8 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-                            y,
-                            Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
+                    text = "" + Math_BigDecimal.roundStrippingTrailingZeros(y,
+                            Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
                             roundingMode).toString();
                 }
                 tw = getTextWidth(text);
@@ -435,9 +431,9 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
 //                //text_String = "" + x.stripTrailingZeros().toPlainString();
 //                //text_String = "" + x.round(mc).stripTrailingZeros().toString();
 //                //text_String = "" + x.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+//                text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(
 //                        x,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
+//                        Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
 //                        _RoundingMode).toString();
 //            }
 //            textWidth = getTextWidth(text_String);
@@ -464,9 +460,9 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
 //                //text_String = "" + x.stripTrailingZeros().toPlainString();
 //                //text_String = "" + x.round(mc).stripTrailingZeros().toString();
 //                //text_String = "" + x.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+//                text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(
 //                        x,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
+//                        Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
 //                        _RoundingMode).toString();
 //            }
 //            textWidth = getTextWidth(text_String);
@@ -547,9 +543,9 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
 //                //text_String = "" + y.stripTrailingZeros().toPlainString();
 //                //text_String = "" + y.round(mc).stripTrailingZeros().toString();
 //                //text_String = "" + y.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+//                text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(
 //                        y,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
+//                        Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
 //                        _RoundingMode).toString();
 //            }
 //             textWidth = getTextWidth(text_String);
@@ -574,9 +570,9 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
 //                //text_String = "" + y.stripTrailingZeros().toPlainString();
 //                    //text_String = "" + y.round(mc).stripTrailingZeros().toString();
 //                //text_String = "" + y.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
+//                text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(
 //                        y,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
+//                        Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
 //                        _RoundingMode).toString();
 //            }
 //             textWidth = getTextWidth(text_String);
@@ -634,7 +630,7 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
 //            if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
 //                originCol = dataStartCol;
 //            } else {
-//                originCol = Generic_BigDecimal.divideRoundIfNecessary(
+//                originCol = Math_BigDecimal.divideRoundIfNecessary(
 //                        minX,
 //                        cellWidth,
 //                        0,

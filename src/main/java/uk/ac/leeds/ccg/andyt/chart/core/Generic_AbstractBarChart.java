@@ -24,7 +24,7 @@ import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 
 /**
@@ -78,7 +78,7 @@ public abstract class Generic_AbstractBarChart extends Generic_AbstractPlot {
         if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
             barWidth = 1;
         } else {
-            barWidth = Generic_BigDecimal.divideRoundIfNecessary(
+            barWidth = Math_BigDecimal.divideRoundIfNecessary(
                     intervalWidth, cellWidth, 0,
                     roundingMode).intValue() - (2 * barGap);
         }
@@ -105,7 +105,7 @@ public abstract class Generic_AbstractBarChart extends Generic_AbstractPlot {
 //            if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
 //                originCol = dataStartCol;
 //            } else {
-//                originCol = Generic_BigDecimal.divideRoundIfNecessary(
+//                originCol = Math_BigDecimal.divideRoundIfNecessary(
 //                    BigDecimal.ZERO.subtract(minX),
 //                    cellWidth,
 //                    0,

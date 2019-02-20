@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
@@ -145,12 +145,12 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         // between age intervals. If boxHeight is less than 3 then each boxplot 
         // will display more like a line. If the boxHeight is an odd number 
         // then this allows for a central centre line that is one pixel thick.
-//        int boxHeight = (Generic_BigDecimal.divideRoundIfNecessary(
+//        int boxHeight = (Math_BigDecimal.divideRoundIfNecessary(
 //                BigDecimal.valueOf(ageInterval),
 //                getCellHeight(),
 //                0,
 //                getRoundingMode()).intValueExact()) - 4;
-        int boxHeight = (Generic_BigDecimal.divideRoundIfNecessary(
+        int boxHeight = (Math_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(ageInterval), getCellHeight(), 0,
                 getRoundingMode()).intValue()) - 4;
         int whiskerHeight = boxHeight / 2;
@@ -167,10 +167,10 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             stats = entry.getValue();
 
             // Calculate plot drawing metrics
-//            int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
+//            int boxWidth = Math_BigDecimal.divideRoundIfNecessary(
 //                    stats[4].subtract(stats[3]), cellWidth, 0,
 //                    getRoundingMode()).intValueExact();
-            int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
+            int boxWidth = Math_BigDecimal.divideRoundIfNecessary(
                     stats[4].subtract(stats[3]), cellWidth, 0,
                     getRoundingMode()).intValue();
 
@@ -236,7 +236,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             stats = entry.getValue();
 
             // Calculate plot drawing metrics
-            int boxWidth = Generic_BigDecimal.divideRoundIfNecessary(
+            int boxWidth = Math_BigDecimal.divideRoundIfNecessary(
                     stats[4].subtract(stats[3]), getCellWidth(), 0,
                     getRoundingMode()).intValueExact();
             int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age + 1)) + 2;
@@ -620,7 +620,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Generic_BigDecimal.divideRoundIfNecessary(
+        int barHeight = Math_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(getAgeInterval()), getCellHeight(), 0,
                 getRoundingMode()).intValue();
         extraHeightTop += barHeight;
