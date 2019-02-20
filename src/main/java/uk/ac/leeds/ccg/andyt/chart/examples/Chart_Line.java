@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractLineGraph;
+import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractLine;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -37,14 +37,14 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 /**
  * An example of generating a Line Graph visualization.
  */
-public class Generic_LineGraph extends Generic_AbstractLineGraph {
+public class Chart_Line extends Chart_AbstractLine {
 
     /**
      * Iff set to true then a line is added to the graph at Y = 0.
      */
     boolean drawYZero;
 
-    public Generic_LineGraph() {
+    public Chart_Line() {
     }
 
     /**
@@ -66,7 +66,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
      * @param decimalPlacePrecisionForDisplay
      * @param r
      */
-    public Generic_LineGraph(ExecutorService es, File file, String format,
+    public Chart_Line(ExecutorService es, File file, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, BigDecimal yMax, ArrayList<BigDecimal> yPin,
             BigDecimal yIncrement, int numberOfYAxisTicks, boolean drawYZero,
@@ -227,7 +227,7 @@ public class Generic_LineGraph extends Generic_AbstractLineGraph {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode roundingMode = RoundingMode.HALF_UP;
         ExecutorService es = Executors.newSingleThreadExecutor();
-        Generic_LineGraph chart = new Generic_LineGraph(es, file, format, title,
+        Chart_Line chart = new Chart_Line(es, file, format, title,
                 dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
                 yIncrement, numberOfYAxisTicks, drawYZero,
                 decimalPlacePrecisionForCalculations,

@@ -21,7 +21,7 @@ import java.awt.Graphics2D;
 /**
  * Interface for drawable objects
  */
-public interface Generic_Drawable_Interface {
+public interface Chart_Drawable {
     
     public Dimension draw();
     public Dimension draw(Graphics2D g);

@@ -27,16 +27,16 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.math.stat.regression.SimpleRegression;
-import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
+import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Scatter Plot visualization with a linear 
  * regression line.
  */
-public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot {
+public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
 
-    public Generic_ScatterPlotAndLinearRegression() {
+    public Chart_ScatterAndLinearRegression() {
     }
 
     /**
@@ -54,7 +54,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Generic_ScatterPlotAndLinearRegression(
+    public Chart_ScatterAndLinearRegression(
             ExecutorService es, File file, String format, String title,
             int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot,
@@ -97,8 +97,8 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode rm = RoundingMode.HALF_UP;
         ExecutorService es = Executors.newSingleThreadExecutor();
-        Generic_ScatterPlotAndLinearRegression plot;
-        plot = new Generic_ScatterPlotAndLinearRegression(es, file, format,
+        Chart_ScatterAndLinearRegression plot;
+        plot = new Chart_ScatterAndLinearRegression(es, file, format,
                 title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                 drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
                 decimalPlacePrecisionForDisplay, rm);
@@ -108,8 +108,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     @Override
     public void drawData() {
         double[][] dataD;
-        dataD = getDataAsDoubleArray(
-                (ArrayList<Generic_XYNumericalData>) data[0]);
+        dataD = getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
         drawYEqualsXLineData(dataD);
         /*
          * rp[0] is the y axis intercept;
@@ -128,7 +127,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     
     @Override
     public Object[] getDefaultData() {
-        return new Generic_ScatterPlot().getDefaultData();
+        return new Chart_Scatter().getDefaultData();
     }
 
     @Override
@@ -141,8 +140,7 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
             data = getDefaultData();
         }
         drawPoints(Color.DARK_GRAY, data);
-        double[][] dataAsDoubleArray = getDataAsDoubleArray(
-                (ArrayList<Generic_XYNumericalData>) data[0]);
+        double[][] dataAsDoubleArray = getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
          * rp[0] is the y axis intercept;
@@ -626,15 +624,14 @@ public class Generic_ScatterPlotAndLinearRegression extends Generic_ScatterPlot 
     }
 
     protected double[][] getDataAsDoubleArray() {
-         return getDataAsDoubleArray(
-                 (ArrayList<Generic_XYNumericalData>) data[0]);
+         return getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
     }
     
     protected double[][] getDataAsDoubleArray(
-            ArrayList<Generic_XYNumericalData> d) {
+            ArrayList<Data_BiNumeric> d) {
         double[][] r = new double[2][d.size()];
-        Iterator<Generic_XYNumericalData> ite = d.iterator();
-        Generic_XYNumericalData aGeneric_XYNumericalData;
+        Iterator<Data_BiNumeric> ite = d.iterator();
+        Data_BiNumeric aGeneric_XYNumericalData;
         /*
          * data[0][] are the y values data[1][] are the x values
          */

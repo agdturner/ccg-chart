@@ -25,12 +25,12 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-public class Generic_Canvas extends Canvas {
+public class Chart_Canvas extends Canvas {
 
-    public Generic_Canvas() {
+    public Chart_Canvas() {
     }
 
-    public Generic_AbstractPlot Plot;
+    public Chart Plot;
     public Graphics2D G2D;
     public BufferedImage BI;
     public Rectangle Rect;

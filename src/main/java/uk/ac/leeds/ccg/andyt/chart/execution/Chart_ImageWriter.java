@@ -22,30 +22,30 @@ import java.util.Set;
  *
  * @author Andy Turner
  */
-public class Generic_ImageWriter extends Generic_Executor {
+public class Chart_ImageWriter extends Chart_Executor {
 
-    private final Set<Generic_EventListener> listeners;
+    private final Set<Chart_EventListener> listeners;
 
-    public Generic_ImageWriter() {
+    public Chart_ImageWriter() {
         listeners = new HashSet<>();
     }
     
     public static void main(String[] args) {
-//                Generic_ImageWriter i = new Generic_ImageWriter();
-//                Generic_EventListenerImpl listener = new Generic_EventListenerImpl();
+//                Chart_ImageWriter i = new Chart_ImageWriter();
+//                Chart_EventListenerImpl listener = new Chart_EventListenerImpl();
 //                i.addGeneric_EventListener(listener);
 //                i.start();
-        Generic_ImageWriter i = new Generic_ImageWriter();
-        Generic_EventListenerImpl listener = new Generic_EventListenerImpl();
+        Chart_ImageWriter i = new Chart_ImageWriter();
+        Chart_EventListenerImpl listener = new Chart_EventListenerImpl();
         i.addGeneric_EventListener(listener);
         i.start();
         }
 
-    public void addGeneric_EventListener(Generic_EventListener listener) {
+    public void addGeneric_EventListener(Chart_EventListener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeGeneric_EventListener(Generic_EventListener listener) {
+    public void removeGeneric_EventListener(Chart_EventListener listener) {
         this.listeners.remove(listener);
     }
 
@@ -57,11 +57,11 @@ public class Generic_ImageWriter extends Generic_Executor {
     }
 
     private void notifyListenersOfRenderingComplete() {
-//        for (Generic_EventListener e : listeners) {
-//            e.renderingComplete(new Generic_RenderingCompleteEvent(this));
+//        for (Chart_EventListener e : listeners) {
+//            e.renderingComplete(new Chart_RenderingCompleteEvent(this));
 //        }
         listeners.forEach((e) -> {
-            e.renderingComplete(new Generic_RenderingCompleteEvent(this));
+            e.renderingComplete(new Chart_RenderingCompleteEvent(this));
         });
     }
 }

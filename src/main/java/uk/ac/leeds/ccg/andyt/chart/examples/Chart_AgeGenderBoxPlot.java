@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
+import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
@@ -36,9 +36,9 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 /**
  * An example of generating an Age by Gender Population Box Plot Visualization.
  */
-public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
+public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
 
-    public Generic_AgeGenderBoxPlot() {
+    public Chart_AgeGenderBoxPlot() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Generic_AgeGenderBoxPlot(ExecutorService es, File f, String format,
+    public Chart_AgeGenderBoxPlot(ExecutorService es, File f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
             int startAgeOfEndYearInterval, int decimalPlacePrecisionForCalculations,
@@ -104,7 +104,7 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode rm = RoundingMode.HALF_UP;
         ExecutorService es = Executors.newSingleThreadExecutor();
-        Generic_AgeGenderBoxPlot plot = new Generic_AgeGenderBoxPlot(es, file,
+        Chart_AgeGenderBoxPlot plot = new Chart_AgeGenderBoxPlot(es, file,
                 format, title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                 drawOriginLinesOnPlot, ageInterval, startAgeOfEndYearInterval,
                 decimalPlacePrecisionForCalculations,

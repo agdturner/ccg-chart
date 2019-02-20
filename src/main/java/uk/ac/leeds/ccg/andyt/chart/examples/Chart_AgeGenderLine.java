@@ -26,18 +26,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractAgeGenderPlot;
+import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
 
 /**
  * An example of generating an Age by Gender Population Line Chart Visualization.
  */
-public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
+public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
 
-    public Generic_AgeGenderLineChart() {
+    public Chart_AgeGenderLine() {
     }
 
-    public Generic_AgeGenderLineChart(
+    public Chart_AgeGenderLine(
             ExecutorService executorService,
             File file,
             String format,
@@ -104,7 +104,7 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode aRoundingMode = RoundingMode.HALF_UP;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_AgeGenderLineChart plot = new Generic_AgeGenderLineChart(
+        Chart_AgeGenderLine plot = new Chart_AgeGenderLine(
                 executorService,
                 file,
                 format,

@@ -25,14 +25,14 @@ import java.util.logging.Logger;
  *
  * @author Andy Turner
  */
-public class Generic_ScheduledExecutor implements Runnable {
+public class Chart_ScheduledExecutor implements Runnable {
 
-    public Generic_ScheduledExecutor se;
+    public Chart_ScheduledExecutor se;
     ScheduledExecutorService ses;
 
     public static void main(String[] args) {
-        Generic_ScheduledExecutor se;
-        se = new Generic_ScheduledExecutor();
+        Chart_ScheduledExecutor se;
+        se = new Chart_ScheduledExecutor();
         se.run(args);
     }
 
@@ -53,7 +53,7 @@ public class Generic_ScheduledExecutor implements Runnable {
 //            ses.awaitTermination(20, TimeUnit.SECONDS);
             ses.awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Generic_ScheduledExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Chart_ScheduledExecutor.class.getName()).log(Level.SEVERE, null, ex);
         }
         // shutdown now.
         ses.shutdownNow();
@@ -75,7 +75,7 @@ public class Generic_ScheduledExecutor implements Runnable {
             try {
                 o.wait(timeDelay);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Generic_ScheduledExecutor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Chart_ScheduledExecutor.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.println("Waited " + uk.ac.leeds.ccg.andyt.generic.util.Generic_Time.getTime(timeDelay) + ".");
         }

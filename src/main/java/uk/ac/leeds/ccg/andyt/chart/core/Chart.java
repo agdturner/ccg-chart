@@ -31,8 +31,8 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
-import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
-import uk.ac.leeds.ccg.andyt.chart.execution.Generic_Runnable;
+import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 //import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 //import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -42,8 +42,8 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 /**
  * An class for creating 2D plot visualisations.
  */
-public abstract class Generic_AbstractPlot extends Generic_Runnable
-        implements Generic_Drawable_Interface, Runnable {
+public abstract class Chart extends Chart_Runnable
+        implements Chart_Drawable, Runnable {
 
     protected Object[] data;
     protected String format;
@@ -232,13 +232,13 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     private Integer startAgeOfEndYearInterval;
 
     protected transient ExecutorService executorService;
-    public Generic_Canvas Canvas;
+    public Chart_Canvas Canvas;
     public Future future;
 
-    public Generic_AbstractPlot() {
+    public Chart() {
     }
 
-    public Generic_AbstractPlot(int runID) {
+    public Chart(int runID) {
         super(runID);
     }
 
@@ -515,8 +515,8 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
      * @param p A pixel location as a Point2D.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Generic_XYNumericalData dataPointToCoordinate(            Point2D p) {
-        Generic_XYNumericalData r = new Generic_XYNumericalData();
+    public Data_BiNumeric dataPointToCoordinate(            Point2D p) {
+        Data_BiNumeric r = new Data_BiNumeric();
         BigDecimal x = dataRowToYCoordinate(p.getX());
         BigDecimal y = dataColToXCoordinate(p.getY());
         r.setX(x);
@@ -985,7 +985,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
     @Override
     public void run() {
         try {
-            Canvas = new Generic_Canvas();
+            Canvas = new Chart_Canvas();
             Canvas.Plot = this;
             Canvas.Rect = new Rectangle(0, 0, getDataWidth(), getDataHeight());
             //            Graphics2D g2 = (Graphics2D) Canvas.getGraphics();
@@ -994,7 +994,7 @@ public abstract class Generic_AbstractPlot extends Generic_Runnable
             //            Dimension dim = draw();
             //            Canvas.setDimension(dim);
             PrinterJob pj = PrinterJob.getPrinterJob();
-            Generic_Printable printable = new Generic_Printable(Canvas);
+            Chart_Printable printable = new Chart_Printable(Canvas);
             pj.setPrintable(printable);
             String psMimeType = "application/postscript";
             FileOutputStream fos = null;

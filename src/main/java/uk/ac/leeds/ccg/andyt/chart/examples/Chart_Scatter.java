@@ -26,20 +26,20 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractPlot;
-import uk.ac.leeds.ccg.andyt.data.Generic_XYNumericalData;
+import uk.ac.leeds.ccg.andyt.chart.core.Chart;
+import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Scatter Plot visualization.
  */
-public class Generic_ScatterPlot extends Generic_AbstractPlot {
+public class Chart_Scatter extends Chart {
 
-    public Generic_ScatterPlot() {
+    public Chart_Scatter() {
     }
 
-    public Generic_ScatterPlot(
+    public Chart_Scatter(
             ExecutorService executorService,
             File file,
             String format,
@@ -102,7 +102,7 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode aRoundingMode = RoundingMode.HALF_UP;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_ScatterPlot plot = new Generic_ScatterPlot(
+        Chart_Scatter plot = new Chart_Scatter(
                 executorService,
                 file,
                 format,
@@ -602,10 +602,10 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
             Color color,
             Object[] data) {
         if (data != null) {
-            ArrayList<Generic_XYNumericalData> theGeneric_XYNumericalData;
-            theGeneric_XYNumericalData = (ArrayList<Generic_XYNumericalData>) data[0];
-            Iterator<Generic_XYNumericalData> ite = theGeneric_XYNumericalData.iterator();
-            Generic_XYNumericalData aGeneric_XYNumericalData;
+            ArrayList<Data_BiNumeric> theGeneric_XYNumericalData;
+            theGeneric_XYNumericalData = (ArrayList<Data_BiNumeric>) data[0];
+            Iterator<Data_BiNumeric> ite = theGeneric_XYNumericalData.iterator();
+            Data_BiNumeric aGeneric_XYNumericalData;
             setPaint(color);
             Point2D aPoint2D;
             while (ite.hasNext()) {
@@ -656,7 +656,7 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
         BigDecimal minx = BigDecimal.valueOf(Double.MAX_VALUE);
         BigDecimal maxy = BigDecimal.valueOf(Double.MIN_VALUE);
         BigDecimal miny = BigDecimal.valueOf(Double.MAX_VALUE);
-        ArrayList<Generic_XYNumericalData> theGeneric_XYNumericalData = new ArrayList<>();
+        ArrayList<Data_BiNumeric> theGeneric_XYNumericalData = new ArrayList<>();
 //        for (int i = -100; i < 328; i++) {         
 //            for (int j = -100; j < 0; j++) {
 //        for (int i = -100; i < 100; i++) {
@@ -673,7 +673,7 @@ public class Generic_ScatterPlot extends Generic_AbstractPlot {
                 minx = minx.min(x);
                 maxy = maxy.max(y);
                 miny = miny.min(y);
-                Generic_XYNumericalData point = new Generic_XYNumericalData(
+                Data_BiNumeric point = new Data_BiNumeric(
                         x,
                         y);
                 theGeneric_XYNumericalData.add(point);

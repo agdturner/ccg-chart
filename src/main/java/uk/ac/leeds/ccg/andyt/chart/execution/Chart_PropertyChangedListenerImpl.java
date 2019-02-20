@@ -15,15 +15,23 @@
  */
 package uk.ac.leeds.ccg.andyt.chart.execution;
 
+import java.beans.PropertyChangeEvent;
+
 /**
+ *
  * @author Andy Turner
  */
-public class Generic_EventListenerImpl implements Generic_EventListener {
-
+public class Chart_PropertyChangedListenerImpl implements Chart_PropertyChangedListener {
+    
     boolean renderingComplete;
     
     @Override
-    public void renderingComplete(Generic_RenderingCompleteEvent e) {
+    public void propertyChange(PropertyChangeEvent evt) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void renderingComplete(Chart_PropertyChangedListener e) {
         renderingComplete = true;
         //throw new UnsupportedOperationException("Not supported yet.");
     }

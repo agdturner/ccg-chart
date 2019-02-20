@@ -32,7 +32,7 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Generic_AbstractBarChart extends Generic_AbstractPlot {
+public abstract class Chart_AbstractBar extends Chart {
 
     protected int xAxisIncrement;
     protected int numberOfYAxisTicks;

@@ -21,9 +21,9 @@ import java.util.EventObject;
  *
  * @author Andy Turner
  */
-public class Generic_RenderingCompleteEvent extends EventObject {
+public class Chart_RenderingCompleteEvent extends EventObject {
     
-        public Generic_RenderingCompleteEvent(Object source) {
+        public Chart_RenderingCompleteEvent(Object source) {
                 super(source);
         }
     

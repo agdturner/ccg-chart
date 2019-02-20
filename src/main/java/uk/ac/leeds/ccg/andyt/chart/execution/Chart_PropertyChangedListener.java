@@ -15,14 +15,13 @@
  */
 package uk.ac.leeds.ccg.andyt.chart.execution;
 
-import java.util.EventListener;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author Andy Turner
  */
-public interface Generic_EventListener extends EventListener {
+public interface Chart_PropertyChangedListener extends PropertyChangeListener {
     
-    public void renderingComplete(Generic_RenderingCompleteEvent e);
-    
+    public void renderingComplete(Chart_PropertyChangedListener e);
 }

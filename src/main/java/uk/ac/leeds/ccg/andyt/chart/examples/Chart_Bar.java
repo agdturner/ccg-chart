@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import uk.ac.leeds.ccg.andyt.chart.core.Generic_AbstractBarChart;
+import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractBar;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -37,9 +37,9 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 /**
  * An example of generating a Bar Chart Visualization.
  */
-public class Generic_BarChart extends Generic_AbstractBarChart {
+public class Chart_Bar extends Chart_AbstractBar {
 
-    public Generic_BarChart() {
+    public Chart_Bar() {
     }
 
     /**
@@ -63,7 +63,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Generic_BarChart(ExecutorService es, File file,
+    public Chart_Bar(ExecutorService es, File file,
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, //Ignored
@@ -175,7 +175,7 @@ public class Generic_BarChart extends Generic_AbstractBarChart {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode roundingMode = RoundingMode.HALF_UP;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Generic_BarChart chart = new Generic_BarChart(
+        Chart_Bar chart = new Chart_Bar(
                 executorService,
                 file,
                 format,

@@ -24,18 +24,18 @@ import java.util.logging.Logger;
 /**
  * @author Andy Turner
  */
-public class Generic_Executor implements Runnable {
+public class Chart_Executor implements Runnable {
 
-    public Generic_ImageWriter imageWriter;
+    public Chart_ImageWriter imageWriter;
 
-    public Generic_Executor() {
+    public Chart_Executor() {
     }
 
-    public Generic_Executor(Generic_ImageWriter i) {
+    public Chart_Executor(Chart_ImageWriter i) {
     }
 
     public static void main(String[] args) {
-        new Generic_Executor().run();
+        new Chart_Executor().run();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Generic_Executor implements Runnable {
         ExecutorService es;
         es = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < poolSize * 2; i++) {
-            final Generic_Runnable r = new Generic_Runnable(runID);
+            final Chart_Runnable r = new Chart_Runnable(runID);
             es.execute(r::start);
             runID++;
         }
@@ -54,7 +54,7 @@ public class Generic_Executor implements Runnable {
             // wait for them to finish for up to one minute.
             es.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Generic_Executor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Chart_Executor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

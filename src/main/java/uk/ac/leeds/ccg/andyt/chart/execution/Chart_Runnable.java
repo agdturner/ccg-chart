@@ -22,21 +22,21 @@ import java.util.logging.Logger;
  *
  * @author Andy Turner
  */
-public class Generic_Runnable extends Thread implements Runnable {
+public class Chart_Runnable extends Thread implements Runnable {
 
-    Generic_EventListenerImpl listener;
+    Chart_EventListenerImpl listener;
     int runID;
 
-    public Generic_Runnable() {
+    public Chart_Runnable() {
         this(0);
     }
 
-    public Generic_Runnable(int runID) {
+    public Chart_Runnable(int runID) {
         this.runID = runID;
     }
 
     public static void main(String[] args) {
-        new Generic_Runnable(0).start();
+        new Chart_Runnable(0).start();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Generic_Runnable extends Thread implements Runnable {
         long timeSleepInMillis = 10000;
         sleepABit(timeSleepInMillis);
         if (listener != null) {
-            listener.renderingComplete(new Generic_RenderingCompleteEvent(this));
+            listener.renderingComplete(new Chart_RenderingCompleteEvent(this));
         }
         sleepABit(timeSleepInMillis * timeSleepInMillis);
     }
@@ -54,7 +54,7 @@ public class Generic_Runnable extends Thread implements Runnable {
         try {
             Thread.sleep(timeSleepInMillis);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Generic_Runnable.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Chart_Runnable.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("..." + runID + " done sleeping");
     }

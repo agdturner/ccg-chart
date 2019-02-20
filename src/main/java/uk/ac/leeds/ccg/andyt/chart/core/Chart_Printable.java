@@ -21,13 +21,13 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 
 /**
- * Holds a reference to a Generic_Canvas for graphics rendering.
+ * Holds a reference to a Chart_Canvas for graphics rendering.
  */
-public class Generic_Printable implements Printable {
+public class Chart_Printable implements Printable {
 
-    public Generic_Canvas c;
+    public Chart_Canvas c;
     
-    public Generic_Printable (Generic_Canvas c) {
+    public Chart_Printable (Chart_Canvas c) {
         this.c = c;
     }
     

@@ -28,7 +28,7 @@ import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Generic_AbstractAgeGenderPlot extends Generic_AbstractPlot {
+public abstract class Chart_AbstractAgeGender extends Chart {
 
     protected final void init(
             ExecutorService executorService,

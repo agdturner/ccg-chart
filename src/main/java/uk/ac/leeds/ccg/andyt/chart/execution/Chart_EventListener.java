@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Centre for Computational Geography, University of Leeds.
+ * Copyright (C) 2018 Centre for Computational Geography, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,14 @@
  */
 package uk.ac.leeds.ccg.andyt.chart.execution;
 
-import java.beans.PropertyChangeEvent;
+import java.util.EventListener;
 
 /**
  *
  * @author Andy Turner
  */
-public class Generic_PropertyChangedListenerImpl implements Generic_PropertyChangedListener {
+public interface Chart_EventListener extends EventListener {
     
-    boolean renderingComplete;
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void renderingComplete(Generic_PropertyChangedListener e) {
-        renderingComplete = true;
-        //throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void renderingComplete(Chart_RenderingCompleteEvent e);
     
 }
