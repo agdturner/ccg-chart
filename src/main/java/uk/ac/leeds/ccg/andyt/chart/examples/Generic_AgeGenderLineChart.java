@@ -807,19 +807,19 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
             age = iterator.next();
             pop = female10000.get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9000.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9900.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9950.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9800.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             BigDecimal[] boxPlotStatistics
                     = Generic_Statistics.getSummaryStatistics_0(
@@ -834,19 +834,19 @@ public class Generic_AgeGenderLineChart extends Generic_AbstractAgeGenderPlot {
             age = iterator.next();
             pop = male10000.get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9000.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9900.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9950.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9800.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
                     values,

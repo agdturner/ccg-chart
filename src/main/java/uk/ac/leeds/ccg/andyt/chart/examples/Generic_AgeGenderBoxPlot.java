@@ -454,11 +454,11 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             if (age < startAgeOfEndYearInterval) {
                 values = new ArrayList<>();
             }
-            maxValue = Generic_BigDecimal.max(maxValue, pop10000);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9000);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9900);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9950);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9800);
+            maxValue = maxValue.max(pop10000);
+            maxValue = maxValue.max(pop9000);
+            maxValue = maxValue.max(pop9900);
+            maxValue = maxValue.max(pop9950);
+            maxValue = maxValue.max(pop9800);
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -503,11 +503,11 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             if (age < startAgeOfEndYearInterval) {
                 values = new ArrayList<>();
             }
-            maxValue = Generic_BigDecimal.max(maxValue, pop10000);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9000);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9900);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9950);
-            maxValue = Generic_BigDecimal.max(maxValue, pop9800);
+            maxValue = maxValue.max(pop10000);
+            maxValue = maxValue.max(pop9000);
+            maxValue = maxValue.max(pop9900);
+            maxValue = maxValue.max(pop9950);
+            maxValue = maxValue.max(pop9800);
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -568,19 +568,19 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             age = iterator.next();
             pop = female10000.get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9000.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9900.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9950.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = female9800.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             BigDecimal[] boxPlotStats;
             boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
@@ -593,19 +593,19 @@ public class Generic_AgeGenderBoxPlot extends Generic_AbstractAgeGenderPlot {
             age = iterator.next();
             pop = male10000.get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9000.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9900.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9950.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             pop = male9800.get(age);
-            maxValue = Generic_BigDecimal.max(maxValue, pop);
+            maxValue = maxValue.max(pop);
             values.add(pop);
             BigDecimal[] boxPlotStats;
             boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
