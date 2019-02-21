@@ -236,27 +236,16 @@ public abstract class Chart_AbstractLine extends Chart {
         int row;
         BitSet rows = new BitSet();
         // Add the yPins that fit
-//        if (yPin != null) {
-//            Iterator<BigDecimal> ite;
-//            ite = yPin.iterator();
-//            while (ite.hasNext()) {
-//                y = ite.next();
-//                int row = coordinateToScreenRow(y);
-//                // Check that this can be added
-//                tickText = "" + Math_BigDecimal.roundIfNecessary(y, 2, rm);
-//                textWidth = getTextWidth(tickText);
-//                tickTextStartCol = tickTextEndCol - textWidth;
-//                drawString(tickText, tickTextStartCol, row + (textHeight / 3));
-//                maxTickTextWidth = Math.max(maxTickTextWidth, textWidth);
-//            }
-        Iterator<BigDecimal> ite;
-        ite = yPin.iterator();
-        while (ite.hasNext()) {
-            y = ite.next();
-            row = coordinateToScreenRow(y);
-            // Add Y Axis Mark
-            maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
-                    maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+        if (yPin != null) {
+            Iterator<BigDecimal> ite;
+            ite = yPin.iterator();
+            while (ite.hasNext()) {
+                y = ite.next();
+                row = coordinateToScreenRow(y);
+                // Add Y Axis Mark
+                maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
+                        maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
+            }
         }
 
         // Add a pin at zero
@@ -320,7 +309,7 @@ public abstract class Chart_AbstractLine extends Chart {
     }
 
     /**
-     * 
+     *
      * @param row
      * @param col
      * @param scaleTickLength
@@ -330,7 +319,7 @@ public abstract class Chart_AbstractLine extends Chart {
      * @param rows
      * @param tickTextEndCol
      * @param rm
-     * @return 
+     * @return
      */
     protected int addYAxisMark(int row, int col, int scaleTickLength,
             BigDecimal y, int maxTickTextWidth, int textHeight, BitSet rows,
@@ -338,9 +327,9 @@ public abstract class Chart_AbstractLine extends Chart {
         int r = maxTickTextWidth;
         //System.out.println(textHeight);
         int tHDiv3 = textHeight / 3;
-        int tHPlus = 3 * textHeight / 2 ;
+        int tHPlus = 3 * textHeight / 2;
         // Check that this can be added
-        int bitsetRow = (row - dataStartRow + tHDiv3)/ tHPlus;
+        int bitsetRow = (row - dataStartRow + tHDiv3) / tHPlus;
         System.out.println(bitsetRow);
         if (!rows.get(bitsetRow)) {
             Line2D.Double ab;
