@@ -49,6 +49,10 @@
         <agdt-java-generic-math.version>1.0-SNAPSHOT</agdt-java-generic-math.version>
         <agdt-java-generic-stats.version>1.0-SNAPSHOT</agdt-java-generic-stats.version>
         <agdt-java-generic-data.version>1.0-SNAPSHOT</agdt-java-generic-data.version>
+        <!--
+        <commons-math.version>2.2</commons-math.version>
+        -->
+        <commons-math.version>3.6.1</commons-math.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
