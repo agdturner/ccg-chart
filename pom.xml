@@ -53,8 +53,12 @@
         <commons-math.version>2.2</commons-math.version>
         -->
         <commons-math.version>3.6.1</commons-math.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <!--
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        -->
     </properties>
     
     <dependencies>
