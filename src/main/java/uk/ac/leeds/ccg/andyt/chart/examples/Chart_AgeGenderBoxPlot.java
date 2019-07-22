@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
@@ -85,8 +86,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
             title = "Age Gender Population Box Plot";
             System.out.println("Use default title: " + title);
             Generic_Files files = new Generic_Files();
-            File outdir;
-            outdir = files.getOutputDataDir();
+            File outdir = files.getOutputDataDir();
             file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
