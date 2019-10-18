@@ -201,7 +201,7 @@ public class Chart_Line extends Chart_AbstractLine {
             System.out.println("Use default title: " + title);
             Generic_Files files = new Generic_Files();
             File outdir;
-            outdir = files.getOutputDataDir();
+            outdir = files.getOutputDir();
             file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {

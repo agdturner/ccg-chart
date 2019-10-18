@@ -152,7 +152,7 @@ public class Chart_Bar extends Chart_AbstractBar {
             System.out.println("Use default title: " + title);
             Generic_Files files = new Generic_Files();
             File outdir;
-            outdir = files.getOutputDataDir();
+            outdir = files.getOutputDir();
             file = new File(outdir, title.replace(" ", "_") + "." + format);
             System.out.println("Use default File: " + file.toString());
         } else {
