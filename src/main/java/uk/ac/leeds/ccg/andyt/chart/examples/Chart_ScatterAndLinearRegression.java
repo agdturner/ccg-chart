@@ -28,15 +28,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
- * An example of generating a Scatter Plot visualization with a linear 
+ * An example of generating a Scatter Plot visualization with a linear
  * regression line.
  */
 public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
 
-    public Chart_ScatterAndLinearRegression() {
+    public Chart_ScatterAndLinearRegression(Generic_Environment e) {
+        super(e);
     }
 
     /**
@@ -54,13 +56,14 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Chart_ScatterAndLinearRegression(
+    public Chart_ScatterAndLinearRegression(Generic_Environment e,
             ExecutorService es, File file, String format, String title,
             int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode rm) {
+        super(e);
         init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot,
                 decimalPlacePrecisionForCalculations,
@@ -68,41 +71,47 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
-        /*
-         * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println("Expected 2 args: args[0] title; args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Scatter Plot And Linear Regression";
-            System.out.println("Default title: " + title);
-            file = new File(new File(System.getProperty("user.dir")),
-                    title.replace(" ", "_") + "." + format);
-            System.out.println("Default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
+            /**
+             * Initialise title and File to write image to
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println("Expected 2 args: args[0] title; args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Scatter Plot And Linear Regression";
+                System.out.println("Default title: " + title);
+                file = new File(new File(System.getProperty("user.dir")),
+                        title.replace(" ", "_") + "." + format);
+                System.out.println("Default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 256;//250;
+            int dataHeight = 256;
+            String xAxisLabel = "Expected (X)";
+            String yAxisLabel = "Observed (Y)";
+            boolean drawOriginLinesOnPlot = false;//true;
+            int decimalPlacePrecisionForCalculations = 100;
+            int decimalPlacePrecisionForDisplay = 3;
+            RoundingMode rm = RoundingMode.HALF_UP;
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_ScatterAndLinearRegression plot;
+            plot = new Chart_ScatterAndLinearRegression(e, es, file, format,
+                    title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
+                    drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
+                    decimalPlacePrecisionForDisplay, rm);
+            plot.run();
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
         }
-        int dataWidth = 256;//250;
-        int dataHeight = 256;
-        String xAxisLabel = "Expected (X)";
-        String yAxisLabel = "Observed (Y)";
-        boolean drawOriginLinesOnPlot = false;//true;
-        int decimalPlacePrecisionForCalculations = 100;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode rm = RoundingMode.HALF_UP;
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Chart_ScatterAndLinearRegression plot;
-        plot = new Chart_ScatterAndLinearRegression(es, file, format,
-                title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
-                drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay, rm);
-        plot.run();
     }
 
     @Override
@@ -124,10 +133,10 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
             drawLegend(rp);
         }
     }
-    
+
     @Override
     public Object[] getDefaultData() {
-        return new Chart_Scatter().getDefaultData();
+        return new Chart_Scatter(env).getDefaultData();
     }
 
     @Override
@@ -624,9 +633,9 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     }
 
     protected double[][] getDataAsDoubleArray() {
-         return getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
+        return getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
     }
-    
+
     protected double[][] getDataAsDoubleArray(
             ArrayList<Data_BiNumeric> d) {
         double[][] r = new double[2][d.size()];

@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractBar;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
@@ -40,7 +41,8 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public class Chart_Bar extends Chart_AbstractBar {
 
-    public Chart_Bar() {
+    public Chart_Bar(Generic_Environment e) {
+        super(e);
     }
 
     /**
@@ -64,7 +66,7 @@ public class Chart_Bar extends Chart_AbstractBar {
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Chart_Bar(ExecutorService es, File file,
+    public Chart_Bar(Generic_Environment e, ExecutorService es, File file,
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, //Ignored
@@ -73,6 +75,7 @@ public class Chart_Bar extends Chart_AbstractBar {
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode rm) {
+        super(e);
         this.barGap = barGap;
         this.xAxisIncrement = xIncrement;
         this.numberOfYAxisTicks = numberOfYAxisTicks;
@@ -133,73 +136,76 @@ public class Chart_Bar extends Chart_AbstractBar {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
-
-        /*
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
+            /*
          * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Example Bar Chart";
-            System.out.println("Use default title: " + title);
-            Generic_Files files = new Generic_Files();
-            File outdir;
-            outdir = files.getOutputDir();
-            file = new File(outdir, title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println(
+                        "Expected 2 args:"
+                        + " args[0] title;"
+                        + " args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Example Bar Chart";
+                System.out.println("Use default title: " + title);
+                File outdir = e.files.getOutputDir();
+                file = new File(outdir, title.replace(" ", "_") + "." + format);
+                System.out.println("Use default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 500;
+            int dataHeight = 250;
+            String xAxisLabel = "Population";
+            String yAxisLabel = "Count of Areas";
+            boolean drawOriginLinesOnPlot = true;
+            int barGap = 1;
+            int xIncrement = 1;
+            int numberOfYAxisTicks = 11;
+            BigDecimal yMax;
+            yMax = null;
+            BigDecimal yPin = BigDecimal.ZERO;
+            BigDecimal yIncrement = BigDecimal.ONE;
+            //int yAxisStartOfEndInterval = 60;
+            int decimalPlacePrecisionForCalculations = 10;
+            int decimalPlacePrecisionForDisplay = 3;
+            RoundingMode roundingMode = RoundingMode.HALF_UP;
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Chart_Bar chart = new Chart_Bar(e,
+                    executorService,
+                    file,
+                    format,
+                    title,
+                    dataWidth,
+                    dataHeight,
+                    xAxisLabel,
+                    yAxisLabel,
+                    drawOriginLinesOnPlot,
+                    barGap,
+                    xIncrement,
+                    yMax,
+                    yPin,
+                    yIncrement,
+                    numberOfYAxisTicks,
+                    decimalPlacePrecisionForCalculations,
+                    decimalPlacePrecisionForDisplay,
+                    roundingMode);
+            chart.setData(chart.getDefaultData());
+            chart.run();
+            Future future = chart.future;
+            Generic_Execution exec = new Generic_Execution(e);
+            exec.shutdownExecutorService(executorService, future, chart);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
         }
-        int dataWidth = 500;
-        int dataHeight = 250;
-        String xAxisLabel = "Population";
-        String yAxisLabel = "Count of Areas";
-        boolean drawOriginLinesOnPlot = true;
-        int barGap = 1;
-        int xIncrement = 1;
-        int numberOfYAxisTicks = 11;
-        BigDecimal yMax;
-        yMax = null;
-        BigDecimal yPin = BigDecimal.ZERO;
-        BigDecimal yIncrement = BigDecimal.ONE;
-        //int yAxisStartOfEndInterval = 60;
-        int decimalPlacePrecisionForCalculations = 10;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode roundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Chart_Bar chart = new Chart_Bar(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                barGap,
-                xIncrement,
-                yMax,
-                yPin,
-                yIncrement,
-                numberOfYAxisTicks,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                roundingMode);
-        chart.setData(chart.getDefaultData());
-        chart.run();
-        Future future = chart.future;
-        Generic_Execution.shutdownExecutorService(
-                executorService, future, chart);
     }
 
     @Override
@@ -247,8 +253,8 @@ public class Chart_Bar extends Chart_AbstractBar {
         //setYAxisWidth(yAxisExtraWidthLeft);
         // Draw X axis
         int[] xAxisDimensions;
-        xAxisDimensions = drawXAxis(textHeight, scaleTickLength, 
-                scaleTickAndTextSeparation, partTitleGap, 
+        xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
+                scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         xAxisExtraWidthLeft = xAxisDimensions[0];
         xAxisExtraWidthRight = xAxisDimensions[1];

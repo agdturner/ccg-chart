@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
@@ -39,39 +40,36 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
 
-    public Chart_AgeGenderBar() {
+    public Chart_AgeGenderBar(Generic_Environment e) {
+        super(e);
     }
 
-    public Chart_AgeGenderBar(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawOriginLinesOnPlot,
-            int ageInterval,
-            int startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            int decimalPlacePrecisionForDisplay,
-            RoundingMode aRoundingMode) {
-        init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                ageInterval,
-                startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+    /**
+     *
+     * @param es
+     * @param file
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawOriginLinesOnPlot
+     * @param ageInterval
+     * @param startAgeOfEndYearInterval
+     * @param dpc decimalPlacePrecisionForCalculations
+     * @param dpd decimalPlacePrecisionForDisplay
+     * @param rm RoundingMode
+     */
+    public Chart_AgeGenderBar(Generic_Environment e, ExecutorService es,
+            File file, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
+            int startAgeOfEndYearInterval, int dpc, int dpd, RoundingMode rm) {
+        super(e);
+        init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawOriginLinesOnPlot, ageInterval,
+                startAgeOfEndYearInterval, dpc, dpd, rm);
     }
 
     @Override
@@ -81,7 +79,6 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
 
     public void drawBarChart(int ageInterval) {
         setPaint(Color.DARK_GRAY);
-        RoundingMode roundingMode = getRoundingMode();
         BigDecimal cellWidth = getCellWidth();
         TreeMap<Long, BigDecimal> femaleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[0];
         TreeMap<Long, BigDecimal> maleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[1];
@@ -194,62 +191,63 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
 
-        /*
+            /*
          * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Age Gender Population Bar Chart";
-            System.out.println("Use default title: " + title);
-            file = new File(
-                    new File(System.getProperty("user.dir")),
-                    title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println(
+                        "Expected 2 args:"
+                        + " args[0] title;"
+                        + " args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Age Gender Population Bar Chart";
+                System.out.println("Use default title: " + title);
+                file = new File(
+                        new File(System.getProperty("user.dir")),
+                        title.replace(" ", "_") + "." + format);
+                System.out.println("Use default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 250;
+            int dataHeight = 500;
+            String xAxisLabel = "Population";
+            String yAxisLabel = "Age";
+            boolean drawOriginLinesOnPlot = true;
+            int ageInterval = 5;
+            int startAgeOfEndYearInterval = 60;
+            /**
+             * decimalPlacePrecisionForCalculations
+             */
+            int dpc = 10;
+            /**
+             * decimalPlacePrecisionForDisplay
+             */
+            int dpd = 3;
+            RoundingMode rm = RoundingMode.HALF_UP;
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_AgeGenderBar chart = new Chart_AgeGenderBar(e, es, file,
+                    format, title, dataWidth, dataHeight, xAxisLabel,
+                    yAxisLabel, drawOriginLinesOnPlot, ageInterval,
+                    startAgeOfEndYearInterval, dpc, dpd, rm);
+            chart.setData(chart.getDefaultData());
+            chart.run();
+            Future future = chart.future;
+            Generic_Execution exec = new Generic_Execution(e);
+            exec.shutdownExecutorService(es, future, chart);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
         }
-        int dataWidth = 250;
-        int dataHeight = 500;
-        String xAxisLabel = "Population";
-        String yAxisLabel = "Age";
-        boolean drawOriginLinesOnPlot = true;
-        int ageInterval = 5;
-        int startAgeOfEndYearInterval = 60;
-        int decimalPlacePrecisionForCalculations = 10;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode roundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Chart_AgeGenderBar chart = new Chart_AgeGenderBar(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                ageInterval,
-                startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                roundingMode);
-        chart.setData(chart.getDefaultData());
-        chart.run();
-        Future future = chart.future;
-        Generic_Execution.shutdownExecutorService(
-                executorService, future, chart);
     }
 
     @Override

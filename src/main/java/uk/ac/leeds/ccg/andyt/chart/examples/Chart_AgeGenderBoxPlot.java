@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
@@ -39,7 +40,8 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
 
-    public Chart_AgeGenderBoxPlot() {
+    public Chart_AgeGenderBoxPlot(Generic_Environment e) {
+        super(e);
     }
 
     /**
@@ -59,11 +61,12 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
      * @param decimalPlacePrecisionForDisplay
      * @param rm
      */
-    public Chart_AgeGenderBoxPlot(ExecutorService es, File f, String format,
+    public Chart_AgeGenderBoxPlot(Generic_Environment e, ExecutorService es, File f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
             int startAgeOfEndYearInterval, int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay, RoundingMode rm) {
+        super(e);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot, ageInterval,
                 startAgeOfEndYearInterval, decimalPlacePrecisionForCalculations,
@@ -71,47 +74,53 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
 
-        /*
+            /*
          * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println("Expected 2 args: args[0] title; args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Age Gender Population Box Plot";
-            System.out.println("Use default title: " + title);
-            Generic_Files files = new Generic_Files();
-            File outdir = files.getOutputDir();
-            file = new File(outdir, title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println("Expected 2 args: args[0] title; args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Age Gender Population Box Plot";
+                System.out.println("Use default title: " + title);
+                File outdir = e.files.getOutputDir();
+                file = new File(outdir, title.replace(" ", "_") + "." + format);
+                System.out.println("Use default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 1000;//250;
+            int dataHeight = 500;
+            String xAxisLabel = "Population";
+            String yAxisLabel = "Age";
+            boolean drawOriginLinesOnPlot = true;
+            int ageInterval = 5;
+            int startAgeOfEndYearInterval = 70;//95;
+            int decimalPlacePrecisionForCalculations = 10;
+            int decimalPlacePrecisionForDisplay = 3;
+            RoundingMode rm = RoundingMode.HALF_UP;
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_AgeGenderBoxPlot plot = new Chart_AgeGenderBoxPlot(e, es, file,
+                    format, title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
+                    drawOriginLinesOnPlot, ageInterval, startAgeOfEndYearInterval,
+                    decimalPlacePrecisionForCalculations,
+                    decimalPlacePrecisionForDisplay, rm);
+            plot.setData(plot.getDefaultData());
+            //plot.run();
+            plot.start();
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+
         }
-        int dataWidth = 1000;//250;
-        int dataHeight = 500;
-        String xAxisLabel = "Population";
-        String yAxisLabel = "Age";
-        boolean drawOriginLinesOnPlot = true;
-        int ageInterval = 5;
-        int startAgeOfEndYearInterval = 70;//95;
-        int decimalPlacePrecisionForCalculations = 10;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode rm = RoundingMode.HALF_UP;
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Chart_AgeGenderBoxPlot plot = new Chart_AgeGenderBoxPlot(es, file,
-                format, title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
-                drawOriginLinesOnPlot, ageInterval, startAgeOfEndYearInterval,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay, rm);
-        plot.setData(plot.getDefaultData());
-        //plot.run();
-        plot.start();
     }
 
     @Override

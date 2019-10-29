@@ -24,6 +24,7 @@ import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 
@@ -41,6 +42,10 @@ public abstract class Chart_AbstractBar extends Chart {
     protected int barWidth;
     protected int barGap;
 
+    public Chart_AbstractBar(Generic_Environment e) {
+        super(e);
+    }
+    
     protected final void init(ExecutorService es, File file, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,

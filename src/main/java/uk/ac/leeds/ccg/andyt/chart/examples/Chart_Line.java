@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractLine;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
@@ -45,7 +46,8 @@ public class Chart_Line extends Chart_AbstractLine {
      */
     boolean drawYZero;
 
-    public Chart_Line() {
+    public Chart_Line(Generic_Environment e) {
+        super(e);
     }
 
     /**
@@ -67,12 +69,13 @@ public class Chart_Line extends Chart_AbstractLine {
      * @param decimalPlacePrecisionForDisplay
      * @param r
      */
-    public Chart_Line(ExecutorService es, File file, String format,
+    public Chart_Line(Generic_Environment e, ExecutorService es, File file, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, BigDecimal yMax, ArrayList<BigDecimal> yPin,
             BigDecimal yIncrement, int numberOfYAxisTicks, boolean drawYZero,
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay, RoundingMode r) {
+        super(e);
         this.yMax = yMax;
         this.yPin = yPin;
         this.yIncrement = yIncrement;
@@ -186,58 +189,64 @@ public class Chart_Line extends Chart_AbstractLine {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
-        /*
-         * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println("Expected 2 args: args[0] title; args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Example Line Graph";
-            System.out.println("Use default title: " + title);
-            Generic_Files files = new Generic_Files();
-            File outdir;
-            outdir = files.getOutputDir();
-            file = new File(outdir, title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
-        }
-        int dataWidth = 500;
-        int dataHeight = 250;
-        String xAxisLabel = "X";
-        String yAxisLabel = "Y";
-        boolean drawYZero;
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
+            /**
+             * Initialise title and File to write image to.
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println("Expected 2 args: args[0] title; args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Example Line Graph";
+                System.out.println("Use default title: " + title);
+                File outdir = e.files.getOutputDir();
+                file = new File(outdir, title.replace(" ", "_") + "." + format);
+                System.out.println("Use default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 500;
+            int dataHeight = 250;
+            String xAxisLabel = "X";
+            String yAxisLabel = "Y";
+            boolean drawYZero;
 //        drawYZero = true;
-        drawYZero = false;
-        int numberOfYAxisTicks = 11;
-        BigDecimal yMax;
-        yMax = null;
-        ArrayList<BigDecimal> yPin;
-        yPin = new ArrayList<>();
-        yPin.add(BigDecimal.ZERO);
-        //BigDecimal yIncrement = BigDecimal.ONE;
-        BigDecimal yIncrement = null;
-        //int yAxisStartOfEndInterval = 60;
-        int decimalPlacePrecisionForCalculations = 10;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode roundingMode = RoundingMode.HALF_UP;
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Chart_Line chart = new Chart_Line(es, file, format, title,
-                dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
-                yIncrement, numberOfYAxisTicks, drawYZero,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                roundingMode);
-        chart.setData(chart.getDefaultData());
-        chart.run();
-        Future future = chart.future;
-        Generic_Execution.shutdownExecutorService(es, future, chart);
+            drawYZero = false;
+            int numberOfYAxisTicks = 11;
+            BigDecimal yMax;
+            yMax = null;
+            ArrayList<BigDecimal> yPin;
+            yPin = new ArrayList<>();
+            yPin.add(BigDecimal.ZERO);
+            //BigDecimal yIncrement = BigDecimal.ONE;
+            BigDecimal yIncrement = null;
+            //int yAxisStartOfEndInterval = 60;
+            int decimalPlacePrecisionForCalculations = 10;
+            int decimalPlacePrecisionForDisplay = 3;
+            RoundingMode roundingMode = RoundingMode.HALF_UP;
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_Line chart = new Chart_Line(e, es, file, format, title,
+                    dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
+                    yIncrement, numberOfYAxisTicks, drawYZero,
+                    decimalPlacePrecisionForCalculations,
+                    decimalPlacePrecisionForDisplay,
+                    roundingMode);
+            chart.setData(chart.getDefaultData());
+            chart.run();
+            Future future = chart.future;
+            Generic_Execution exec = new Generic_Execution(e);
+            exec.shutdownExecutorService(es, future, chart);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
     }
 
     @Override

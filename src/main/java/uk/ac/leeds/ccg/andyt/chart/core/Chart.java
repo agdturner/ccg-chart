@@ -33,6 +33,7 @@ import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
 import uk.ac.leeds.ccg.andyt.chart.execution.Chart_Runnable;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 //import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 //import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
@@ -45,6 +46,7 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 public abstract class Chart extends Chart_Runnable
         implements Chart_Drawable, Runnable {
 
+    protected final Generic_Environment env;
     protected Object[] data;
     protected String format;
     protected File file;
@@ -235,11 +237,13 @@ public abstract class Chart extends Chart_Runnable
     public Chart_Canvas Canvas;
     public Future future;
 
-    public Chart() {
+    public Chart(Generic_Environment e) {
+        this.env = e;
     }
 
-    public Chart(int runID) {
+    public Chart(Generic_Environment e, int runID) {
         super(runID);
+        this.env = e;
     }
 
     protected ExecutorService getExecutorService() {
@@ -1042,7 +1046,8 @@ public abstract class Chart extends Chart_Runnable
                 //Canvas.setSize(dataWidth, dataHeight);
                 // Canvas.paint(g2);
                 long delay = 10000;
-                future = Generic_Visualisation.saveImage(executorService, this, Canvas.getBufferedImage(), delay, format, file);
+                Generic_Visualisation v = new Generic_Visualisation(env);
+                future = v.saveImage(executorService, this, Canvas.getBufferedImage(), delay, format, file);
                 //            fileOutputStream.close();
                 //            printerJob.cancel();
                 //            psFile.delete();
@@ -1068,8 +1073,7 @@ public abstract class Chart extends Chart_Runnable
             //time = 60000L; // 1 minute
             //time = 120000L;// 2 minutes
             time = 240000L; // 4 minutes
-            System.out.println("OutOfMemoryError1, waiting " + time / 1000 + " secs " + "before trying Generic_Plot.run again...");
-            Generic_Execution.waitSychronized(this, time); // wait a time
+            Generic_Execution.waitSychronized(env, this, time); // wait a time
             System.out.println("...on we go.");
             run();
         }

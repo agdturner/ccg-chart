@@ -21,6 +21,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 
 /**
@@ -30,36 +31,36 @@ import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
  */
 public abstract class Chart_AbstractAgeGender extends Chart {
 
-    protected final void init(
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawAxesOnPlot,
-            int ageInterval,
-            Integer startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations,
-            int significantDigits,
-            RoundingMode aRoundingMode) {
+    public Chart_AbstractAgeGender(Generic_Environment e) {
+        super(e);
+    }
+
+    /**
+     *
+     * @param es
+     * @param file
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawAxesOnPlot
+     * @param ageInterval
+     * @param startAgeOfEndYearInterval
+     * @param dpc decimal place precision for calculations
+     * @param sd significant digits
+     * @param rm RoundingMode
+     */
+    protected final void init(ExecutorService es, File file, String format,
+            String title, int dataWidth, int dataHeight, String xAxisLabel,
+            String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
+            Integer startAgeOfEndYearInterval, int dpc, int sd,
+            RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
-        super.init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                significantDigits,
-                aRoundingMode);
+        super.init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawAxesOnPlot, dpc, sd, rm);
     }
 
     @Override

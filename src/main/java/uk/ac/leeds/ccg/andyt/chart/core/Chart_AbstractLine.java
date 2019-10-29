@@ -26,6 +26,7 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 
@@ -75,6 +76,10 @@ public abstract class Chart_AbstractLine extends Chart {
     private Color[] colours;
     private ArrayList<String> labels;
 
+    public Chart_AbstractLine(Generic_Environment e) {
+        super(e);
+    }
+    
     /**
      *
      * @param es -

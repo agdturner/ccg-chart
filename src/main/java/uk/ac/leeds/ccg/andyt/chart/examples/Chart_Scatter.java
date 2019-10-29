@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart;
 import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
@@ -36,10 +37,11 @@ import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
  */
 public class Chart_Scatter extends Chart {
 
-    public Chart_Scatter() {
+    public Chart_Scatter(Generic_Environment e) {
+        super(e);
     }
 
-    public Chart_Scatter(
+    public Chart_Scatter(Generic_Environment e,
             ExecutorService executorService,
             File file,
             String format,
@@ -52,6 +54,7 @@ public class Chart_Scatter extends Chart {
             int decimalPlacePrecisionForCalculations,
             int decimalPlacePrecisionForDisplay,
             RoundingMode aRoundingMode) {
+        super(e);
         init(
                 executorService,
                 file,
@@ -68,8 +71,10 @@ public class Chart_Scatter extends Chart {
     }
 
     public static void main(String[] args) {
-        Generic_Visualisation.getHeadlessEnvironment();
-
+        try {
+            Generic_Environment e = new Generic_Environment();
+            Generic_Visualisation v = new Generic_Visualisation(e);
+            v.getHeadlessEnvironment();
         /*
          * Initialise title and File to write image to
          */
@@ -102,7 +107,7 @@ public class Chart_Scatter extends Chart {
         int decimalPlacePrecisionForDisplay = 3;
         RoundingMode aRoundingMode = RoundingMode.HALF_UP;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Chart_Scatter plot = new Chart_Scatter(
+        Chart_Scatter plot = new Chart_Scatter(e,
                 executorService,
                 file,
                 format,
@@ -118,6 +123,10 @@ public class Chart_Scatter extends Chart {
         plot.setData(plot.getDefaultData());
         plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
         plot.run();
+        
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     @Override
