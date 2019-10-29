@@ -33,7 +33,6 @@ import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating an Age by Gender Population Box Plot Visualization.
@@ -76,8 +75,6 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
 
             /*
          * Initialise title and File to write image to
@@ -115,6 +112,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
                     decimalPlacePrecisionForCalculations,
                     decimalPlacePrecisionForDisplay, rm);
             plot.setData(plot.getDefaultData());
+            plot.vis.getHeadlessEnvironment();
             //plot.run();
             plot.start();
         } catch (Exception ex) {

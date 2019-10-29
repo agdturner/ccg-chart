@@ -34,7 +34,6 @@ import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Bar Chart Visualization.
@@ -138,8 +137,7 @@ public class Chart_Bar extends Chart_AbstractBar {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
+            
             /*
          * Initialise title and File to write image to
              */
@@ -199,6 +197,7 @@ public class Chart_Bar extends Chart_AbstractBar {
                     decimalPlacePrecisionForDisplay,
                     roundingMode);
             chart.setData(chart.getDefaultData());
+            chart.vis.getHeadlessEnvironment();
             chart.run();
             Future future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);

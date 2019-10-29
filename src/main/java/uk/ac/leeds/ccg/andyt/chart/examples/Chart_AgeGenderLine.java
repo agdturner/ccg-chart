@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 import uk.ac.leeds.ccg.andyt.stats.Generic_Statistics;
 
 /**
@@ -77,8 +76,6 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
             /*
          * Initialise title and File to write image to
              */
@@ -129,6 +126,7 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
                     decimalPlacePrecisionForDisplay,
                     aRoundingMode);
             plot.setData(plot.getDefaultData());
+            plot.vis.getHeadlessEnvironment();
             plot.run();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);

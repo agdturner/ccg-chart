@@ -34,7 +34,6 @@ import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Line Graph visualization.
@@ -65,16 +64,16 @@ public class Chart_Line extends Chart_AbstractLine {
      * @param yIncrement
      * @param numberOfYAxisTicks
      * @param drawYZero
-     * @param decimalPlacePrecisionForCalculations
-     * @param decimalPlacePrecisionForDisplay
-     * @param r
+     * @param dcp decimalPlacePrecisionForCalculations
+     * @param dcd decimalPlacePrecisionForDisplay
+     * @param rm
      */
-    public Chart_Line(Generic_Environment e, ExecutorService es, File file, String format,
-            String title, int dataWidth, int dataHeight, String xAxisLabel,
-            String yAxisLabel, BigDecimal yMax, ArrayList<BigDecimal> yPin,
-            BigDecimal yIncrement, int numberOfYAxisTicks, boolean drawYZero,
-            int decimalPlacePrecisionForCalculations,
-            int decimalPlacePrecisionForDisplay, RoundingMode r) {
+    public Chart_Line(Generic_Environment e, ExecutorService es, File file,
+            String format, String title, int dataWidth, int dataHeight,
+            String xAxisLabel, String yAxisLabel, BigDecimal yMax,
+            ArrayList<BigDecimal> yPin, BigDecimal yIncrement,
+            int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd, 
+            RoundingMode rm) {
         super(e);
         this.yMax = yMax;
         this.yPin = yPin;
@@ -82,8 +81,8 @@ public class Chart_Line extends Chart_AbstractLine {
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.drawYZero = drawYZero;
         init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, false, decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay, r);
+                yAxisLabel, false, dcp,
+                dcd, rm);
     }
 
     @Override
@@ -191,8 +190,6 @@ public class Chart_Line extends Chart_AbstractLine {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
             /**
              * Initialise title and File to write image to.
              */
@@ -239,6 +236,7 @@ public class Chart_Line extends Chart_AbstractLine {
                     decimalPlacePrecisionForDisplay,
                     roundingMode);
             chart.setData(chart.getDefaultData());
+            chart.vis.getHeadlessEnvironment();
             chart.run();
             Future future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);

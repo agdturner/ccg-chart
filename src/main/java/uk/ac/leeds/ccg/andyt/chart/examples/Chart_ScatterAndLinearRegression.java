@@ -29,7 +29,6 @@ import java.util.concurrent.Executors;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Scatter Plot visualization with a linear
@@ -73,8 +72,6 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
             /**
              * Initialise title and File to write image to
              */
@@ -108,6 +105,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
                     title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
                     decimalPlacePrecisionForDisplay, rm);
+            plot.vis.getHeadlessEnvironment();
             plot.run();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);

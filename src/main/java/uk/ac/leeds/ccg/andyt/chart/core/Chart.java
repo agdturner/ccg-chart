@@ -47,6 +47,9 @@ public abstract class Chart extends Chart_Runnable
         implements Chart_Drawable, Runnable {
 
     protected final Generic_Environment env;
+    protected final Generic_Execution exec;
+    protected final Generic_Visualisation vis;
+    
     protected Object[] data;
     protected String format;
     protected File file;
@@ -238,12 +241,14 @@ public abstract class Chart extends Chart_Runnable
     public Future future;
 
     public Chart(Generic_Environment e) {
-        this.env = e;
+        this(e, 0);
     }
 
     public Chart(Generic_Environment e, int runID) {
         super(runID);
         this.env = e;
+        exec = new Generic_Execution(e);
+        vis = new Generic_Visualisation (e);
     }
 
     protected ExecutorService getExecutorService() {

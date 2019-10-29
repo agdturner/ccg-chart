@@ -30,7 +30,6 @@ import uk.ac.leeds.ccg.andyt.chart.core.Chart;
 import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An example of generating a Scatter Plot visualization.
@@ -73,8 +72,6 @@ public class Chart_Scatter extends Chart {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
         /*
          * Initialise title and File to write image to
          */
@@ -121,6 +118,7 @@ public class Chart_Scatter extends Chart {
                 decimalPlacePrecisionForDisplay,
                 aRoundingMode);
         plot.setData(plot.getDefaultData());
+        plot.vis.getHeadlessEnvironment();
         plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
         plot.run();
         

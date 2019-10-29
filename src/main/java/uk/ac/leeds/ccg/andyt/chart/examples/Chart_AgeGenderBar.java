@@ -29,7 +29,6 @@ import uk.ac.leeds.ccg.andyt.chart.core.Chart_AbstractAgeGender;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
-import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 
 /**
  * An implementation of <code>Chart_AgeGenderBar</code>
@@ -193,8 +192,6 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-            Generic_Visualisation v = new Generic_Visualisation(e);
-            v.getHeadlessEnvironment();
 
             /*
          * Initialise title and File to write image to
@@ -241,6 +238,7 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
                     yAxisLabel, drawOriginLinesOnPlot, ageInterval,
                     startAgeOfEndYearInterval, dpc, dpd, rm);
             chart.setData(chart.getDefaultData());
+            chart.vis.getHeadlessEnvironment();
             chart.run();
             Future future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);
