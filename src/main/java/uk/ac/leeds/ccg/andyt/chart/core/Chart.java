@@ -31,7 +31,7 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
-import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.chart.data.Data_BiBigDecimal;
 import uk.ac.leeds.ccg.andyt.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
@@ -49,7 +49,7 @@ public abstract class Chart extends Chart_Runnable
     protected final Generic_Environment env;
     protected final Generic_Execution exec;
     protected final Generic_Visualisation vis;
-    
+
     protected Object[] data;
     protected String format;
     protected File file;
@@ -248,7 +248,7 @@ public abstract class Chart extends Chart_Runnable
         super(runID);
         this.env = e;
         exec = new Generic_Execution(e);
-        vis = new Generic_Visualisation (e);
+        vis = new Generic_Visualisation(e);
     }
 
     protected ExecutorService getExecutorService() {
@@ -299,7 +299,7 @@ public abstract class Chart extends Chart_Runnable
         setOriginRow();
         setOriginCol();
     }
-    
+
     public Graphics2D getG2image() {
         return g2image;
     }
@@ -524,8 +524,8 @@ public abstract class Chart extends Chart_Runnable
      * @param p A pixel location as a Point2D.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Data_BiNumeric dataPointToCoordinate(            Point2D p) {
-        Data_BiNumeric r = new Data_BiNumeric();
+    public Data_BiBigDecimal dataPointToCoordinate(Point2D p) {
+        Data_BiBigDecimal r = new Data_BiBigDecimal();
         BigDecimal x = dataRowToYCoordinate(p.getX());
         BigDecimal y = dataColToXCoordinate(p.getY());
         r.setX(x);

@@ -27,7 +27,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.andyt.chart.core.Chart;
-import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.chart.data.Data_BiBigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 
@@ -40,88 +40,84 @@ public class Chart_Scatter extends Chart {
         super(e);
     }
 
-    public Chart_Scatter(Generic_Environment e,
-            ExecutorService executorService,
-            File file,
-            String format,
-            String title,
-            int dataWidth,
-            int dataHeight,
-            String xAxisLabel,
-            String yAxisLabel,
-            boolean drawOriginLinesOnPlot,
-            int decimalPlacePrecisionForCalculations,
-            int decimalPlacePrecisionForDisplay,
-            RoundingMode aRoundingMode) {
+    /**
+     *
+     * @param e
+     * @param executorService
+     * @param file
+     * @param format
+     * @param title
+     * @param dataWidth
+     * @param dataHeight
+     * @param xAxisLabel
+     * @param yAxisLabel
+     * @param drawOriginLinesOnPlot
+     * @param dpc decimal place precision calculations
+     * @param dpd decimal place precision for calculations
+     * @param rm
+     */
+    public Chart_Scatter(Generic_Environment e, ExecutorService executorService,
+            File file, String format, String title, int dataWidth,
+            int dataHeight, String xAxisLabel, String yAxisLabel,
+            boolean drawOriginLinesOnPlot, int dpc, int dpd, RoundingMode rm) {
         super(e);
-        init(
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
+        init(executorService, file, format, title, dataWidth, dataHeight, 
+                xAxisLabel, yAxisLabel, drawOriginLinesOnPlot, dpc, dpd, rm);
     }
 
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment();
-        /*
+            /*
          * Initialise title and File to write image to
-         */
-        String title;
-        File file;
-        String format = "PNG";
-        if (args.length != 2) {
-            System.out.println(
-                    "Expected 2 args:"
-                    + " args[0] title;"
-                    + " args[1] File."
-                    + " Recieved " + args.length + " args.");
-            // Use defaults
-            title = "Scatter Plot";
-            System.out.println("Use default title: " + title);
-            file = new File(
-                    new File(System.getProperty("user.dir")),
-                    title.replace(" ", "_") + "." + format);
-            System.out.println("Use default File: " + file.toString());
-        } else {
-            title = args[0];
-            file = new File(args[1]);
-        }
-        int dataWidth = 400;//250;
-        int dataHeight = 657;
-        String xAxisLabel = "Expected";
-        String yAxisLabel = "Observed";
-        boolean drawOriginLinesOnPlot = true;
-        int decimalPlacePrecisionForCalculations = 10;
-        int decimalPlacePrecisionForDisplay = 3;
-        RoundingMode aRoundingMode = RoundingMode.HALF_UP;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Chart_Scatter plot = new Chart_Scatter(e,
-                executorService,
-                file,
-                format,
-                title,
-                dataWidth,
-                dataHeight,
-                xAxisLabel,
-                yAxisLabel,
-                drawOriginLinesOnPlot,
-                decimalPlacePrecisionForCalculations,
-                decimalPlacePrecisionForDisplay,
-                aRoundingMode);
-        plot.setData(plot.getDefaultData());
-        plot.vis.getHeadlessEnvironment();
-        plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
-        plot.run();
-        
+             */
+            String title;
+            File file;
+            String format = "PNG";
+            if (args.length != 2) {
+                System.out.println(
+                        "Expected 2 args:"
+                        + " args[0] title;"
+                        + " args[1] File."
+                        + " Recieved " + args.length + " args.");
+                // Use defaults
+                title = "Scatter Plot";
+                System.out.println("Use default title: " + title);
+                file = new File(
+                        new File(System.getProperty("user.dir")),
+                        title.replace(" ", "_") + "." + format);
+                System.out.println("Use default File: " + file.toString());
+            } else {
+                title = args[0];
+                file = new File(args[1]);
+            }
+            int dataWidth = 400;//250;
+            int dataHeight = 657;
+            String xAxisLabel = "Expected";
+            String yAxisLabel = "Observed";
+            boolean drawOriginLinesOnPlot = true;
+            int decimalPlacePrecisionForCalculations = 10;
+            int decimalPlacePrecisionForDisplay = 3;
+            RoundingMode aRoundingMode = RoundingMode.HALF_UP;
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Chart_Scatter plot = new Chart_Scatter(e,
+                    executorService,
+                    file,
+                    format,
+                    title,
+                    dataWidth,
+                    dataHeight,
+                    xAxisLabel,
+                    yAxisLabel,
+                    drawOriginLinesOnPlot,
+                    decimalPlacePrecisionForCalculations,
+                    decimalPlacePrecisionForDisplay,
+                    aRoundingMode);
+            plot.setData(plot.getDefaultData());
+            plot.vis.getHeadlessEnvironment();
+            plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
+            plot.run();
+
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -605,22 +601,16 @@ public class Chart_Scatter extends Chart {
 //        return result;
 //    
 //    }
-    protected void drawPoints(
-            Color color,
-            Object[] data) {
+    protected void drawPoints(Color color, Object[] data) {
         if (data != null) {
-            ArrayList<Data_BiNumeric> theGeneric_XYNumericalData;
-            theGeneric_XYNumericalData = (ArrayList<Data_BiNumeric>) data[0];
-            Iterator<Data_BiNumeric> ite = theGeneric_XYNumericalData.iterator();
-            Data_BiNumeric aGeneric_XYNumericalData;
+            ArrayList<Data_BiBigDecimal> xyData;
+            xyData = (ArrayList<Data_BiBigDecimal>) data[0];
+            Iterator<Data_BiBigDecimal> ite = xyData.iterator();
             setPaint(color);
-            Point2D aPoint2D;
             while (ite.hasNext()) {
-                aGeneric_XYNumericalData = ite.next();
-                aPoint2D = coordinateToScreen(
-                        aGeneric_XYNumericalData.getX(),
-                        aGeneric_XYNumericalData.getY());
-                draw(aPoint2D);
+                Data_BiBigDecimal xy = ite.next();
+                Point2D p = coordinateToScreen(xy.getX(), xy.getY());
+                draw(p);
             }
         }
     }
@@ -663,7 +653,7 @@ public class Chart_Scatter extends Chart {
         BigDecimal minx = BigDecimal.valueOf(Double.MAX_VALUE);
         BigDecimal maxy = BigDecimal.valueOf(Double.MIN_VALUE);
         BigDecimal miny = BigDecimal.valueOf(Double.MAX_VALUE);
-        ArrayList<Data_BiNumeric> theGeneric_XYNumericalData = new ArrayList<>();
+        ArrayList<Point2D> theGeneric_XYNumericalData = new ArrayList<>();
 //        for (int i = -100; i < 328; i++) {         
 //            for (int j = -100; j < 0; j++) {
 //        for (int i = -100; i < 100; i++) {
@@ -680,9 +670,7 @@ public class Chart_Scatter extends Chart {
                 minx = minx.min(x);
                 maxy = maxy.max(y);
                 miny = miny.min(y);
-                Data_BiNumeric point = new Data_BiNumeric(
-                        x,
-                        y);
+                Point2D point = new Point2D.Double(x.doubleValue(), y.doubleValue());
                 theGeneric_XYNumericalData.add(point);
             }
         }

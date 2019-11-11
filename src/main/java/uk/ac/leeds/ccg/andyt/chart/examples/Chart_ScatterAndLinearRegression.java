@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.math.stat.regression.SimpleRegression;
-import uk.ac.leeds.ccg.andyt.data.Data_BiNumeric;
+import uk.ac.leeds.ccg.andyt.chart.data.Data_BiBigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 
 /**
@@ -42,6 +42,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
 
     /**
      *
+     * @param e
      * @param es
      * @param file
      * @param format
@@ -115,7 +116,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     @Override
     public void drawData() {
         double[][] dataD;
-        dataD = getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
+        dataD = getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
         drawYEqualsXLineData(dataD);
         /*
          * rp[0] is the y axis intercept;
@@ -147,7 +148,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
             data = getDefaultData();
         }
         drawPoints(Color.DARK_GRAY, data);
-        double[][] dataAsDoubleArray = getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
+        double[][] dataAsDoubleArray = getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
          * rp[0] is the y axis intercept;
@@ -631,22 +632,22 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     }
 
     protected double[][] getDataAsDoubleArray() {
-        return getDataAsDoubleArray((ArrayList<Data_BiNumeric>) data[0]);
+        return getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
     }
 
     protected double[][] getDataAsDoubleArray(
-            ArrayList<Data_BiNumeric> d) {
+            ArrayList<Data_BiBigDecimal> d) {
         double[][] r = new double[2][d.size()];
-        Iterator<Data_BiNumeric> ite = d.iterator();
-        Data_BiNumeric aGeneric_XYNumericalData;
+        Iterator<Data_BiBigDecimal> ite = d.iterator();
+        Data_BiBigDecimal xyData;
         /*
          * data[0][] are the y values data[1][] are the x values
          */
         int n = 0;
         while (ite.hasNext()) {
-            aGeneric_XYNumericalData = ite.next();
-            r[0][n] = aGeneric_XYNumericalData.getY().doubleValue();
-            r[1][n] = aGeneric_XYNumericalData.getX().doubleValue();
+            xyData = ite.next();
+            r[0][n] = xyData.getY().doubleValue();
+            r[1][n] = xyData.getX().doubleValue();
             n++;
         }
         return r;
