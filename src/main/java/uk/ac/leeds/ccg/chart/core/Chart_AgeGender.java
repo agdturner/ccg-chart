@@ -29,37 +29,36 @@ import uk.ac.leeds.ccg.math.Math_BigDecimal;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Chart_AbstractAgeGender extends Chart {
+public abstract class Chart_AgeGender extends Chart {
 
-    public Chart_AbstractAgeGender(Generic_Environment e) {
+    public Chart_AgeGender(Generic_Environment e) {
         super(e);
     }
 
     /**
-     *
-     * @param es
-     * @param file
-     * @param format
-     * @param title
-     * @param dataWidth
-     * @param dataHeight
-     * @param xAxisLabel
-     * @param yAxisLabel
-     * @param drawAxesOnPlot
-     * @param ageInterval
-     * @param startAgeOfEndYearInterval
-     * @param dpc decimal place precision for calculations
+     * @param es The ExecutorService.
+     * @param f The Path.
+     * @param format The format.
+     * @param title The title.
+     * @param dataWidth The data width.
+     * @param dataHeight The data height.
+     * @param xAxisLabel The x axis label.
+     * @param yAxisLabel The y axis label.
+     * @param drawAxesOnPlot if {@code true} draw lines on the plot.
+     * @param ageInterval The age interval.
+     * @param startAgeOfEndYearInterval The start age of the end year interval.
+     * @param dpc The decimal place precision for calculations.
      * @param sd significant digits
-     * @param rm RoundingMode
+     * @param rm The RoundingMode.
      */
-    protected final void init(ExecutorService es, Path file, String format,
+    protected final void init(ExecutorService es, Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval, int dpc, int sd,
             RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
-        super.init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+        super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawAxesOnPlot, dpc, sd, rm);
     }
 

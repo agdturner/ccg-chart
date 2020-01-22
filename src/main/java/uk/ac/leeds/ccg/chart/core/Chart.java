@@ -1000,7 +1000,7 @@ public abstract class Chart extends Chart_Runnable
         try {
             Canvas = new Chart_Canvas();
             Canvas.Plot = this;
-            Canvas.Rect = new Rectangle(0, 0, getDataWidth(), getDataHeight());
+            Canvas.rect = new Rectangle(0, 0, getDataWidth(), getDataHeight());
             //            Graphics2D g2 = (Graphics2D) Canvas.getGraphics();
             //            setG2(g2);
             //            //Canvas.paint(g2);
@@ -1051,7 +1051,7 @@ public abstract class Chart extends Chart_Runnable
                 //            Dimension dim = draw();
                 //            Canvas.setDimension(dim);
                 //Canvas.setDimension(Canvas.paintAndGetNewDimensions(g2));
-                //Canvas.Rect = new Rectangle(dim);
+                //Canvas.rect = new Rectangle(dim);
                 //Canvas.setSize(dataWidth, dataHeight);
                 // Canvas.paint(g2);
                 long delay = 10000;

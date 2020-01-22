@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import uk.ac.leeds.ccg.chart.core.Chart;
 
 public class Chart_Canvas extends Canvas {
 
@@ -32,35 +31,35 @@ public class Chart_Canvas extends Canvas {
     }
 
     public Chart Plot;
-    public Graphics2D G2D;
-    public BufferedImage BI;
-    public Rectangle Rect;
+    public Graphics2D g2d;
+    public BufferedImage bi;
+    public Rectangle rect;
 
     @Override
     public Graphics getGraphics() {
-        return this.G2D;
+        return this.g2d;
     }
 
     public BufferedImage getBufferedImage() {
-        return BI;
+        return bi;
     }
 
     //public int paintedCounter; 
     /**
      * This is a bit strange as the input Graphics g are ignored!
      *
-     * @param g
+     * @param g The graphics.
      */
     @Override
     public void paint(Graphics g) {
 
-        //Rectangle Rect = getBounds();
-        BI = new BufferedImage(Rect.width, Rect.height, BufferedImage.TYPE_INT_ARGB);
-        G2D = (Graphics2D) BI.getGraphics();
+        //Rectangle rect = getBounds();
+        bi = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+        g2d = (Graphics2D) bi.getGraphics();
 
-//        G2D = (Graphics2D) g;
+//        g2d = (Graphics2D) g;
         // draw all components
-        Dimension d = Plot.draw(G2D);
+        Dimension d = Plot.draw(g2d);
         setDimension(d);
 
 //        paintedCounter ++;
@@ -68,7 +67,7 @@ public class Chart_Canvas extends Canvas {
 //            int debug = 1;
 //             Generic_Visualisation.saveImage(
 //                    this,
-//                    BI,
+//                    bi,
 //                    10000,
 //                    Plot.getFormat(),
 //                    Plot.getFile());
@@ -81,38 +80,35 @@ public class Chart_Canvas extends Canvas {
 //        
 //    }
 //    public Dimension paintAndGetNewDimensions(Graphics g) {
-//        //Rectangle Rect = getBounds();
-//        BI = new BufferedImage(
-//                Rect.width,
-//                Rect.height,
+//        //Rectangle rect = getBounds();
+//        bi = new BufferedImage(
+//                rect.width,
+//                rect.height,
 //                BufferedImage.TYPE_INT_ARGB);
-//        G2D = (Graphics2D) BI.getGraphics();
+//        g2d = (Graphics2D) bi.getGraphics();
 //        // draw all components
 //        return Plot.draw();
 //    }
     // Override this to do custom drawing
     public void draw() {
         drawOutline();
-        G2D.setFont(new Font("Arial", Font.ITALIC, 12));
-        G2D.drawString("Test", 32, 8);
+        g2d.setFont(new Font("Arial", Font.ITALIC, 12));
+        g2d.drawString("Test", 32, 8);
     }
 
     public void drawOutline() {
-        //Color color = G2D.getColor();
-        G2D.setPaint(Color.WHITE);
-        Rectangle2D rect = new Rectangle2D.Double(
-                getX(),
-                getY(),
-                getWidth() - 1,
+        //Color color = g2d.getColor();
+        g2d.setPaint(Color.WHITE);
+        Rectangle2D r2 = new Rectangle2D.Double(getX(), getY(), getWidth() - 1, 
                 getHeight() - 1);
-//        G2D.fillRect(getX(),getY(),(2 * getWidth()) - 1,(2 * getHeight()) - 1);
-        G2D.fillRect(getX(), getY(), getWidth() - 1, getHeight() - 1);
-        G2D.setPaint(Color.DARK_GRAY);
-        G2D.draw(rect);
+//        g2d.fillRect(getX(),getY(),(2 * getWidth()) - 1,(2 * getHeight()) - 1);
+        g2d.fillRect(getX(), getY(), getWidth() - 1, getHeight() - 1);
+        g2d.setPaint(Color.DARK_GRAY);
+        g2d.draw(r2);
         //setPaint(color);
     }
 
     public void setDimension(Dimension d) {
-        Rect = new Rectangle(d);
+        rect = new Rectangle(d);
     }
 }

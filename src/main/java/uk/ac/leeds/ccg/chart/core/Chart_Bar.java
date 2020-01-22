@@ -33,7 +33,7 @@ import uk.ac.leeds.ccg.generic.util.Generic_Collections;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Chart_AbstractBar extends Chart {
+public abstract class Chart_Bar extends Chart {
 
     protected int xAxisIncrement;
     protected int numberOfYAxisTicks;
@@ -42,21 +42,35 @@ public abstract class Chart_AbstractBar extends Chart {
     protected int barWidth;
     protected int barGap;
 
-    public Chart_AbstractBar(Generic_Environment e) {
+    public Chart_Bar(Generic_Environment e) {
         super(e);
     }
-    
-    protected final void init(ExecutorService es, Path file, String format,
+
+    /**
+     * @param es The ExecutorService.
+     * @param f The Path.
+     * @param format The format.
+     * @param title The title.
+     * @param dataWidth The data width.
+     * @param dataHeight The data height.
+     * @param xAxisLabel The x axis label.
+     * @param yAxisLabel The y axis label.
+     * @param drawAxesOnPlot if {@code true} draw lines on the plot.
+     * @param ageInterval The age interval.
+     * @param startAgeOfEndYearInterval The start age of the end year interval.
+     * @param dpc The decimal place precision for calculations.
+     * @param sd significant digits
+     * @param rm The RoundingMode.
+     */
+    protected final void init(ExecutorService es, Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
-            Integer startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations, int significantDigits,
+            Integer startAgeOfEndYearInterval, int dpc, int sd,
             RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
-        super.init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations, significantDigits, rm);
+        super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
+                yAxisLabel, drawAxesOnPlot, dpc, sd, rm);
     }
 
     @Override

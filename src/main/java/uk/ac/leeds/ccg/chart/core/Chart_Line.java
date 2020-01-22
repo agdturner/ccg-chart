@@ -35,7 +35,7 @@ import uk.ac.leeds.ccg.math.Math_BigDecimal;
  * possibly rendering them in a lightweight component as suited to headless
  * rendering.
  */
-public abstract class Chart_AbstractLine extends Chart {
+public abstract class Chart_Line extends Chart {
 
     protected BigDecimal yMax;
 
@@ -76,7 +76,7 @@ public abstract class Chart_AbstractLine extends Chart {
     private Color[] colours;
     private ArrayList<String> labels;
 
-    public Chart_AbstractLine(Generic_Environment e) {
+    public Chart_Line(Generic_Environment e) {
         super(e);
     }
     
@@ -315,16 +315,16 @@ public abstract class Chart_AbstractLine extends Chart {
 
     /**
      *
-     * @param row
-     * @param col
-     * @param scaleTickLength
-     * @param y
-     * @param maxTickTextWidth
-     * @param textHeight
-     * @param rows
-     * @param tickTextEndCol
-     * @param rm
-     * @return
+     * @param row The row.
+     * @param col The column.
+     * @param scaleTickLength The length of a scale tick.
+     * @param y The y.
+     * @param maxTickTextWidth The maximum width of any text next to a tick.
+     * @param textHeight The text height.
+     * @param rows The rows.
+     * @param tickTextEndCol The tick text end column.
+     * @param rm The RoundingMode.
+     * @return The y axis mark.
      */
     protected int addYAxisMark(int row, int col, int scaleTickLength,
             BigDecimal y, int maxTickTextWidth, int textHeight, BitSet rows,
