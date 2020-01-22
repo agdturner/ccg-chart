@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.chart.core.Chart_AgeGender;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.stats.Generic_Statistics;
@@ -36,7 +36,7 @@ import uk.ac.leeds.ccg.stats.Generic_Statistics;
  * An example of generating an Age by Gender Population Line Chart
  * Visualization.
  */
-public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
+public class Chart_AgeGenderLine extends Chart_AgeGender {
 
     public Chart_AgeGenderLine(Generic_Environment e) {
         super(e);
@@ -621,13 +621,13 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
     }
 
     /**
-     * Returns a sample dataset.
+     * Returns a sample data set.
      *
-     * @param ageInterval
-     * @param rm
+     * @param ageInterval Age interval.
+     * @param rm RoundingMode
      * @param saeyi startAgeOfEndYearInterval
-     * @param dp
-     * @return The dataset.
+     * @param dp The decimal places.
+     * @return The data set.
      */
     public static Object[] getDefaultData(int ageInterval, int saeyi, int dp,
             RoundingMode rm) {
@@ -776,15 +776,13 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
     }
 
     /**
-     * Returns a sample dataset.
+     * Returns a sample data set.
      *
-     * @param decimalPlacePrecisionForCalculations
-     * @param roundingMode
-     * @return The dataset.
+     * @param dpc decimalPlacePrecisionForCalculations
+     * @param rm roundingMode
+     * @return The data set.
      */
-    public static Object[] getData(
-            int decimalPlacePrecisionForCalculations,
-            RoundingMode roundingMode) {
+    public static Object[] getData(int dpc, RoundingMode rm) {
         Object[] result = new Object[2];
         TreeMap<Integer, BigDecimal[]> femaleBoxPlotStatistics = new TreeMap<>();
         TreeMap<Integer, BigDecimal[]> maleBoxPlotStatistics = new TreeMap<>();
@@ -830,8 +828,8 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
             BigDecimal[] boxPlotStatistics
                     = Generic_Statistics.getSummaryStatistics_0(
                             values,
-                            decimalPlacePrecisionForCalculations,
-                            roundingMode);
+                            dpc,
+                            rm);
             femaleBoxPlotStatistics.put(age, boxPlotStatistics);
         }
         maxValue = BigDecimal.ZERO;
@@ -856,8 +854,8 @@ public class Chart_AgeGenderLine extends Chart_AbstractAgeGender {
             values.add(pop);
             BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
                     values,
-                    decimalPlacePrecisionForCalculations,
-                    roundingMode);
+                    dpc,
+                    rm);
             maleBoxPlotStatistics.put(age, boxPlotStatistics);
         }
         result[0] = femaleBoxPlotStatistics;

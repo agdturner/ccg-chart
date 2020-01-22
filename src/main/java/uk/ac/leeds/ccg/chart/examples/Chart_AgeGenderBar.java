@@ -26,7 +26,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import uk.ac.leeds.ccg.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.chart.core.Chart_AgeGender;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
@@ -39,7 +39,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
  * Bar Chart Visualization of some default data and write it out to file as a
  * PNG.
  */
-public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
+public class Chart_AgeGenderBar extends Chart_AgeGender {
 
     public Chart_AgeGenderBar(Generic_Environment e) {
         super(e);
@@ -257,26 +257,25 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
         int malePopAge0 = 9900;
         int ageInterval = 5;
         int startAgeOfEndYearInterval = 60;
-        return getDefaultData(femalePopAge0, malePopAge0, ageInterval, 
+        return getDefaultData(femalePopAge0, malePopAge0, ageInterval,
                 startAgeOfEndYearInterval);
     }
 
     /**
-     *
-     * @param femalePopAge0
-     * @param malePopAge0
-     * @param ageInterval
-     * @param startAgeOfEndYearInterval
-     * @return Object[] result: result[0] =
-     * femaleAgeInYearsPopulationCount_TreeMap; result[1] =
-     * maleAgeInYearsPopulationCount_TreeMap; result[2] = maxPop;
+     * @param femalePopAge0 Female population age 0.
+     * @param malePopAge0 Male population age 0.
+     * @param ageInterval Age interval.
+     * @param saeyi startAgeOfEndYearInterval
+     * @return Object[] r:
+     * <ul>
+     * <li>r[0] = femaleAgeInYearsPopulationCount</li>
+     * <li>r[1] = maleAgeInYearsPopulationCount</li>
+     * <li>r[2] = maxPop</li>
+     * </ul>
      */
-    public static Object[] getDefaultData(
-            int femalePopAge0,
-            int malePopAge0,
-            int ageInterval,
-            int startAgeOfEndYearInterval) {
-        Object[] result = new Object[3];
+    public static Object[] getDefaultData(int femalePopAge0, int malePopAge0,
+            int ageInterval, int saeyi) {
+        Object[] r = new Object[3];
         Object[] data = getDefaultData(femalePopAge0, malePopAge0);
         // fapc femaleAgeInYearsPopulationCounts
         TreeMap<Long, BigDecimal> fapc = new TreeMap<>();
@@ -300,7 +299,7 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
         while (ite.hasNext()) {
             age = ite.next();
             pop = syapc.get(age);
-            if (age.intValue() > startAgeOfEndYearInterval) {
+            if (age.intValue() > saeyi) {
                 if (!reportedPenultimateGroup) {
                     fapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
@@ -308,7 +307,7 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
                     popGroup = new BigDecimal(pop.toString());
                     reportedPenultimateGroup = true;
                 }
-                ageGroup = startAgeOfEndYearInterval;
+                ageGroup = saeyi;
                 popGroup = popGroup.add(pop);
                 maxPop = maxPop.max(popGroup);
                 fapc.put(ageGroup, popGroup);
@@ -330,7 +329,7 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
         while (ite.hasNext()) {
             age = ite.next();
             pop = symapc.get(age);
-            if (age.intValue() > startAgeOfEndYearInterval) {
+            if (age.intValue() > saeyi) {
                 if (!reportedPenultimateGroup) {
                     mapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
@@ -338,7 +337,7 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
                     popGroup = new BigDecimal(pop.toString());
                     reportedPenultimateGroup = true;
                 }
-                ageGroup = startAgeOfEndYearInterval;
+                ageGroup = saeyi;
                 popGroup = popGroup.add(pop);
                 maxPop = maxPop.max(popGroup);
                 mapc.put(ageGroup, popGroup);
@@ -353,10 +352,10 @@ public class Chart_AgeGenderBar extends Chart_AbstractAgeGender {
                 }
             }
         }
-        result[0] = fapc;
-        result[1] = mapc;
-        result[2] = maxPop;
-        return result;
+        r[0] = fapc;
+        r[1] = mapc;
+        r[2] = maxPop;
+        return r;
     }
 
     private static Object[] getDefaultData(

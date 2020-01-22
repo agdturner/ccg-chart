@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import uk.ac.leeds.ccg.chart.core.Chart_AbstractBar;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
@@ -38,7 +37,7 @@ import uk.ac.leeds.ccg.generic.util.Generic_Collections;
 /**
  * An example of generating a Bar Chart Visualization.
  */
-public class Chart_Bar extends Chart_AbstractBar {
+public class Chart_Bar extends uk.ac.leeds.ccg.chart.core.Chart_Bar {
 
     public Chart_Bar(Generic_Environment e) {
         super(e);

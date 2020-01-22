@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import uk.ac.leeds.ccg.chart.core.Chart_AbstractAgeGender;
+import uk.ac.leeds.ccg.chart.core.Chart_AgeGender;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
@@ -37,7 +37,7 @@ import uk.ac.leeds.ccg.stats.Generic_Statistics;
 /**
  * An example of generating an Age by Gender Population Box Plot Visualization.
  */
-public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
+public class Chart_AgeGenderBoxPlot extends Chart_AgeGender {
 
     public Chart_AgeGenderBoxPlot(Generic_Environment e) {
         super(e);
@@ -64,7 +64,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
     public Chart_AgeGenderBoxPlot(Generic_Environment e, ExecutorService es,
             Path f, String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, boolean drawOriginLinesOnPlot,
-            int ageInterval, int startAgeOfEndYearInterval, int dpc, int dpd, 
+            int ageInterval, int startAgeOfEndYearInterval, int dpc, int dpd,
             RoundingMode rm) {
         super(e);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
@@ -399,16 +399,15 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
      * Returns a sample dataset.
      *
      * @param ageInterval Age interval.
-     * @param rm
-     * @param startAgeOfEndYearInterval
-     * @param decimalPlacePrecisionForCalculations
+     * @param rm The RoundingMode.
+     * @param saeyi The start age of the end year interval.
+     * @param dpc decimalPlacePrecisionForCalculations
      * @return The dataset.
      */
     public static Object[] getDefaultData(int ageInterval,
-            int startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations, RoundingMode rm) {
+            int saeyi, int dpc, RoundingMode rm) {
         //int startAgeOfEndYearInterval = getStartAgeOfEndYearInterval();
-        Object[] result = new Object[5];
+        Object[] r = new Object[5];
         TreeMap<Integer, BigDecimal[]> femaleBoxPlotStats = new TreeMap<>();
         TreeMap<Integer, BigDecimal[]> maleBoxPlotStats = new TreeMap<>();
         Object[] data10000 = getPopulationData(10000, 10000);
@@ -445,7 +444,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
             pop9800 = BigDecimal.ZERO;
             for (int interval = 0; interval < ageInterval; interval++) {
                 age = iterator.next();
-                if (age >= startAgeOfEndYearInterval) {
+                if (age >= saeyi) {
                     pop10000 = values.get(0).add(female10000.get(age));
                     pop9000 = values.get(1).add(female9000.get(age));
                     pop9900 = values.get(2).add(female9900.get(age));
@@ -459,7 +458,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
                     pop9800 = pop9800.add(female9800.get(age));
                 }
             }
-            if (age < startAgeOfEndYearInterval) {
+            if (age < saeyi) {
                 values = new ArrayList<>();
             }
             maxValue = maxValue.max(pop10000);
@@ -474,12 +473,12 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
             values.add(pop9800);
             BigDecimal[] boxPlotStats;
             boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
-                    decimalPlacePrecisionForCalculations, rm);
+                    dpc, rm);
             System.out.println("Female age " + age);
-            if (age < startAgeOfEndYearInterval) {
+            if (age < saeyi) {
                 femaleBoxPlotStats.put(age, boxPlotStats);
             } else {
-                femaleBoxPlotStats.put(startAgeOfEndYearInterval + ageInterval,
+                femaleBoxPlotStats.put(saeyi + ageInterval,
                         boxPlotStats);
             }
         }
@@ -494,7 +493,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
             pop9800 = BigDecimal.ZERO;
             for (int interval = 0; interval < ageInterval; interval++) {
                 age = iterator.next();
-                if (age >= startAgeOfEndYearInterval) {
+                if (age >= saeyi) {
                     pop10000 = values.get(0).add(male10000.get(age));
                     pop9000 = values.get(1).add(male9000.get(age));
                     pop9900 = values.get(2).add(male9900.get(age));
@@ -508,7 +507,7 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
                     pop9800 = pop9800.add(male9800.get(age));
                 }
             }
-            if (age < startAgeOfEndYearInterval) {
+            if (age < saeyi) {
                 values = new ArrayList<>();
             }
             maxValue = maxValue.max(pop10000);
@@ -524,21 +523,21 @@ public class Chart_AgeGenderBoxPlot extends Chart_AbstractAgeGender {
             System.out.println("Male age " + age);
             BigDecimal[] boxPlotStats;
             boxPlotStats = Generic_Statistics.getSummaryStatistics_0(values,
-                    decimalPlacePrecisionForCalculations, rm);
-            if (age < startAgeOfEndYearInterval) {
+                    dpc, rm);
+            if (age < saeyi) {
                 maleBoxPlotStats.put(age, boxPlotStats);
             } else {
-                maleBoxPlotStats.put(startAgeOfEndYearInterval + ageInterval,
+                maleBoxPlotStats.put(saeyi + ageInterval,
                         boxPlotStats);
             }
         }
-        result[0] = femaleBoxPlotStats;
-        result[1] = maleBoxPlotStats;
+        r[0] = femaleBoxPlotStats;
+        r[1] = maleBoxPlotStats;
         //minX = maxValue.negate();
-        result[2] = maxValue;
-        result[3] = BigDecimal.valueOf(100);
-        result[4] = BigDecimal.ZERO;
-        return result;
+        r[2] = maxValue;
+        r[3] = BigDecimal.valueOf(100);
+        r[4] = BigDecimal.ZERO;
+        return r;
     }
 
     /**

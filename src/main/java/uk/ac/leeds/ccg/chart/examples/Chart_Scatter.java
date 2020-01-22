@@ -56,7 +56,7 @@ public class Chart_Scatter extends Chart {
      * on the plot.
      * @param dpc decimal place precision calculations
      * @param dpd decimal place precision for calculations
-     * @param rm
+     * @param rm The RoundingMode.
      */
     public Chart_Scatter(Generic_Environment e, ExecutorService es,
             Path f, String format, String title, int dataWidth,
@@ -131,35 +131,40 @@ public class Chart_Scatter extends Chart {
     /**
      * Draws the X axis returns the height
      *
-     * @param seperationDistanceOfAxisAndData
-     * @param partTitleGap
-     * @return
+     * @param th textHeight
+     * @param stl scaleTickLength
+     * @param sd1 scaleTickAndTextSeparation
+     * @param sd2 seperationDistanceOfAxisAndData
+     * @param ptg partTitleGap
+     * @return int[] r where:
+     * <ul>
+     * <li>r[0] = xAxisExtraWidthLeft</li>
+     * <li>r[1] = xAxisExtraWidthRight</li>
+     * <li>r[2] = xAxisExtraHeightBottom</li>
+     * </ul>
      */
     @Override
-    public int[] drawXAxis(int textHeight, int scaleTickLength,
-            int scaleTickAndTextSeparation, int partTitleGap,
-            int seperationDistanceOfAxisAndData) {
-        int[] result = new int[3];
+    public int[] drawXAxis(int th, int stl, int sd1, int ptg, int sd2) {
+        int[] r = new int[3];
         int xAxisExtraWidthLeft = 0;
         int xAxisExtraWidthRight = 0;
         //int seperationDistanceOfAxisAndData = partTitleGap;
         //int seperationDistanceOfAxisAndData = partTitleGap * 2;
         //int seperationDistanceOfAxisAndData = textHeight;
-        int xAxisExtraHeightBottom = scaleTickLength + scaleTickAndTextSeparation + seperationDistanceOfAxisAndData;
+        int xAxisExtraHeightBottom = stl + sd1 + sd2;
 //                    row + scaleTickLength + (textHeight / 3));;
         setPaint(Color.LIGHT_GRAY);
         // Draw X axis below the data
         setPaint(Color.GRAY);
-        int row = dataEndRow + seperationDistanceOfAxisAndData;
-        Line2D ab = new Line2D.Double(dataStartCol, row, dataEndCol,
-                row);
+        int row = dataEndRow + sd2;
+        Line2D ab = new Line2D.Double(dataStartCol, row, dataEndCol, row);
         draw(ab);
         /*
          * Draw X axis ticks and labels below the X axis
          */
-        int increment = textHeight;
-        while (((dataWidth * textHeight) + 4) / increment > dataWidth) {
-            increment += textHeight;
+        int increment = th;
+        while (((dataWidth * th) + 4) / increment > dataWidth) {
+            increment += th;
         }
         int xAxisMaxLabelHeight = 0;
         String text_String;
@@ -171,11 +176,7 @@ public class Chart_Scatter extends Chart {
         RoundingMode rm = getRoundingMode();
         for (int col = startCol; col <= dataEndCol; col += increment) {
             if (col >= dataStartCol) {
-                ab = new Line2D.Double(
-                        col,
-                        row,
-                        col,
-                        row + scaleTickLength);
+                ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
                 BigDecimal x = imageColToXCoordinate(col);
                 if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
@@ -191,22 +192,14 @@ public class Chart_Scatter extends Chart {
                 textWidth = getTextWidth(text_String);
                 xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
                 angle = Math.PI / 2;
-                writeText(
-                        text_String,
-                        angle,
-                        col - (textHeight / 3),
-                        row + scaleTickAndTextSeparation + scaleTickLength);
+                writeText(text_String, angle, col - (th / 3), row + sd1 + stl);
 //                    row + scaleTickLength + (textHeight / 3));
             }
         }
         // From the origin left
         for (int col = startCol; col >= dataStartCol; col -= increment) {
             if (col >= dataStartCol) {
-                ab = new Line2D.Double(
-                        col,
-                        row,
-                        col,
-                        row + scaleTickLength);
+                ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
                 BigDecimal x = imageColToXCoordinate(col);
                 if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
@@ -216,28 +209,26 @@ public class Chart_Scatter extends Chart {
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
                     text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(x,
-                            Math_BigDecimal.getDecimalPlacePrecision(
-                                    x,
-                                    significantDigits),
+                            Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
                             rm).toString();
                 }
                 textWidth = getTextWidth(text_String);
                 xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
                 angle = Math.PI / 2;
-                writeText(text_String, angle, col - (textHeight / 3),
-                        row + scaleTickAndTextSeparation + scaleTickLength);
+                writeText(text_String, angle, col - (th / 3),
+                        row + sd1 + stl);
 //                    row + scaleTickLength + (textHeight / 3));
             }
         }
         xAxisExtraHeightBottom += xAxisMaxLabelHeight;
         //xAxisExtraHeightBottom += scaleTickAndTextSeparation + scaleTickLength + seperationDistanceOfAxisAndData;
-        xAxisExtraWidthRight += textHeight * 2;
-        xAxisExtraWidthLeft += textHeight / 2;
+        xAxisExtraWidthRight += th * 2;
+        xAxisExtraWidthLeft += th / 2;
         // Add the X axis label
         setPaint(Color.BLACK);
         text_String = xAxisLabel;
         textWidth = getTextWidth(text_String);
-        xAxisExtraHeightBottom += partTitleGap;
+        xAxisExtraHeightBottom += ptg;
         // Calculate if the xAxisLabel will require the imageWidth to increase.
         // If the xAxisLable is wider than the XAxis it might be best to split 
         // it and write it on multiple lines.  
@@ -246,52 +237,44 @@ public class Chart_Scatter extends Chart {
         if (endxAxisLabelPostion > currentWidth) {
             xAxisExtraWidthRight += endxAxisLabelPostion - currentWidth;
         }
-        drawString(
-                text_String,
+        drawString(text_String,
                 dataStartCol + (dataWidth / 2) - (textWidth / 2),
                 row + xAxisExtraHeightBottom);
         // Draw line on origin
         if (isDrawOriginLinesOnPlot()) {
             if (originRow <= dataEndRow && originRow >= dataStartRow) {
                 setPaint(Color.LIGHT_GRAY);
-                ab = new Line2D.Double(
-                        dataStartCol,
-                        originRow,
-                        dataEndCol,
+                ab = new Line2D.Double(dataStartCol, originRow, dataEndCol,
                         originRow);
                 draw(ab);
             }
         }
         if (addLegend) {
-            xAxisExtraHeightBottom += (2 * textHeight);
+            xAxisExtraHeightBottom += (2 * th);
         }
-        result[0] = xAxisExtraWidthLeft;
-        result[1] = xAxisExtraWidthRight;
-        result[2] = xAxisExtraHeightBottom;
-        return result;
+        r[0] = xAxisExtraWidthLeft;
+        r[1] = xAxisExtraWidthRight;
+        r[2] = xAxisExtraHeightBottom;
+        return r;
     }
 
     /**
      *
-     * @param interval // ignored
-     * @param textHeight
-     * @param startAgeOfEndYearInterval // ignored
-     * @param scaleTickLength
-     * @param scaleTickAndTextSeparation
-     * @param partTitleGap
-     * @param seperationDistanceOfAxisAndData
+     * @param interval ignored
+     * @param th textHeight
+     * @param saeyi startAgeOfEndYearInterval ignored
+     * @param stl scaleTickLength
+     * @param sd1 scaleTickAndTextSeparation
+     * @param ptg partTitleGap
+     * @param sd2 seperationDistanceOfAxisAndData
      * @return
      */
     @Override
-    public int[] drawYAxis(int interval, int textHeight,
-            int startAgeOfEndYearInterval, int scaleTickLength,
-            int scaleTickAndTextSeparation, int partTitleGap,
-            int seperationDistanceOfAxisAndData) {
-        int[] result = new int[1];
-        int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
-                + seperationDistanceOfAxisAndData;
+    public int[] drawYAxis(int interval, int th, int saeyi, int stl,
+            int sd1, int ptg, int sd2) {
+        int[] r = new int[1];
+        int yAxisExtraWidthLeft = stl + sd1 + sd2;
         Line2D ab;
-        int th = getTextHeight();
         String text;
         int tw;
         int row;
@@ -300,7 +283,7 @@ public class Chart_Scatter extends Chart {
         // Draw Y axis to left of data
         //setOriginCol();
         setPaint(Color.GRAY);
-        int col = dataStartCol - seperationDistanceOfAxisAndData;
+        int col = dataStartCol - sd2;
         ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
         draw(ab);
         /*
@@ -314,7 +297,7 @@ public class Chart_Scatter extends Chart {
         // From the origin up
         for (row = originRow; row >= dataStartRow; row -= increment) {
             if (row <= dataEndRow) {
-                ab = new Line2D.Double(col, row, col - scaleTickLength, row);
+                ab = new Line2D.Double(col, row, col - stl, row);
                 draw(ab);
                 BigDecimal y = imageRowToYCoordinate(row);
                 if (y.compareTo(BigDecimal.ZERO) == 0 || row == originRow) {
@@ -330,8 +313,8 @@ public class Chart_Scatter extends Chart {
                 yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
                 drawString(
                         text,
-                        col - scaleTickAndTextSeparation - scaleTickLength - tw,
-                        row + (textHeight / 3));
+                        col - sd1 - stl - tw,
+                        row + (th / 3));
             }
         }
         // From the origin down
@@ -340,7 +323,7 @@ public class Chart_Scatter extends Chart {
                 ab = new Line2D.Double(
                         col,
                         row,
-                        col - scaleTickLength,
+                        col - stl,
                         row);
                 draw(ab);
                 BigDecimal y = imageRowToYCoordinate(row);
@@ -357,18 +340,18 @@ public class Chart_Scatter extends Chart {
                 yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
                 drawString(
                         text,
-                        col - scaleTickAndTextSeparation - scaleTickLength - tw,
-                        row + (textHeight / 3));
+                        col - sd1 - stl - tw,
+                        row + (th / 3));
             }
         }
-        yAxisExtraWidthLeft += scaleTickLength + scaleTickAndTextSeparation + yAxisMaxLabelWidth;
+        yAxisExtraWidthLeft += stl + sd1 + yAxisMaxLabelWidth;
         // Add the Y axis label
         setPaint(Color.BLACK);
         text = yAxisLabel;
         tw = getTextWidth(text);
-        yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
+        yAxisExtraWidthLeft += (th * 2) + ptg;
         double angle = 3.0d * Math.PI / 2.0d;
-        writeText(text, angle, 3 * textHeight / 2,
+        writeText(text, angle, 3 * th / 2,
                 dataMiddleRow + (tw / 2));
         // Draw line on origin
         if (isDrawOriginLinesOnPlot()) {
@@ -382,8 +365,8 @@ public class Chart_Scatter extends Chart {
                 draw(ab);
             }
         }
-        result[0] = yAxisExtraWidthLeft;
-        return result;
+        r[0] = yAxisExtraWidthLeft;
+        return r;
     }
 
 //    /**

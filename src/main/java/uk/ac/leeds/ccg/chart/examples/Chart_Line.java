@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import uk.ac.leeds.ccg.chart.core.Chart_AbstractLine;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
@@ -38,7 +37,7 @@ import uk.ac.leeds.ccg.generic.util.Generic_Collections;
 /**
  * An example of generating a Line Graph visualization.
  */
-public class Chart_Line extends Chart_AbstractLine {
+public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
 
     /**
      * Iff set to true then a line is added to the graph at Y = 0.
@@ -59,7 +58,7 @@ public class Chart_Line extends Chart_AbstractLine {
      * @param dataHeight The data height.
      * @param xAxisLabel The x axis label.
      * @param yAxisLabel The y axis label.
-  * @param yMax The maximum y on the y axis.
+     * @param yMax The maximum y on the y axis.
      * @param yPin A value that must be on the y axis.
      * @param yIncrement The increment between values on the y axis.
      * @param numberOfYAxisTicks The number of y axis ticks.
@@ -72,7 +71,7 @@ public class Chart_Line extends Chart_AbstractLine {
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, BigDecimal yMax,
             ArrayList<BigDecimal> yPin, BigDecimal yIncrement,
-            int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd, 
+            int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd,
             RoundingMode rm) {
         super(e);
         this.yMax = yMax;
@@ -126,9 +125,8 @@ public class Chart_Line extends Chart_AbstractLine {
     }
 
     /**
-     *
-     * @param map
-     * @param c
+     * @param map The map to draw.
+     * @param c The colour.
      */
     public void drawMap(TreeMap<BigDecimal, BigDecimal> map, Color c) {
         int length;
@@ -137,13 +135,10 @@ public class Chart_Line extends Chart_AbstractLine {
         int col0 = 0;
         setPaint(c);
         boolean first = true;
-        Iterator<BigDecimal> ite;
-        ite = map.keySet().iterator();
+        Iterator<BigDecimal> ite = map.keySet().iterator();
         while (ite.hasNext()) {
-            BigDecimal x;
-            x = ite.next();
-            BigDecimal y;
-            y = map.get(x);
+            BigDecimal x = ite.next();
+            BigDecimal y = map.get(x);
             int row = coordinateToScreenRow(y);
             int col = coordinateToScreenCol(x);
             if (first) {
@@ -156,8 +151,7 @@ public class Chart_Line extends Chart_AbstractLine {
                 drawCross(col0, row0, length);
 //                drawPlus(col, row, length);
                 drawCross(col, row, length);
-                Line2D line;
-                line = new Line2D.Double(col0, row0, col, row);
+                Line2D line = new Line2D.Double(col0, row0, col, row);
                 draw(line);
                 row0 = row;
                 col0 = col;
@@ -174,17 +168,13 @@ public class Chart_Line extends Chart_AbstractLine {
     }
 
     /**
-     *
-     * @param col
-     * @param row
+     * @param col The column.
+     * @param row The row.
      * @param l length of each cross part
      */
     public void drawCross(int col, int row, int l) {
-        Line2D line;
-        line = new Line2D.Double(col - l, row - l, col + l, row + l);
-        draw(line);
-        line = new Line2D.Double(col - l, row + l, col + l, row - l);
-        draw(line);
+        draw(new Line2D.Double(col - l, row - l, col + l, row + l));
+        draw(new Line2D.Double(col - l, row + l, col + l, row - l));
     }
 
     public static void main(String[] args) {

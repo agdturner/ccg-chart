@@ -58,11 +58,11 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
      * @param rm The RoundingMode.
      */
     public Chart_ScatterAndLinearRegression(Generic_Environment e,
-            ExecutorService es, Path file, String format, String title,
+            ExecutorService es, Path f, String format, String title,
             int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, int dpc, int dpd, RoundingMode rm) {
         super(e);
-        init(es, file, format, title, dataWidth, dataHeight, xAxisLabel,
+        init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot, dpc, dpd, rm);
     }
 
@@ -703,15 +703,12 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     }
 
     /**
-     *
-     * @param data
-     * @param lineParameters
-     * @return
+     * @param data Data.
+     * @param lp lineParameters
+     * @return double[][] r the line
      */
-    public static double[][] getXYLineData(
-            double[][] data,
-            double[] lineParameters) {
-        double[][] result = new double[2][2];
+    public static double[][] getXYLineData(double[][] data, double[] lp) {
+        double[][] r = new double[2][2];
         double miny = Double.MAX_VALUE;
         double maxy = Double.MIN_VALUE;
         double minx = Double.MAX_VALUE;
@@ -722,16 +719,16 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
             miny = Math.min(miny, data[1][j]);
             maxy = Math.max(maxy, data[1][j]);
         }
-        result[0][0] = minx;
-        result[0][1] = maxx;
-        result[1][0] = miny;
-        result[1][1] = maxy;
+        r[0][0] = minx;
+        r[0][1] = maxx;
+        r[1][0] = miny;
+        r[1][1] = maxy;
 //        System.out.println("miny " + minx);
 //        System.out.println("maxy " + maxx);
 //        System.out.println("minx " + miny);
 //        System.out.println("maxx " + maxy);
-        double m = lineParameters[1];
-        double c = lineParameters[0];
+        double m = lp[1];
+        double c = lp[0];
         // y = (m * x) + c
         // x = (y - c) / m
         // minyx stores the y at minx
@@ -751,67 +748,57 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
         double maxxy = (m * maxy) + c;
 
         if (maxxy < maxx) {
-            result[0][1] = maxxy;
+            r[0][1] = maxxy;
         } else {
-            result[1][1] = maxyx;
+            r[1][1] = maxyx;
         }
         if (minxy > minx) {
-            result[0][0] = minxy;
+            r[0][0] = minxy;
         } else {
-            result[1][0] = minyx;
+            r[1][0] = minyx;
         }
 
         if (maxyx < maxy) {
-            result[1][1] = maxyx;
+            r[1][1] = maxyx;
         } else {
-            result[0][1] = maxxy;
+            r[0][1] = maxxy;
         }
 
         if (minyx > miny) {
-            result[1][0] = minyx;
+            r[1][0] = minyx;
         } else {
-            result[0][0] = minxy;
+            r[0][0] = minxy;
         }
 
-        if (Double.isNaN(result[1][0])) {
-            if (Double.isNaN(result[0][0])) {
-                result[1][0] = 0;
-                result[0][0] = 0;
+        if (Double.isNaN(r[1][0])) {
+            if (Double.isNaN(r[0][0])) {
+                r[1][0] = 0;
+                r[0][0] = 0;
             } else {
-                result[1][0] = result[0][0];
+                r[1][0] = r[0][0];
                 //result[1][0] = 0;
             }
         }
-        if (Double.isNaN(result[1][1])) {
-            if (Double.isNaN(result[0][1])) {
-                result[1][1] = 0;
-                result[0][1] = 0;
+        if (Double.isNaN(r[1][1])) {
+            if (Double.isNaN(r[0][1])) {
+                r[1][1] = 0;
+                r[0][1] = 0;
             } else {
-                result[1][1] = result[0][1];
+                r[1][1] = r[0][1];
                 //result[1][1] = 0;
             }
         }
-
         System.out.println("Line Segment");
-        System.out.println(
-                "(minx,miny) ("
-                + result[1][0] + ","
-                + result[0][0] + ")");
-        System.out.println(
-                "(maxx,maxy) ("
-                + result[1][1] + ","
-                + result[0][1] + ")");
-        return result;
+        System.out.println("(minx,miny) (" + r[1][0] + "," + r[0][0] + ")");
+        System.out.println("(maxx,maxy) (" + r[1][1] + "," + r[0][1] + ")");
+        return r;
     }
 
     /**
-     *
-     *
-     * @param data
-     * @return
+     * @param data The data
+     * @return The y equals x line.
      */
-    public static double[][] getYEqualsXLineData(
-            double[][] data) {
+    public static double[][] getYEqualsXLineData(double[][] data) {
         double[][] lineChartData = new double[2][2];
         // minx is the minimum x value in data[1]
         double minx = Double.MAX_VALUE;
