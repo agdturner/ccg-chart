@@ -5,7 +5,7 @@
 
     <groupId>io.github.agdturner</groupId>
     <artifactId>agdt-java-chart</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>agdt-java-chart</name>
@@ -41,18 +41,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <agdt-java-generic.version>1.2-SNAPSHOT</agdt-java-generic.version>
-        <agdt-java-math.version>1.1.1</agdt-java-math.version>
-        <agdt-java-stats.version>1.0-SNAPSHOT</agdt-java-stats.version>
-        <agdt-java-data.version>1.0-SNAPSHOT</agdt-java-data.version>
+        <agdt-java-generic.version>2.0</agdt-java-generic.version>
+        <ccg-math.version>1.17</ccg-math.version>
+        <agdt-java-stats.version>0.5</agdt-java-stats.version>
+        <agdt-java-data.version>0.3</agdt-java-data.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
         <!--
         <commons-math.version>3.6.1</commons-math.version>
-        -->
         <commons-math.version>2.2</commons-math.version>
+        -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.version>3.0.1</maven.version>
-        <junit.version>5.5.2</junit.version>
+        <junit.version>5.7.0</junit.version>
     </properties>
     
     <dependencies>
@@ -63,8 +64,8 @@
         </dependency>
         <dependency>
             <groupId>io.github.agdturner</groupId>
-            <artifactId>agdt-java-math</artifactId>
-            <version>${agdt-java-math.version}</version>
+            <artifactId>ccg-math</artifactId>
+            <version>${ccg-math.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.agdturner</groupId>
@@ -76,11 +77,20 @@
             <artifactId>agdt-java-data</artifactId>
             <version>${agdt-java-data.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons-math3.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math -->
+        <!--
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math</artifactId>
             <version>${commons-math.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
