@@ -15,36 +15,36 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
-import java.math.BigDecimal;
+import ch.obermuhlner.math.big.BigRational;
 
-public class Data_BiBigDecimal {
+public class BigRational2 {
 
-    public BigDecimal x;
-    public BigDecimal y;
+    public BigRational x;
+    public BigRational y;
 
-    public Data_BiBigDecimal() {
+    public BigRational2() {
     }
 
-    public Data_BiBigDecimal(
-            BigDecimal x,
-            BigDecimal y) {
+    public BigRational2(
+            BigRational x,
+            BigRational y) {
         this.x = x;
         this.y = y;
     }
 
-    public BigDecimal getX() {
+    public BigRational getX() {
         return x;
     }
 
-    public void setX(BigDecimal x) {
+    public void setX(BigRational x) {
         this.x = x;
     }
 
-    public BigDecimal getY() {
+    public BigRational getY() {
         return y;
     }
 
-    public void setY(BigDecimal y) {
+    public void setY(BigRational y) {
         this.y = y;
     }
 
@@ -56,14 +56,11 @@ public class Data_BiBigDecimal {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Data_BiBigDecimal other = (Data_BiBigDecimal) obj;
+        final BigRational2 other = (BigRational2) obj;
         if (this.x != other.x && (this.x == null || !this.x.equals(other.x))) {
             return false;
         }
-        if (this.y != other.y && (this.y == null || !this.y.equals(other.y))) {
-            return false;
-        }
-        return true;
+        return !(this.y != other.y && (this.y == null || !this.y.equals(other.y)));
     }
 
     @Override

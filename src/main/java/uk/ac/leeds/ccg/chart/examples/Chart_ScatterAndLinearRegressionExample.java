@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Line2D;
@@ -27,8 +28,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.apache.commons.math.stat.regression.SimpleRegression;
-import uk.ac.leeds.ccg.chart.data.Data_BiBigDecimal;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
+//import org.apache.commons.math.stat.regression.SimpleRegression;
+import uk.ac.leeds.ccg.chart.data.BigDecimal2;
+import uk.ac.leeds.ccg.chart.data.BigRational2;
+import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 
@@ -36,9 +40,9 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
  * An example of generating a Scatter Plot visualization with a linear
  * regression line.
  */
-public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
+public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExample {
 
-    public Chart_ScatterAndLinearRegression(Generic_Environment e) {
+    public Chart_ScatterAndLinearRegressionExample(Generic_Environment e) {
         super(e);
     }
 
@@ -57,7 +61,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
      * @param dpd decimalPlacePrecisionForDisplay
      * @param rm The RoundingMode.
      */
-    public Chart_ScatterAndLinearRegression(Generic_Environment e,
+    public Chart_ScatterAndLinearRegressionExample(Generic_Environment e,
             ExecutorService es, Path f, String format, String title,
             int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, int dpc, int dpd, RoundingMode rm) {
@@ -97,8 +101,8 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
             int decimalPlacePrecisionForDisplay = 3;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Chart_ScatterAndLinearRegression plot;
-            plot = new Chart_ScatterAndLinearRegression(e, es, file, format,
+            Chart_ScatterAndLinearRegressionExample plot;
+            plot = new Chart_ScatterAndLinearRegressionExample(e, es, file, format,
                     title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
                     decimalPlacePrecisionForDisplay, rm);
@@ -112,7 +116,7 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     @Override
     public void drawData() {
         double[][] dataD;
-        dataD = getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
+        dataD = getDataAsDoubleArray(getData().xyData);
         drawYEqualsXLineData(dataD);
         /*
          * rp[0] is the y axis intercept;
@@ -123,15 +127,10 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
         double[] rp;
         rp = getSimpleRegressionParameters(dataD);
         drawRegressionLine(rp, dataD);
-        drawPoints(Color.DARK_GRAY, data);
+        drawPoints(Color.DARK_GRAY, getData());
         if (addLegend) {
             drawLegend(rp);
         }
-    }
-
-    @Override
-    public Object[] getDefaultData() {
-        return new Chart_Scatter(env).getDefaultData();
     }
 
     @Override
@@ -143,8 +142,9 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
         if (data == null) {
             data = getDefaultData();
         }
-        drawPoints(Color.DARK_GRAY, data);
-        double[][] dataAsDoubleArray = getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
+        Chart_ScatterData d = getData();
+        drawPoints(Color.DARK_GRAY, d);
+        double[][] dataAsDoubleArray = getDataAsDoubleArray(getData().xyData);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
          * rp[0] is the y axis intercept;
@@ -628,22 +628,22 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
     }
 
     protected double[][] getDataAsDoubleArray() {
-        return getDataAsDoubleArray((ArrayList<Data_BiBigDecimal>) data[0]);
+        return getDataAsDoubleArray(getData().xyData);
     }
 
     protected double[][] getDataAsDoubleArray(
-            ArrayList<Data_BiBigDecimal> d) {
+            ArrayList<BigRational2> d) {
         double[][] r = new double[2][d.size()];
-        Iterator<Data_BiBigDecimal> ite = d.iterator();
-        Data_BiBigDecimal xyData;
+        Iterator<BigRational2> ite = d.iterator();
+        BigRational2 xyData;
         /*
          * data[0][] are the y values data[1][] are the x values
          */
         int n = 0;
         while (ite.hasNext()) {
             xyData = ite.next();
-            r[0][n] = xyData.getY().doubleValue();
-            r[1][n] = xyData.getX().doubleValue();
+            r[0][n] = xyData.getY().toDouble();
+            r[1][n] = xyData.getX().toDouble();
             n++;
         }
         return r;
@@ -654,10 +654,10 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
                 dataAsDoubleArray);
         setPaint(Color.LIGHT_GRAY);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigDecimal.valueOf(yEqualsXLineData[1][0])),
-                coordinateToScreenRow(BigDecimal.valueOf(yEqualsXLineData[0][0])),
-                coordinateToScreenCol(BigDecimal.valueOf(yEqualsXLineData[1][1])),
-                coordinateToScreenRow(BigDecimal.valueOf(yEqualsXLineData[0][1]))));
+                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][0])),
+                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][0])),
+                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][1])),
+                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][1]))));
     }
 
     protected void drawRegressionLine(
@@ -668,10 +668,10 @@ public class Chart_ScatterAndLinearRegression extends Chart_Scatter {
                 rp);
         setPaint(Color.BLACK);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[1][0])),
-                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[0][0])),
-                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[1][1])),
-                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[0][1]))));
+                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][0])),
+                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][0])),
+                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][1])),
+                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][1]))));
 //                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][1])),
 //                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[1][0])),
 //                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][0])),

@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.core;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -26,18 +27,18 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.chart.data.Chart_Data;
+import uk.ac.leeds.ccg.chart.data.Chart_LineData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 
 /**
- * An abstract class for creating Age by Gender Population visualisations and
- * possibly rendering them in a lightweight component as suited to headless
- * rendering.
+ * An abstract class for creating Line Charts.
  */
 public abstract class Chart_Line extends Chart {
 
-    protected BigDecimal yMax;
+    protected BigRational yMax;
 
     /**
      * yPin are a set of values that must appear if possible on the Y axis. The
@@ -45,12 +46,12 @@ public abstract class Chart_Line extends Chart {
      * the last. It is expected that only those that can fit on the axis will be
      * included.
      */
-    protected ArrayList<BigDecimal> yPin;
+    protected ArrayList<BigRational> yPin;
 
     /**
      * If this is set, this is the distance desired between Y axis ticks.
      */
-    protected BigDecimal yIncrement;
+    protected BigRational yIncrement;
 
     /**
      * The number of Y axis ticks wanted in total (other than yPins).
@@ -67,19 +68,20 @@ public abstract class Chart_Line extends Chart {
      */
     protected int numberOfYAxisTicksLT0;
 
-    protected TreeMap<BigDecimal, ?> xAxisLabels;
-    protected BigDecimal xMax;
+    //ArrayList<String> labels;
+    protected TreeMap<BigRational, ?> xAxisLabels;
+    protected BigRational xMax;
     protected BigDecimal xPin;
-    protected BigDecimal xIncrement;
+    protected BigRational xIncrement;
     protected int numberOfXAxisTicks;
 
     private Color[] colours;
-    private ArrayList<String> labels;
+    //private ArrayList<String> labels;
 
     public Chart_Line(Generic_Environment e) {
         super(e);
     }
-    
+
     /**
      *
      * @param es -
@@ -111,21 +113,18 @@ public abstract class Chart_Line extends Chart {
     }
 
     /**
-     *
-     * @param data -
+     * @param data The data from which parameters will be initialised.
      */
     @Override
-    public void initialiseParameters(Object[] data) {
-        minY = (BigDecimal) data[1];
-        maxY = (BigDecimal) data[2];
-        minX = (BigDecimal) data[3];
-        maxX = (BigDecimal) data[4];
-        labels = (ArrayList<String>) data[5];
-        xAxisLabels = (TreeMap<BigDecimal, String>) data[6];
-        setCellHeight();
-        setCellWidth();
-        setOriginRow();
-        setOriginCol();
+    public void initialiseParameters(Chart_Data data) {
+        Chart_LineData ld = (Chart_LineData) data;
+        xAxisLabels = ld.xAxisLabels;
+        super.initialiseParameters(data);
+    }
+
+    @Override
+    public Chart_LineData getData() {
+        return (Chart_LineData) data;
     }
 
     @Override
@@ -148,18 +147,20 @@ public abstract class Chart_Line extends Chart {
     public int[] drawYAxis(int textHeight, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
-        RoundingMode rm;
-        rm = RoundingMode.HALF_UP;
-        MathContext mc;
-        mc = new MathContext(decimalPlacePrecisionForCalculations, rm);
-        BigDecimal y;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        MathContext mc = new MathContext(dpc, rm);
+        BigRational y;
         if (yPin != null) {
-            BigDecimal maxYPin;
-            BigDecimal minYPin;
+            BigRational maxYPin;
+            BigRational minYPin;
             maxYPin = Generic_Collections.getMax(yPin);
             minYPin = Generic_Collections.getMin(yPin);
-            minY = minYPin.min(minY);
-            maxY = maxYPin.max(maxY);
+            if (minYPin != null) {
+                minY = BigRational.min(minYPin, minY);
+            }
+            if (maxYPin != null) {
+                maxY = BigRational.max(maxYPin, maxY);
+            }
             setCellHeight();
         }
 //            if (minY.compareTo(BigDecimal.ZERO) > 1) {
@@ -196,9 +197,9 @@ public abstract class Chart_Line extends Chart {
 //            rowValue = minY;
 //        }
         boolean hasPositives;
-        hasPositives = maxY.compareTo(BigDecimal.ZERO) == 1;
+        hasPositives = maxY.compareTo(BigRational.ZERO) == 1;
         boolean hasNegatives;
-        hasNegatives = minY.compareTo(BigDecimal.ZERO) == -1;
+        hasNegatives = minY.compareTo(BigRational.ZERO) == -1;
 
         /**
          * If yIncrement is not set, then set it. If it is set, then set
@@ -216,12 +217,16 @@ public abstract class Chart_Line extends Chart {
 //                yIncrement = (maxY.subtract(minY)).divide(
 //                        new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
 //            }
-            yIncrement = (maxY.subtract(minY)).divide(
-                    new BigDecimal(numberOfYAxisTicks), mc);
-            initNumberOfYAxisTicksGT0(hasPositives, mc);
-            initNumberOfYAxisTicksLT0(hasNegatives, mc);
-            yIncrement = (maxY.subtract(minY)).divide(
-                    new BigDecimal(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0), mc);
+            if (numberOfYAxisTicks > 0) {
+                yIncrement = (maxY.subtract(minY)).divide(
+                        BigRational.valueOf(numberOfYAxisTicks));
+                initNumberOfYAxisTicksGT0(hasPositives, mc);
+                initNumberOfYAxisTicksLT0(hasNegatives, mc);
+                yIncrement = (maxY.subtract(minY)).divide(
+                        BigRational.valueOf(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0));
+            } else {
+                yIncrement = maxY.subtract(minY);
+            }
         } else {
             initNumberOfYAxisTicksGT0(hasPositives, mc);
             initNumberOfYAxisTicksLT0(hasNegatives, mc);
@@ -242,8 +247,7 @@ public abstract class Chart_Line extends Chart {
         BitSet rows = new BitSet();
         // Add the yPins that fit
         if (yPin != null) {
-            Iterator<BigDecimal> ite;
-            ite = yPin.iterator();
+            Iterator<BigRational> ite = yPin.iterator();
             while (ite.hasNext()) {
                 y = ite.next();
                 row = coordinateToScreenRow(y);
@@ -255,8 +259,8 @@ public abstract class Chart_Line extends Chart {
 
         // Add a pin at zero
         if (hasNegatives && hasPositives) {
-            y = BigDecimal.ZERO;
-            row = coordinateToScreenRow(BigDecimal.ZERO);
+            y = BigRational.ZERO;
+            row = coordinateToScreenRow(BigRational.ZERO);
             // Add Y Axis Mark
             maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                     maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
@@ -327,7 +331,7 @@ public abstract class Chart_Line extends Chart {
      * @return The y axis mark.
      */
     protected int addYAxisMark(int row, int col, int scaleTickLength,
-            BigDecimal y, int maxTickTextWidth, int textHeight, BitSet rows,
+            BigRational y, int maxTickTextWidth, int textHeight, BitSet rows,
             int tickTextEndCol, RoundingMode rm) {
         int r = maxTickTextWidth;
         //System.out.println(textHeight);
@@ -345,7 +349,8 @@ public abstract class Chart_Line extends Chart {
             ab = new Line2D.Double(col, row, col - scaleTickLength, row);
             draw(ab);
             rows.set(bitsetRow, true);
-            tickText = "" + Math_BigDecimal.roundIfNecessary(y, 2, rm);
+            tickText = y.reduce().toRationalString();
+            //tickText = "" + Math_BigDecimal.round(y, -2, rm);
             textWidth = getTextWidth(tickText);
             tickTextStartCol = tickTextEndCol - textWidth;
             drawString(tickText, tickTextStartCol, row + tHDiv3);
@@ -356,13 +361,13 @@ public abstract class Chart_Line extends Chart {
 
     public void initNumberOfYAxisTicksGT0(boolean hasPositives, MathContext mc) {
         if (hasPositives) {
-            numberOfYAxisTicksGT0 = ((maxY).divide(yIncrement, mc)).intValue() + 1;
+            numberOfYAxisTicksGT0 = maxY.divide(yIncrement).integerPart().toBigDecimal().intValue() + 1;
         }
     }
 
     public void initNumberOfYAxisTicksLT0(boolean hasNegatives, MathContext mc) {
         if (hasNegatives) {
-            numberOfYAxisTicksLT0 = ((minY).divide(yIncrement, mc)).negate().intValue() + 1;
+            numberOfYAxisTicksLT0 = minY.divide(yIncrement).negate().integerPart().toBigDecimal().intValue() + 1;
         }
     }
 
@@ -385,17 +390,17 @@ public abstract class Chart_Line extends Chart {
     ) {
         int[] result = new int[3];
 //        Object[] data = getData();
-        BigDecimal colValue;
+        BigRational colValue;
         if (xPin != null) {
             // Initialise colValue
             int pinCompareToMinX;
-            pinCompareToMinX = xPin.compareTo(minX);
+            pinCompareToMinX = xPin.compareTo(minX.toBigDecimal());
             if (pinCompareToMinX != 0) {
                 if (pinCompareToMinX == 1) {
                     int pinCompareToMaxX;
-                    pinCompareToMaxX = xPin.compareTo(maxX);
+                    pinCompareToMaxX = xPin.compareTo(maxX.toBigDecimal());
                     if (pinCompareToMaxX != 1) {
-                        colValue = xPin;
+                        colValue = BigRational.valueOf(xPin);
                         while (colValue.compareTo(minX) != 1) {
                             colValue = colValue.subtract(xIncrement);
                         }
@@ -403,7 +408,7 @@ public abstract class Chart_Line extends Chart {
                         throw new UnsupportedOperationException(this.getClass().getName() + ".drawXAxis(int, int, int, int, int)");
                     }
                 } else {
-                    colValue = xPin;
+                    colValue = BigRational.valueOf(xPin);
                     while (colValue.compareTo(minX) == -1) {
                         colValue = colValue.add(xIncrement);
                     }
@@ -449,14 +454,13 @@ public abstract class Chart_Line extends Chart {
         double angle = 3.0d * Math.PI / 2.0d;
         int col = dataStartCol;
         int previousCol = col;
-        if (xAxisLabels != null) {
+        if (getData().xAxisLabels != null) {
             boolean first = true;
-            Iterator<BigDecimal> ite;
-            ite = xAxisLabels.keySet().iterator();
+            Iterator<BigRational> ite;
+            ite = getData().xAxisLabels.keySet().iterator();
             while (ite.hasNext()) {
-                BigDecimal x;
-                x = ite.next();
-                Object label = xAxisLabels.get(x);
+                BigRational x = ite.next();
+                Object label = getData().xAxisLabels.get(x);
                 col = coordinateToScreenCol(x);
                 if (col >= dataStartCol) {
                     ab = new Line2D.Double(col, row, col, row
@@ -476,13 +480,13 @@ public abstract class Chart_Line extends Chart {
             }
         } else {
             boolean first = true;
-            BigDecimal x = minX;
+            BigDecimal x = minX.toBigDecimal();
             int i = 0;
-            while (x.compareTo(maxX) != 1) {
+            while (x.compareTo(maxX.toBigDecimal()) != 1) {
 //        for (int i = 0; i < numberOfTicks; i ++) {
                 //String label = labels.get(value);
-                x = minX.add(BigDecimal.valueOf(i));
-                col = coordinateToScreenCol(x.multiply(xIncrement));
+                x = minX.toBigDecimal().add(BigDecimal.valueOf(i));
+                col = coordinateToScreenCol(BigRational.valueOf(x).multiply(xIncrement));
                 if (col >= dataStartCol) {
                     ab = new Line2D.Double(col, row, col,
                             row + scaleTickLength);
@@ -557,30 +561,16 @@ public abstract class Chart_Line extends Chart {
     }
 
     /**
-     * @return the labels
-     */
-    public ArrayList<String> getLabels() {
-        return labels;
-    }
-
-    /**
-     * @param labels the labels to set
-     */
-    public final void setLabels(ArrayList<String> labels) {
-        this.labels = labels;
-    }
-
-    /**
      * @return the xAxisLabels
      */
-    public TreeMap<BigDecimal, ?> getxAxisLabels() {
+    public TreeMap<BigRational, ?> getxAxisLabels() {
         return xAxisLabels;
     }
 
     /**
      * @param xAxisLabels the xAxisLabels to set
      */
-    public final void setxAxisLabels(TreeMap<BigDecimal, ?> xAxisLabels) {
+    public final void setxAxisLabels(TreeMap<BigRational, ?> xAxisLabels) {
         this.xAxisLabels = xAxisLabels;
     }
 

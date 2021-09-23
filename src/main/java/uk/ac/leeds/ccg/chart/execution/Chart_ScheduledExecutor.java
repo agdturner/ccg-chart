@@ -65,7 +65,7 @@ public class Chart_ScheduledExecutor implements Runnable {
         for (int i = 0; i < 2; i++) {
             System.out.println("Running " + i + "...");
             wait(this, (long) (Math.random() * 10000));
-            System.out.println("... comnpleted " + i + ".");
+            System.out.println("... completed " + i + ".");
         }
         System.out.println("Done");
     }

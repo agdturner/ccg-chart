@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Line2D;
@@ -28,8 +29,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import uk.ac.leeds.ccg.chart.core.Chart_Line;
+import uk.ac.leeds.ccg.chart.data.Chart_LineData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
@@ -37,14 +39,14 @@ import uk.ac.leeds.ccg.generic.util.Generic_Collections;
 /**
  * An example of generating a Line Graph visualization.
  */
-public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
+public class Chart_LineExample extends Chart_Line {
 
     /**
      * Iff set to true then a line is added to the graph at Y = 0.
      */
     boolean drawYZero;
 
-    public Chart_Line(Generic_Environment e) {
+    public Chart_LineExample(Generic_Environment e) {
         super(e);
     }
 
@@ -67,16 +69,20 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
      * @param dcd decimalPlacePrecisionForDisplay
      * @param rm The RoundingMode.
      */
-    public Chart_Line(Generic_Environment e, ExecutorService es, Path f,
+    public Chart_LineExample(Generic_Environment e, ExecutorService es, Path f,
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, BigDecimal yMax,
-            ArrayList<BigDecimal> yPin, BigDecimal yIncrement,
+            ArrayList<BigRational> yPin, BigDecimal yIncrement,
             int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd,
             RoundingMode rm) {
         super(e);
-        this.yMax = yMax;
+        if (yMax != null) {
+            this.yMax = BigRational.valueOf(yMax);
+        }
         this.yPin = yPin;
-        this.yIncrement = yIncrement;
+        if (yIncrement != null) {
+            this.yIncrement = BigRational.valueOf(yIncrement);
+        }
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.drawYZero = drawYZero;
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
@@ -86,12 +92,8 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
 
     @Override
     public void drawData() {
-        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
-        maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
-        TreeMap<String, Boolean> nonZero = null;
-        if (data.length > 7) {
-            nonZero = (TreeMap<String, Boolean>) data[7];
-        }
+        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps = getData().maps;
+        TreeMap<String, Boolean> nonZero = getData().nonZero;
         Color[] colours;
         colours = getColours();
         int i = 1;
@@ -139,8 +141,8 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
         while (ite.hasNext()) {
             BigDecimal x = ite.next();
             BigDecimal y = map.get(x);
-            int row = coordinateToScreenRow(y);
-            int col = coordinateToScreenCol(x);
+            int row = coordinateToScreenRow(BigRational.valueOf(y));
+            int col = coordinateToScreenCol(BigRational.valueOf(x));
             if (first) {
                 row0 = row;
                 col0 = col;
@@ -209,9 +211,9 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
             int numberOfYAxisTicks = 11;
             BigDecimal yMax;
             yMax = null;
-            ArrayList<BigDecimal> yPin;
+            ArrayList<BigRational> yPin;
             yPin = new ArrayList<>();
-            yPin.add(BigDecimal.ZERO);
+            yPin.add(BigRational.ZERO);
             //BigDecimal yIncrement = BigDecimal.ONE;
             BigDecimal yIncrement = null;
             //int yAxisStartOfEndInterval = 60;
@@ -219,7 +221,7 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
             int decimalPlacePrecisionForDisplay = 3;
             RoundingMode roundingMode = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Chart_Line chart = new Chart_Line(e, es, file, format, title,
+            Chart_LineExample chart = new Chart_LineExample(e, es, file, format, title,
                     dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
                     yIncrement, numberOfYAxisTicks, drawYZero,
                     decimalPlacePrecisionForCalculations,
@@ -246,7 +248,7 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
             Line2D ab;
             // Draw Y axis scale to the left side
             setPaint(Color.LIGHT_GRAY);
-            int zero = coordinateToScreenRow(BigDecimal.ZERO);
+            int zero = coordinateToScreenRow(BigRational.ZERO);
             ab = new Line2D.Double(dataStartCol, zero, dataEndCol, zero);
             draw(ab);
         }
@@ -314,14 +316,12 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
         }
     }
 
-    @Override
-    public Object[] getDefaultData() {
-        Object[] result;
-        result = new Object[7];
-        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
-        maps = new TreeMap<>();
-        TreeMap<BigDecimal, BigDecimal> map;
-        map = new TreeMap<>();
+    /**
+     * @return default data for this type of chart. 
+     */
+    public Chart_LineData getDefaultData() {
+        Chart_LineData r = new Chart_LineData();
+        TreeMap<BigDecimal, BigDecimal> map = new TreeMap<>();
         //map.put(new BigDecimal(0.0d), new BigDecimal(10.0d));
         map.put(new BigDecimal(0.0d), new BigDecimal(-10.0d));
         map.put(new BigDecimal(6.0d), new BigDecimal(11.0d));
@@ -342,9 +342,8 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
         map.put(new BigDecimal(52.0d), new BigDecimal(35.0d));
         map.put(new BigDecimal(53.0d), new BigDecimal(36.0d));
         map.put(new BigDecimal(54.0d), new BigDecimal(37.0d));
-        maps.put("map1", map);
-        TreeMap<BigDecimal, BigDecimal> map2;
-        map2 = new TreeMap<>();
+        r.maps.put("map1", map);
+        TreeMap<BigDecimal, BigDecimal> map2 = new TreeMap<>();
         map2.put(new BigDecimal(0.0d), new BigDecimal(9.0d));
         map2.put(new BigDecimal(6.0d), new BigDecimal(10.0d));
         map2.put(new BigDecimal(12.0d), new BigDecimal(12.0d));
@@ -364,80 +363,63 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
         map2.put(new BigDecimal(52.0d), new BigDecimal(25.0d));
         map2.put(new BigDecimal(53.0d), new BigDecimal(37.0d));
         map2.put(new BigDecimal(54.0d), new BigDecimal(37.0d));
-        maps.put("map2", map2);
-        BigDecimal[] minMaxBigDecimal;
-        minMaxBigDecimal = Generic_Collections.getMinMaxBigDecimal(map);
-        minY = minMaxBigDecimal[0];
-        maxY = minMaxBigDecimal[1];
-        minX = map.firstKey();
-        maxX = map.lastKey();
-        minMaxBigDecimal = Generic_Collections.getMinMaxBigDecimal(map2);
-        if (minY.compareTo(minMaxBigDecimal[0]) == 1) {
-            minY = minMaxBigDecimal[0];
+        r.maps.put("map2", map2);
+        Generic_Collections.MinMaxBigDecimal minMax;
+        minMax = Generic_Collections.getMinMaxBigDecimal(map);
+        minY = BigRational.valueOf(minMax.min);
+        maxY = BigRational.valueOf(minMax.max);
+        minX = BigRational.valueOf(map.firstKey());
+        maxX = BigRational.valueOf(map.lastKey());
+        minMax = Generic_Collections.getMinMaxBigDecimal(map2);
+        if (minY.compareTo(BigRational.valueOf(minMax.min)) == 1) {
+            minY = BigRational.valueOf(minMax.min);
         }
-        if (maxY.compareTo(minMaxBigDecimal[1]) == -1) {
-            maxY = minMaxBigDecimal[1];
+        if (maxY.compareTo(BigRational.valueOf(minMax.max)) == -1) {
+            maxY = BigRational.valueOf(minMax.max);
         }
-        if (minX.compareTo(map2.firstKey()) == 1) {
-            minX = map2.firstKey();
+        if (minX.compareTo(BigRational.valueOf(map2.firstKey())) == 1) {
+            minX = BigRational.valueOf(map2.firstKey());
         }
-        if (maxX.compareTo(map2.lastKey()) == -1) {
-            maxX = map2.lastKey();
+        if (maxX.compareTo(BigRational.valueOf(map2.lastKey())) == -1) {
+            maxX = BigRational.valueOf(map2.lastKey());
         }
-        result[0] = maps;
-        result[1] = minY;
-        result[2] = maxY;
-        result[3] = minX;
-        result[4] = maxX;
-        ArrayList<String> labels;
-        labels = new ArrayList<>();
-        labels.addAll(maps.keySet());
-        result[5] = labels;
-
-        // Comment out the following section to have a normal axis instead of labels.
-        TreeMap<BigDecimal, String> xAxisLabels;
-        xAxisLabels = new TreeMap<>();
-        xAxisLabels.put(new BigDecimal(0.0d), "2008 April");
-        xAxisLabels.put(new BigDecimal(6.0d), "2008 October");
-        xAxisLabels.put(new BigDecimal(12.0d), "2009 April");
-        xAxisLabels.put(new BigDecimal(18.0d), "2009 October");
-        xAxisLabels.put(new BigDecimal(24.0d), "2010 April");
-        xAxisLabels.put(new BigDecimal(27.0d), "2010 July");
-        xAxisLabels.put(new BigDecimal(30.0d), "2010 October");
-        xAxisLabels.put(new BigDecimal(33.0d), "2010 January");
-        xAxisLabels.put(new BigDecimal(36.0d), "2011 April");
-        xAxisLabels.put(new BigDecimal(39.0d), "2011 July");
-        xAxisLabels.put(new BigDecimal(42.0d), "2011 October");
-        xAxisLabels.put(new BigDecimal(45.0d), "2012 January");
-        xAxisLabels.put(new BigDecimal(48.0d), "2012 April");
-        xAxisLabels.put(new BigDecimal(49.0d), "2012 May");
-        xAxisLabels.put(new BigDecimal(50.0d), "2012 June");
-        xAxisLabels.put(new BigDecimal(51.0d), "2012 April");
-        xAxisLabels.put(new BigDecimal(52.0d), "2012 August");
-        xAxisLabels.put(new BigDecimal(53.0d), "2012 September");
-        xAxisLabels.put(new BigDecimal(54.0d), "2012 October");
-        result[6] = xAxisLabels;
-        return result;
+        r.minY = minY;
+        r.maxY = maxY;
+        r.minX = minX;
+        r.maxX = maxX;
+        r.xAxisLabels.put(BigRational.valueOf(0), "2008 April");
+        r.xAxisLabels.put(BigRational.valueOf(6), "2008 October");
+        r.xAxisLabels.put(BigRational.valueOf(12), "2009 April");
+        r.xAxisLabels.put(BigRational.valueOf(18), "2009 October");
+        r.xAxisLabels.put(BigRational.valueOf(24), "2010 April");
+        r.xAxisLabels.put(BigRational.valueOf(27), "2010 July");
+        r.xAxisLabels.put(BigRational.valueOf(30), "2010 October");
+        r.xAxisLabels.put(BigRational.valueOf(33), "2010 January");
+        r.xAxisLabels.put(BigRational.valueOf(36), "2011 April");
+        r.xAxisLabels.put(BigRational.valueOf(39), "2011 July");
+        r.xAxisLabels.put(BigRational.valueOf(42), "2011 October");
+        r.xAxisLabels.put(BigRational.valueOf(45), "2012 January");
+        r.xAxisLabels.put(BigRational.valueOf(48), "2012 April");
+        r.xAxisLabels.put(BigRational.valueOf(49), "2012 May");
+        r.xAxisLabels.put(BigRational.valueOf(50), "2012 June");
+        r.xAxisLabels.put(BigRational.valueOf(51), "2012 April");
+        r.xAxisLabels.put(BigRational.valueOf(52), "2012 August");
+        r.xAxisLabels.put(BigRational.valueOf(53), "2012 September");
+        r.xAxisLabels.put(BigRational.valueOf(54), "2012 October");
+        return r;
     }
 
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(getAgeInterval()),
-                getCellHeight(), 0, getRoundingMode()).intValue();
+        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
     }
 
     protected void drawLegend() {
 //        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
 //        maps = (TreeMap<String, TreeMap<BigDecimal, BigDecimal>>) data[0];
-        TreeMap<String, Boolean> nonZero2 = null;
-        if (data.length > 8) {
-            nonZero2 = (TreeMap<String, Boolean>) data[8];
-        }
-        ArrayList<String> labels;
-        labels = getLabels();
+        TreeMap<String, Boolean> nonZero2 = getData().nonZero2;
         Color[] colours;
         colours = getColours();
         int newLegendWidth = 0;
@@ -470,7 +452,7 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
         int i = 1;
         Iterator<String> ite;
         //ite = maps.keySet().iterator();
-        ite = labels.iterator();
+        ite = getData().maps.keySet().iterator();
         while (ite.hasNext()) {
 //            String type;
 //            type = ite.next();
@@ -488,8 +470,7 @@ public class Chart_Line extends uk.ac.leeds.ccg.chart.core.Chart_Line {
                 setPaint(Color.DARK_GRAY);
                 drawString(label, col, row);
                 setPaint(colours[j]);
-                Line2D line;
-                line = new Line2D.Double(th, row, col - 2, row - th);
+                Line2D line = new Line2D.Double(th, row, col - 2, row - th);
                 draw(line);
                 newLegendHeight += th + 2;
                 i++;

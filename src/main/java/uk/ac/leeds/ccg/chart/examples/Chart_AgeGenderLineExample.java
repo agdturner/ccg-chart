@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -28,17 +29,20 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.chart.core.Chart_AgeGender;
+import uk.ac.leeds.ccg.chart.data.Chart_AgeGenderData;
+import uk.ac.leeds.ccg.chart.data.Chart_AgeGenderLineData;
+import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
-import uk.ac.leeds.ccg.stats.Generic_Statistics;
+import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
 
 /**
  * An example of generating an Age by Gender Population Line Chart
  * Visualization.
  */
-public class Chart_AgeGenderLine extends Chart_AgeGender {
+public class Chart_AgeGenderLineExample extends Chart_AgeGender {
 
-    public Chart_AgeGenderLine(Generic_Environment e) {
+    public Chart_AgeGenderLineExample(Generic_Environment e) {
         super(e);
     }
 
@@ -60,7 +64,7 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
      * @param dpd The decimal place precision for display.
      * @param rm The RoundingMode.
      */
-    public Chart_AgeGenderLine(Generic_Environment e, ExecutorService es,
+    public Chart_AgeGenderLineExample(Generic_Environment e, ExecutorService es,
             Path f, String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, boolean drawOriginLinesOnPlot,
             int ageInterval, int startAgeOfEndYearInterval, int dpc, int dpd,
@@ -104,25 +108,14 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
             boolean drawOriginLinesOnPlot = true;
             int ageInterval = 1;
             int startAgeOfEndYearInterval = 90;//95;
-            int decimalPlacePrecisionForCalculations = 10;
-            int decimalPlacePrecisionForDisplay = 3;
-            RoundingMode aRoundingMode = RoundingMode.HALF_UP;
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Chart_AgeGenderLine plot = new Chart_AgeGenderLine(e,
-                    executorService,
-                    file,
-                    format,
-                    title,
-                    dataWidth,
-                    dataHeight,
-                    xAxisLabel,
-                    yAxisLabel,
-                    drawOriginLinesOnPlot,
-                    ageInterval,
-                    startAgeOfEndYearInterval,
-                    decimalPlacePrecisionForCalculations,
-                    decimalPlacePrecisionForDisplay,
-                    aRoundingMode);
+            int dpc = 10;
+            int dpd = 3;
+            RoundingMode rm = RoundingMode.HALF_UP;
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_AgeGenderLineExample plot = new Chart_AgeGenderLineExample(e, es, file,
+                    format, title, dataWidth, dataHeight, xAxisLabel,
+                    yAxisLabel, drawOriginLinesOnPlot, ageInterval,
+                    startAgeOfEndYearInterval, dpc, dpd, rm);
             plot.setData(plot.getDefaultData());
             plot.vis.getHeadlessEnvironment();
             plot.run();
@@ -141,19 +134,8 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
     public void drawLineChartUsingMeanAndStandardDeviation() {
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
-        TreeMap<Integer, Object[]> femaleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[0];
-        TreeMap<Integer, Object[]> maleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[1];
-        Iterator<Map.Entry<Integer, Object[]>> ite;
-        Map.Entry<Integer, Object[]> entry;
-        Integer age;
-        Object[] stats;
-        BigDecimal[] firstOrderStats;
-        BigDecimal[] secondOrderStats;
-        BigDecimal mean;
-        BigDecimal meanAddStdDev;
-        BigDecimal meanSubtractStdDev;
-        boolean firstPoint;
-        firstPoint = true;
+        Chart_AgeGenderLineData d = (Chart_AgeGenderLineData) getData();
+        boolean firstPoint = true;
         /*
          * Draw Female Lines
          */
@@ -161,23 +143,19 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
         int lastMeanAddStdDevPointCol = 0;
         int lastMeanSubtractStdDevPointCol = 0;
         int lastPointRow = 0;
-        ite = femaleSummaryStatisticsData.entrySet().iterator();
+        Iterator<Map.Entry<Integer, Stats_BigDecimal1>> ite;
+        ite = d.fData.entrySet().iterator();
         while (ite.hasNext()) {
-            entry = ite.next();
-            age = entry.getKey();
-            stats = entry.getValue();
-            firstOrderStats = (BigDecimal[]) stats[0];
-            secondOrderStats = (BigDecimal[]) stats[1];
-            mean = firstOrderStats[1];
-            meanAddStdDev = mean.add(secondOrderStats[5]);
-            meanSubtractStdDev = mean.subtract(secondOrderStats[5]);
-            int meanPointCol = coordinateToScreenCol(mean);
-            int pointRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age - ageInterval / 2));
-            int meanAddStdDevPointCol = coordinateToScreenCol(
-                    meanAddStdDev);
-            int meanSubtractStdDevPointCol = coordinateToScreenCol(
-                    meanSubtractStdDev);
+            Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
+            Integer age = entry.getKey();
+            Stats_BigDecimal1 stats = entry.getValue();
+            BigRational stdDev = BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
+            BigRational meanAddStdDev = stats.getMean().add(stdDev);
+            BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
+            int meanPointCol = coordinateToScreenCol(stats.getMean());
+            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int meanAddStdDevPointCol = coordinateToScreenCol(meanAddStdDev);
+            int meanSubtractStdDevPointCol = coordinateToScreenCol(meanSubtractStdDev);
             if (firstPoint) {
                 lastMeanPointCol = meanPointCol;
                 lastMeanAddStdDevPointCol = meanAddStdDevPointCol;
@@ -216,23 +194,18 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
          * Draw Male Lines
          */
         firstPoint = true;
-        ite = maleSummaryStatisticsData.entrySet().iterator();
+        ite = d.mData.entrySet().iterator();
         while (ite.hasNext()) {
-            entry = ite.next();
-            age = entry.getKey();
-            stats = entry.getValue();
-            firstOrderStats = (BigDecimal[]) stats[0];
-            secondOrderStats = (BigDecimal[]) stats[1];
-            mean = firstOrderStats[1];
-            meanAddStdDev = mean.add(secondOrderStats[5]);
-            meanSubtractStdDev = mean.subtract(secondOrderStats[5]);
-            int meanPointCol = coordinateToScreenCol(mean.negate());
-            int pointRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age - ageInterval / 2));
-            int meanAddStdDevPointCol = coordinateToScreenCol(
-                    meanAddStdDev.negate());
-            int meanSubtractStdDevPointCol = coordinateToScreenCol(
-                    meanSubtractStdDev.negate());
+            Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
+            Integer age = entry.getKey();
+            Stats_BigDecimal1 stats = entry.getValue();
+            BigRational stdDev = BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
+            BigRational meanAddStdDev = stats.getMean().add(stdDev);
+            BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
+            int meanPointCol = coordinateToScreenCol(stats.getMean().negate());
+            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int meanAddStdDevPointCol = coordinateToScreenCol(meanAddStdDev.negate());
+            int meanSubtractStdDevPointCol = coordinateToScreenCol(meanSubtractStdDev.negate());
             if (firstPoint) {
                 lastMeanPointCol = meanPointCol;
                 lastMeanAddStdDevPointCol = meanAddStdDevPointCol;
@@ -272,21 +245,8 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
     public void drawLineChartUsingMinQ1MedianQ3Max() {
         int ageInterval = getAgeInterval();
         Line2D abLine2D;
-        TreeMap<Integer, Object[]> femaleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[0];
-        TreeMap<Integer, Object[]> maleSummaryStatisticsData = (TreeMap<Integer, Object[]>) data[1];
-        Iterator<Map.Entry<Integer, Object[]>> ite;
-        Map.Entry<Integer, Object[]> entry;
-        Integer age;
-        Object[] stats;
-        BigDecimal[] firstOrderStats;
-        BigDecimal[] secondOrderStats;
-        BigDecimal min;
-        BigDecimal q1;
-        BigDecimal median;
-        BigDecimal q3;
-        BigDecimal max;
-        boolean firstPoint;
-        firstPoint = true;
+        Chart_AgeGenderLineData d = (Chart_AgeGenderLineData) getData();
+        boolean firstPoint = true;
         /*
          * Draw Female Lines
          */
@@ -296,46 +256,18 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
         int last_q3PointCol = 0;
         int last_maxPointCol = 0;
         int lastPointRow = 0;
-        ite = femaleSummaryStatisticsData.entrySet().iterator();
+        Iterator<Map.Entry<Integer, Stats_BigDecimal1>> ite;
+        ite = d.fData.entrySet().iterator();
         while (ite.hasNext()) {
-            entry = ite.next();
-            age = entry.getKey();
-            stats = entry.getValue();
-            /* 
-             * firstOrderStats[0] = sum;
-             * firstOrderStats[1] = mean;
-             * firstOrderStats[2] = median;
-             * firstOrderStats[3] = q1;
-             * firstOrderStats[4] = q3;
-             * firstOrderStats[5] = mode;
-             * firstOrderStats[6] = min;
-             * firstOrderStats[7] = max;
-             * firstOrderStats[8] = numberOfDifferentValues;
-             * firstOrderStats[9] = numberOfDifferentValuesInMode;
-             * firstOrderStats[10] = numberOfSameValuesInAnyPartOfMode;
-             */
-            firstOrderStats = (BigDecimal[]) stats[0];
-            /*
-             * secondOrderStats[0] = moment1 = sum of the (differences from the median)
-             * secondOrderStats[1] = moment2 = sum of the (differences from the median squared)
-             * secondOrderStats[2] = moment3 = sum of the (differences from the median cubed)
-             * secondOrderStats[3] = moment4 = sum of the (differences from the median squared squared)
-             * secondOrderStats[4] = variance = (sum of the (differences from the median))/n
-             * secondOrderStats[5] = standard deviation (hacked)  
-             */
-            secondOrderStats = (BigDecimal[]) stats[1];
-            min = firstOrderStats[6];
-            q1 = firstOrderStats[3];
-            median = firstOrderStats[2];
-            q3 = firstOrderStats[4];
-            max = firstOrderStats[7];
-            int minPointCol = coordinateToScreenCol(min);
-            int q1PointCol = coordinateToScreenCol(q1);
-            int medianPointCol = coordinateToScreenCol(median);
-            int q3PointCol = coordinateToScreenCol(q3);
-            int maxPointCol = coordinateToScreenCol(max);
-            int pointRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age - ageInterval / 2));
+            Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
+            Integer age = entry.getKey();
+            Stats_BigDecimal1 stats = entry.getValue();
+            int minPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin()));
+            int q1PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ1()));
+            int medianPointCol = coordinateToScreenCol(stats.getMedian());
+            int q3PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ3()));
+            int maxPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax()));
+            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
             if (firstPoint) {
                 last_minPointCol = minPointCol;
                 last_q1PointCol = q1PointCol;
@@ -397,46 +329,17 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
          * Draw Male Lines
          */
         firstPoint = true;
-        ite = maleSummaryStatisticsData.entrySet().iterator();
+        ite = d.mData.entrySet().iterator();
         while (ite.hasNext()) {
-            entry = ite.next();
-            age = entry.getKey();
-            stats = entry.getValue();
-            /* 
-             * firstOrderStats[0] = sum;
-             * firstOrderStats[1] = mean;
-             * firstOrderStats[2] = median;
-             * firstOrderStats[3] = q1;
-             * firstOrderStats[4] = q3;
-             * firstOrderStats[5] = mode;
-             * firstOrderStats[6] = min;
-             * firstOrderStats[7] = max;
-             * firstOrderStats[8] = numberOfDifferentValues;
-             * firstOrderStats[9] = numberOfDifferentValuesInMode;
-             * firstOrderStats[10] = numberOfSameValuesInAnyPartOfMode;
-             */
-            firstOrderStats = (BigDecimal[]) stats[0];
-            /*
-             * secondOrderStats[0] = moment1 = sum of the (differences from the median)
-             * secondOrderStats[1] = moment2 = sum of the (differences from the median squared)
-             * secondOrderStats[2] = moment3 = sum of the (differences from the median cubed)
-             * secondOrderStats[3] = moment4 = sum of the (differences from the median squared squared)
-             * secondOrderStats[4] = variance = (sum of the (differences from the median))/n
-             * secondOrderStats[5] = standard deviation (hacked)  
-             */
-            secondOrderStats = (BigDecimal[]) stats[1];
-            min = firstOrderStats[6];
-            q1 = firstOrderStats[3];
-            median = firstOrderStats[2];
-            q3 = firstOrderStats[4];
-            max = firstOrderStats[7];
-            int minPointCol = coordinateToScreenCol(min.negate());
-            int q1PointCol = coordinateToScreenCol(q1.negate());
-            int medianPointCol = coordinateToScreenCol(median.negate());
-            int q3PointCol = coordinateToScreenCol(q3.negate());
-            int maxPointCol = coordinateToScreenCol(max.negate());
-            int pointRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age - ageInterval / 2));
+            Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
+            Integer age = entry.getKey();
+            Stats_BigDecimal1 stats = entry.getValue();
+            int minPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin().negate()));
+            int q1PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ1().negate()));
+            int medianPointCol = coordinateToScreenCol(stats.getMedian().negate());
+            int q3PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ3().negate()));
+            int maxPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax().negate()));
+            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
             if (firstPoint) {
                 last_minPointCol = minPointCol;
                 last_q1PointCol = q1PointCol;
@@ -607,8 +510,10 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
         return result;
     }
 
-    @Override
-    public Object[] getDefaultData() {
+    /**
+     * @return default data for this type of chart. 
+     */
+    public Chart_AgeGenderLineData getDefaultData() {
         int ageInterval = 1;
         int startAgeOfEndYearInterval = 90;//95;
         int decimalPlacePrecisionForCalculations = 10;
@@ -629,11 +534,11 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
      * @param dp The decimal places.
      * @return The data set.
      */
-    public static Object[] getDefaultData(int ageInterval, int saeyi, int dp,
+    public static Chart_AgeGenderLineData getDefaultData(int ageInterval, int saeyi, int dp,
             RoundingMode rm) {
-        Object[] r = new Object[5];
-        TreeMap<Integer, Object[]> femaleSummaryStatistics = new TreeMap<>();
-        TreeMap<Integer, Object[]> maleSummaryStatistics = new TreeMap<>();
+        Chart_AgeGenderLineData r = new Chart_AgeGenderLineData();
+        TreeMap<Integer, Stats_BigDecimal1> fss = new TreeMap<>();
+        TreeMap<Integer, Stats_BigDecimal1> mss = new TreeMap<>();
         Object[] data10000 = getPopulationData(10000, 10000);
         TreeMap<Integer, BigDecimal> female10000 = (TreeMap<Integer, BigDecimal>) data10000[0];
         TreeMap<Integer, BigDecimal> male10000 = (TreeMap<Integer, BigDecimal>) data10000[1];
@@ -656,8 +561,7 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
         BigDecimal pop9900;
         BigDecimal pop9950;
         BigDecimal pop9800;
-        BigDecimal maxValue;
-        maxValue = BigDecimal.ZERO;
+        r.max = BigRational.ZERO;
         iterator = ((TreeMap<Integer, BigDecimal>) data10000[0]).keySet().iterator();
         ArrayList<BigDecimal> values = null;
         while (iterator.hasNext()) {
@@ -692,28 +596,19 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
             values.add(pop9900);
             values.add(pop9950);
             values.add(pop9800);
-            Object[] summaryStatistics_1 = Generic_Statistics.getSummaryStatistics_1(
-                    values,
-                    dp,
-                    rm);
-            System.out.println(
-                    "Female age " + age);
-            // Set maxValue to be the maximum of the median added to the standard 
+            Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
+            System.out.println("Female age " + age);
+            // Set r.max to be the maximum of the median added to the standard 
             // deviation
-            BigDecimal[] firstOrderStatistics = (BigDecimal[]) summaryStatistics_1[0];
-            BigDecimal[] secondOrderStatistics = (BigDecimal[]) summaryStatistics_1[1];
-            maxValue = maxValue.max(
-                    firstOrderStatistics[1].add(secondOrderStatistics[5]));
+            r.max = BigRational.max(r.max, BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
             if (age < saeyi) {
-                femaleSummaryStatistics.put(age, summaryStatistics_1);
+                fss.put(age, ss);
             } else {
-                femaleSummaryStatistics.put(
-                        saeyi + ageInterval,
-                        summaryStatistics_1);
+                fss.put(saeyi + ageInterval, ss);
             }
         }
-//maxX = maxValue;
-//maxValue = BigDecimal.ZERO;
+        //maxX = r.max;
+        //r.max = BigDecimal.ZERO;
         iterator = ((TreeMap<Integer, BigDecimal>) data10000[1]).keySet().iterator();
         while (iterator.hasNext()) {
             pop10000 = BigDecimal.ZERO;
@@ -748,30 +643,22 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
             values.add(pop9950);
             values.add(pop9800);
             System.out.println("Male age " + age);
-            Object[] summaryStatistics_1 = Generic_Statistics.getSummaryStatistics_1(
-                    values,
-                    dp,
-                    rm);
-            // Set maxValue to be the maximum of the median added to the standard 
+            Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
+            // Set r.max to be the maximum of the median added to the standard 
             // deviation
-            BigDecimal[] firstOrderStatistics = (BigDecimal[]) summaryStatistics_1[0];
-            BigDecimal[] secondOrderStatistics = (BigDecimal[]) summaryStatistics_1[1];
-            maxValue = maxValue.max(
-                    firstOrderStatistics[1].add(secondOrderStatistics[5]));
+            r.max = BigRational.max(r.max, BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
             if (age < saeyi) {
-                maleSummaryStatistics.put(age, summaryStatistics_1);
+                mss.put(age, ss);
             } else {
-                maleSummaryStatistics.put(
-                        saeyi + ageInterval,
-                        summaryStatistics_1);
+                mss.put(saeyi + ageInterval, ss);
             }
         }
-        r[0] = femaleSummaryStatistics;
-        r[1] = maleSummaryStatistics;
-        //minX = maxValue.negate();
-        r[2] = maxValue;
-        r[3] = BigDecimal.valueOf(100);
-        r[4] = BigDecimal.ZERO;
+//        r[0] = fss;
+//        r[1] = mss;
+//        //minX = r.max.negate();
+//        r[2] = r.max;
+//        r[3] = BigDecimal.valueOf(100);
+//        r[4] = BigDecimal.ZERO;
         return r;
     }
 
@@ -784,8 +671,8 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
      */
     public static Object[] getData(int dpc, RoundingMode rm) {
         Object[] result = new Object[2];
-        TreeMap<Integer, BigDecimal[]> femaleBoxPlotStatistics = new TreeMap<>();
-        TreeMap<Integer, BigDecimal[]> maleBoxPlotStatistics = new TreeMap<>();
+        TreeMap<Integer, Stats_BigDecimal1> femaleBoxPlotStatistics = new TreeMap<>();
+        TreeMap<Integer, Stats_BigDecimal1> maleBoxPlotStatistics = new TreeMap<>();
         Object[] data10000 = getPopulationData(10000, 10000);
         TreeMap<Integer, BigDecimal> female10000 = (TreeMap<Integer, BigDecimal>) data10000[0];
         TreeMap<Integer, BigDecimal> male10000 = (TreeMap<Integer, BigDecimal>) data10000[1];
@@ -825,12 +712,7 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
             pop = female9800.get(age);
             maxValue = maxValue.max(pop);
             values.add(pop);
-            BigDecimal[] boxPlotStatistics
-                    = Generic_Statistics.getSummaryStatistics_0(
-                            values,
-                            dpc,
-                            rm);
-            femaleBoxPlotStatistics.put(age, boxPlotStatistics);
+            femaleBoxPlotStatistics.put(age, new Stats_BigDecimal1(values));
         }
         maxValue = BigDecimal.ZERO;
         iterator = ((TreeMap<Integer, BigDecimal>) data10000[0]).keySet().iterator();
@@ -852,14 +734,15 @@ public class Chart_AgeGenderLine extends Chart_AgeGender {
             pop = male9800.get(age);
             maxValue = maxValue.max(pop);
             values.add(pop);
-            BigDecimal[] boxPlotStatistics = Generic_Statistics.getSummaryStatistics_0(
-                    values,
-                    dpc,
-                    rm);
-            maleBoxPlotStatistics.put(age, boxPlotStatistics);
+            maleBoxPlotStatistics.put(age, new Stats_BigDecimal1(values));
         }
         result[0] = femaleBoxPlotStatistics;
         result[1] = maleBoxPlotStatistics;
         return result;
+    }
+
+    @Override
+    public Chart_Data getData() {
+        return (Chart_AgeGenderData) data;
     }
 }

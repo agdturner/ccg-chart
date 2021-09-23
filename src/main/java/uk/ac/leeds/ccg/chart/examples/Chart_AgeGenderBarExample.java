@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,21 +28,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.chart.core.Chart_AgeGender;
+import uk.ac.leeds.ccg.chart.data.Chart_AgeGenderBarData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 
 /**
- * An implementation of <code>Chart_AgeGenderBar</code>
+ * An implementation of <code>Chart_AgeGenderBarExample</code>
  *
  * If you run this class it will attempt to generate an Age by Gender Population
  * Bar Chart Visualization of some default data and write it out to file as a
  * PNG.
  */
-public class Chart_AgeGenderBar extends Chart_AgeGender {
+public class Chart_AgeGenderBarExample extends Chart_AgeGender {
 
-    public Chart_AgeGenderBar(Generic_Environment e) {
+    public Chart_AgeGenderBarExample(Generic_Environment e) {
         super(e);
     }
 
@@ -63,7 +64,7 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
      * @param dpd The decimal place precision for display.
      * @param rm The RoundingMode.
      */
-    public Chart_AgeGenderBar(Generic_Environment e, ExecutorService es,
+    public Chart_AgeGenderBarExample(Generic_Environment e, ExecutorService es,
             Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
@@ -79,38 +80,34 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
         drawBarChart(getAgeInterval());
     }
 
+    /**
+     * @param ageInterval
+     */
     public void drawBarChart(int ageInterval) {
         setPaint(Color.DARK_GRAY);
-        BigDecimal cellWidth = getCellWidth();
-        TreeMap<Long, BigDecimal> femaleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[0];
-        TreeMap<Long, BigDecimal> maleAgeInYearsPopulationCount_TreeMap = (TreeMap<Long, BigDecimal>) data[1];
+        BigRational cellWidth = getCellWidth();
+        // Female Age_In_Years Population Counts
+        Chart_AgeGenderBarData d = getData();
+        TreeMap<Long, BigDecimal> f = d.female;
+        // Male Age_In_Years Population Counts
+        TreeMap<Long, BigDecimal> m = d.male;
         Iterator<Map.Entry<Long, BigDecimal>> ite;
         Map.Entry<Long, BigDecimal> entry;
         Long age;
         BigDecimal population;
         int barGap = 4;
-//        int barGapDiv2 = barGap / 2;
-//        int barHeight = Math_BigDecimal.divideRoundIfNecessary(
-//                BigDecimal.valueOf(ageInterval),
-//                getCellHeight(),
-//                0,
-//                roundingMode).intValueExact() - barGap;
         int barHeight;
-        BigDecimal cellHeight = getCellHeight();
-        if (cellHeight.compareTo(BigDecimal.ZERO) == 0) {
+        BigRational cellHeight = getCellHeight();
+        if (cellHeight.compareTo(BigRational.ZERO) == 0) {
             barHeight = 1;
         } else {
-            barHeight = Math_BigDecimal.divideRoundIfNecessary(
-                    BigDecimal.valueOf(ageInterval),
-                    getCellHeight(),
-                    0,
-                    roundingMode).intValue() - barGap;
+            barHeight = BigRational.valueOf(ageInterval).divide(getCellHeight()).integerPart().toBigDecimal().intValue() - barGap;
         }
         if (barHeight < 1) {
             barHeight = 1;
         }
         // Draw Female bars
-        ite = femaleAgeInYearsPopulationCount_TreeMap.entrySet().iterator();
+        ite = f.entrySet().iterator();
         while (ite.hasNext()) {
             entry = ite.next();
 
@@ -124,34 +121,18 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
             }
 
             population = entry.getValue();
-            int barWidth = Math_BigDecimal.divideRoundIfNecessary(
-                    population,
-                    cellWidth,
-                    0,
-                    //roundingMode).intValueExact();
-                    roundingMode).intValue();
+            int barWidth = BigRational.valueOf(population).divide(cellWidth).integerPart().toBigDecimal().intValue();
 //            int barTopRow = coordinateToScreenRow(
 //                    BigDecimal.valueOf(age + ageInterval))
 //                    + barGapDiv2;
             int barTopRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age + ageInterval))
+                    BigRational.valueOf(age + ageInterval))
                     + barGap;
             setPaint(Color.DARK_GRAY);
-//            Rectangle2D r2 = new Rectangle2D.Double(
-//                    originCol,
-//                    barTopRow,
-//                    barWidth,
-//                    barHeight);
-            fillRect(
-                    originCol,
-                    barTopRow,
-                    barWidth,
-                    barHeight);
-//            setPaint(Color.BLACK);
-//            draw(r2);
+            fillRect(originCol, barTopRow, barWidth, barHeight);
         }
         // Draw Male bars
-        ite = maleAgeInYearsPopulationCount_TreeMap.entrySet().iterator();
+        ite = m.entrySet().iterator();
         while (ite.hasNext()) {
             entry = ite.next();
 
@@ -165,16 +146,12 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
             }
 
             population = entry.getValue();
-            int barWidth = Math_BigDecimal.divideRoundIfNecessary(
-                    population,
-                    cellWidth,
-                    0,
-                    roundingMode).intValueExact();
+            int barWidth = BigRational.valueOf(population).divide(cellWidth).integerPart().toBigDecimal().intValueExact();
 //            int barTopRow = coordinateToScreenRow(
 //                    BigDecimal.valueOf(age + ageInterval))
 //                    + barGapDiv2;
             int barTopRow = coordinateToScreenRow(
-                    BigDecimal.valueOf(age + ageInterval))
+                    BigRational.valueOf(age + ageInterval))
                     + barGap;
             setPaint(Color.LIGHT_GRAY);
 //            Rectangle2D r2 = new Rectangle2D.Double(
@@ -197,8 +174,8 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
             Generic_Environment e = new Generic_Environment(
                     new Generic_Defaults());
 
-            /*
-         * Initialise title and Path to write image to
+            /**
+             * Initialise title and Path to write image to.
              */
             String title;
             Path file;
@@ -236,7 +213,7 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
             int dpd = 3;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Chart_AgeGenderBar chart = new Chart_AgeGenderBar(e, es, file,
+            Chart_AgeGenderBarExample chart = new Chart_AgeGenderBarExample(e, es, file,
                     format, title, dataWidth, dataHeight, xAxisLabel,
                     yAxisLabel, drawOriginLinesOnPlot, ageInterval,
                     startAgeOfEndYearInterval, dpc, dpd, rm);
@@ -251,8 +228,10 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
         }
     }
 
-    @Override
-    public Object[] getDefaultData() {
+    /**
+     * @return Default data for this type of chart.
+     */
+    public Chart_AgeGenderBarData getDefaultData() {
         int femalePopAge0 = 10000;
         int malePopAge0 = 9900;
         int ageInterval = 5;
@@ -266,25 +245,11 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
      * @param malePopAge0 Male population age 0.
      * @param ageInterval Age interval.
      * @param saeyi startAgeOfEndYearInterval
-     * @return Object[] r:
-     * <ul>
-     * <li>r[0] = femaleAgeInYearsPopulationCount</li>
-     * <li>r[1] = maleAgeInYearsPopulationCount</li>
-     * <li>r[2] = maxPop</li>
-     * </ul>
+     * @return Chart_AgeGenderBarData
      */
-    public static Object[] getDefaultData(int femalePopAge0, int malePopAge0,
-            int ageInterval, int saeyi) {
-        Object[] r = new Object[3];
-        Object[] data = getDefaultData(femalePopAge0, malePopAge0);
-        // fapc femaleAgeInYearsPopulationCounts
-        TreeMap<Long, BigDecimal> fapc = new TreeMap<>();
-        // mapc maleAgeInYearsPopulationCounts
-        TreeMap<Long, BigDecimal> mapc = new TreeMap<>();
-        // syfapc singleYearFemaleAgeInYearsPopulationCounts
-        TreeMap<Long, BigDecimal> syapc = (TreeMap<Long, BigDecimal>) data[0];
-        // symapc singleYearMaleAgeInYearsPopulationCounts
-        TreeMap<Long, BigDecimal> symapc = (TreeMap<Long, BigDecimal>) data[1];
+    public static Chart_AgeGenderBarData getDefaultData(int femalePopAge0,
+            int malePopAge0, int ageInterval, int saeyi) {
+        Chart_AgeGenderBarData r = getDefaultData(femalePopAge0, malePopAge0);
         Iterator<Long> ite;
         Long age;
         BigDecimal pop;
@@ -295,13 +260,13 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
         popGroup = BigDecimal.ZERO;
         boolean reportedPenultimateGroup;
         reportedPenultimateGroup = false;
-        ite = syapc.keySet().iterator();
+        ite = r.female.keySet().iterator();
         while (ite.hasNext()) {
             age = ite.next();
-            pop = syapc.get(age);
+            pop = r.female.get(age);
             if (age.intValue() > saeyi) {
                 if (!reportedPenultimateGroup) {
-                    fapc.put(ageGroup, popGroup);
+                    r.fapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
                     //ageGroup = ageGroup + ageInterval;
                     popGroup = new BigDecimal(pop.toString());
@@ -310,10 +275,10 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
                 ageGroup = saeyi;
                 popGroup = popGroup.add(pop);
                 maxPop = maxPop.max(popGroup);
-                fapc.put(ageGroup, popGroup);
+                r.fapc.put(ageGroup, popGroup);
             } else {
                 if (age > ageGroup + ageInterval) {
-                    fapc.put(ageGroup, popGroup);
+                    r.fapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
                     ageGroup = ageGroup + ageInterval;
                     popGroup = new BigDecimal(pop.toString());
@@ -325,13 +290,13 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
         ageGroup = 0;
         popGroup = BigDecimal.ZERO;
         reportedPenultimateGroup = false;
-        ite = symapc.keySet().iterator();
+        ite = r.male.keySet().iterator();
         while (ite.hasNext()) {
             age = ite.next();
-            pop = symapc.get(age);
+            pop = r.male.get(age);
             if (age.intValue() > saeyi) {
                 if (!reportedPenultimateGroup) {
-                    mapc.put(ageGroup, popGroup);
+                    r.mapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
                     //ageGroup = ageGroup + ageInterval;
                     popGroup = new BigDecimal(pop.toString());
@@ -340,10 +305,10 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
                 ageGroup = saeyi;
                 popGroup = popGroup.add(pop);
                 maxPop = maxPop.max(popGroup);
-                mapc.put(ageGroup, popGroup);
+                r.mapc.put(ageGroup, popGroup);
             } else {
                 if (age > ageGroup + ageInterval) {
-                    mapc.put(ageGroup, popGroup);
+                    r.mapc.put(ageGroup, popGroup);
                     maxPop = maxPop.max(popGroup);
                     ageGroup = ageGroup + ageInterval;
                     popGroup = new BigDecimal(pop.toString());
@@ -352,122 +317,99 @@ public class Chart_AgeGenderBar extends Chart_AgeGender {
                 }
             }
         }
-        r[0] = fapc;
-        r[1] = mapc;
-        r[2] = maxPop;
         return r;
     }
 
-    private static Object[] getDefaultData(
-            int femalePopAge0,
+    private static Chart_AgeGenderBarData getDefaultData(int femalePopAge0,
             int malePopAge0) {
-        Object[] result = new Object[2];
-        TreeMap<Long, BigDecimal> femaleAgeInYearsPopulationCount_TreeMap = new TreeMap<>();
-        TreeMap<Long, BigDecimal> maleAgeInYearsPopulationCount_TreeMap = new TreeMap<>();
-        BigDecimal population_BigDecimal;
-        BigDecimal change_BigDecimal;
+        Chart_AgeGenderBarData r = new Chart_AgeGenderBarData();
+        BigDecimal pop;
+        BigDecimal change;
         long age;
-        population_BigDecimal = new BigDecimal("" + femalePopAge0);
-        change_BigDecimal = new BigDecimal("0.94");
+        pop = new BigDecimal("" + femalePopAge0);
+        change = new BigDecimal("0.94");
         for (age = 0; age < 5; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.95");
+        change = new BigDecimal("0.95");
         for (age = 5; age < 10; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.96");
+        change = new BigDecimal("0.96");
         for (age = 10; age < 15; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.97");
+        change = new BigDecimal("0.97");
         for (age = 15; age < 20; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.99");
+        change = new BigDecimal("0.99");
         for (age = 20; age < 60; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.97");
+        change = new BigDecimal("0.97");
         for (age = 60; age < 80; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.75");
+        change = new BigDecimal("0.75");
         for (age = 80; age < 100; age++) {
-            femaleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.female.put(age, pop);
+            pop = pop.multiply(change);
         }
-        population_BigDecimal = new BigDecimal("" + malePopAge0);
-        change_BigDecimal = new BigDecimal("0.93");
+        pop = new BigDecimal("" + malePopAge0);
+        change = new BigDecimal("0.93");
         for (age = 0; age < 5; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.94");
+        change = new BigDecimal("0.94");
         for (age = 5; age < 10; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.95");
+        change = new BigDecimal("0.95");
         for (age = 10; age < 15; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.96");
+        change = new BigDecimal("0.96");
         for (age = 15; age < 20; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.98");
+        change = new BigDecimal("0.98");
         for (age = 20; age < 60; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.7");
+        change = new BigDecimal("0.7");
         for (age = 60; age < 70; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        change_BigDecimal = new BigDecimal("0.5");
+        change = new BigDecimal("0.5");
         for (age = 70; age < 100; age++) {
-            maleAgeInYearsPopulationCount_TreeMap.put(
-                    age, population_BigDecimal);
-            population_BigDecimal = population_BigDecimal.multiply(change_BigDecimal);
+            r.male.put(age, pop);
+            pop = pop.multiply(change);
         }
-        //Integer maxAge = 99;
-        //BigDecimal maxCount = new BigDecimal("" + Math.max(femalePopAge0, malePopAge0));
-        result[0] = femaleAgeInYearsPopulationCount_TreeMap;
-        result[1] = maleAgeInYearsPopulationCount_TreeMap;
-        //result[2] = maxAge;
-        //result[3] = maxCount;
-        return result;
+        return r;
     }
 
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(getAgeInterval()), getCellHeight(),
-                0, getRoundingMode()).intValue();
+        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
+    }
+
+    @Override
+    public Chart_AgeGenderBarData getData() {
+        return (Chart_AgeGenderBarData) data;
     }
 }

@@ -1,6 +1,7 @@
 package uk.ac.leeds.ccg.chart.core;
 
 //import java.awt.*;
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,7 +20,6 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,13 +35,13 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
-import uk.ac.leeds.ccg.chart.data.Data_BiBigDecimal;
+import uk.ac.leeds.ccg.chart.data.Chart_Data;
+import uk.ac.leeds.ccg.chart.data.BigDecimal2;
 import uk.ac.leeds.ccg.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 //import uk.ac.leeds.ccg.generic.core.Generic_Strings;
 //import uk.ac.leeds.ccg.generic.io.Generic_Files;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.visualisation.Generic_Visualisation;
 
 /**
@@ -54,12 +54,14 @@ public abstract class Chart extends Chart_Runnable
     protected final Generic_Execution exec;
     protected final Generic_Visualisation vis;
 
-    protected Object[] data;
+    protected Chart_Data data;
     protected String format;
     protected Path file;
     protected Graphics2D g2image;
     protected Graphics2D g2;
     protected BufferedImage bi;
+
+    public abstract Chart_Data getData();
 
     /**
      * Metrics to do with the font used for text in the plot.
@@ -167,49 +169,47 @@ public abstract class Chart extends Chart_Runnable
     /**
      * For storing the maximum value of x in the data area.
      */
-    protected BigDecimal maxX;
+    protected BigRational maxX;
 
     /**
      * For storing the minimum value of x in the data area.
      */
-    protected BigDecimal minX;
+    protected BigRational minX;
 
     /**
      * For storing the maximum value of y in the data area.
      */
-    protected BigDecimal maxY;
+    protected BigRational maxY;
 
     /**
      * For storing the minimum value of y in the data area.
      */
-    protected BigDecimal minY;
+    protected BigRational minY;
 
     /**
      * For storing the number of decimal places used in calculations needed for
      * the plot.
      */
-    protected int decimalPlacePrecisionForCalculations;
+    protected int dpc;
 
     /**
      * For storing the number of decimal places used for numerical values
      * displayed on the plot.
      */
-    protected int decimalPlacePrecisionForDisplay;
+    protected int dpd;
 
     protected int significantDigits;
-    protected RoundingMode roundingMode;
+    protected RoundingMode rm;
 
     /**
      * cellHeight is for storing the height of a pixel in the data units of y
      */
-    private BigDecimal cellHeight;
+    private BigRational cellHeight;
 
     /**
      * cellWidth is for storing the width of a pixel in the data units of x
      */
-    private BigDecimal cellWidth;
-    private BigDecimal cellHeightDiv2;
-    private BigDecimal cellWidthDiv2;
+    private BigRational cellWidth;
 
     /**
      * originRow the row index on which the origin is located (y = 0).
@@ -265,12 +265,12 @@ public abstract class Chart extends Chart_Runnable
         return executorService;
     }
 
-    public void setData(Object[] data) {
+    public void setData(Chart_Data data) {
         initData(data);
         initialiseParameters(data);
     }
 
-    public void initData(Object[] data) {
+    public void initData(Chart_Data data) {
         this.data = data;
     }
 
@@ -293,11 +293,11 @@ public abstract class Chart extends Chart_Runnable
     /**
      * @param data The data from which parameters will be initialised.
      */
-    public void initialiseParameters(Object[] data) {
-        maxX = new BigDecimal(((BigDecimal) data[1]).toString());
-        minX = new BigDecimal(((BigDecimal) data[2]).toString());
-        maxY = new BigDecimal(((BigDecimal) data[3]).toString());
-        minY = new BigDecimal(((BigDecimal) data[4]).toString());
+    public void initialiseParameters(Chart_Data data) {
+        minX = data.minX;
+        maxX = data.maxX;
+        minY = data.minY;
+        maxY = data.maxY;
         setCellHeight();
         setCellWidth();
         setOriginRow();
@@ -372,22 +372,22 @@ public abstract class Chart extends Chart_Runnable
     }
 
     public RoundingMode getRoundingMode() {
-        if (roundingMode == null) {
+        if (rm == null) {
             return getDefaultRoundingMode();
         }
-        return roundingMode;
+        return rm;
     }
 
-    public BigDecimal getCellHeight() {
+    public BigRational getCellHeight() {
         if (cellHeight == null) {
-            return new BigDecimal("1");
+            return BigRational.valueOf(0);
         }
         return cellHeight;
     }
 
-    public BigDecimal getCellWidth() {
+    public BigRational getCellWidth() {
         if (cellWidth == null) {
-            return new BigDecimal("0");
+            return BigRational.valueOf(0);
         }
         return cellWidth;
     }
@@ -421,10 +421,9 @@ public abstract class Chart extends Chart_Runnable
      * @param yAxisLabel What {@link #yAxisLabel} is set to.
      * @param drawOriginLinesOnPlot What {@link #drawOriginLinesOnPlot} is set
      * to.
-     * @param decimalPlacePrecisionForCalculations What
-     * {@link #decimalPlacePrecisionForCalculations} is set to.
+     * @param decimalPlacePrecisionForCalculations What {@link #dpc} is set to.
      * @param significantDigits What {@link #significantDigits} is set to.
-     * @param rm What {@link #roundingMode} is set to.
+     * @param rm What {@link #rm} is set to.
      */
     protected final void init(ExecutorService es, Path file, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
@@ -449,18 +448,16 @@ public abstract class Chart extends Chart_Runnable
         this.dataEndRow = dataStartRow + dataHeight;
         this.dataStartCol = 0;
         this.dataEndCol = dataStartCol + dataWidth;
-        this.decimalPlacePrecisionForCalculations = decimalPlacePrecisionForCalculations;
-        this.decimalPlacePrecisionForDisplay = significantDigits;
+        this.dpc = decimalPlacePrecisionForCalculations;
+        this.dpd = significantDigits;
         this.significantDigits = significantDigits;
-        this.roundingMode = rm;
+        this.rm = rm;
 //        if (data == null) {
 //            setData(getDefaultData());
 //        } else {
 //            initialiseParameters(data);
 //        }
     }
-
-    public abstract Object[] getDefaultData();
 
     protected void resize(JFrame f) {
         f.pack();
@@ -491,33 +488,36 @@ public abstract class Chart extends Chart_Runnable
         //mediaTracker.addImage(bi, 0);
     }
 
-    public BigDecimal imageRowToYCoordinate(double row) {
+    public BigRational imageRowToYCoordinate(double row) {
         return dataRowToYCoordinate(row - dataStartRow);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight).subtract(halfCellHeight);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight);
     }
 
-    public BigDecimal imageColToXCoordinate(double col) {
+    public BigRational imageColToXCoordinate(double col) {
         return dataColToXCoordinate(col - dataStartCol);
 //        //return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth).add(this.minX);
 //        return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth);
     }
 
-    public BigDecimal dataRowToYCoordinate(double row) {
-        BigDecimal result = BigDecimal.ONE; // default value
-        if (minY != null) {
-            result = BigDecimal.valueOf(getDataHeight() - row)
-                    .multiply(getCellHeight()).add(minY);
+    /**
+     *
+     * @param row
+     * @return
+     */
+    public BigRational dataRowToYCoordinate(double row) {
+        if (data.minY != null) {
+            return BigRational.valueOf(getDataHeight() - row)
+                    .multiply(getCellHeight()).add(data.minY);
         }
-        return result;
+        return BigRational.ONE; // default value
     }
 
-    public BigDecimal dataColToXCoordinate(double col) {
-        BigDecimal result = BigDecimal.ONE; // default value
-        if (minX != null) {
-            result = BigDecimal.valueOf(col).multiply(getCellWidth()).add(minX);
+    public BigRational dataColToXCoordinate(double col) {
+        if (data.minX != null) {
+            return BigRational.valueOf(col).multiply(getCellWidth()).add(data.minX);
         }
-        return result;
+        return BigRational.ONE; // default value
     }
 
     /**
@@ -528,13 +528,10 @@ public abstract class Chart extends Chart_Runnable
      * @param p A pixel location as a Point2D.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Data_BiBigDecimal dataPointToCoordinate(Point2D p) {
-        Data_BiBigDecimal r = new Data_BiBigDecimal();
-        BigDecimal x = dataRowToYCoordinate(p.getX());
-        BigDecimal y = dataColToXCoordinate(p.getY());
-        r.setX(x);
-        r.setY(y);
-        return r;
+    public BigDecimal2 dataPointToCoordinate(Point2D p) {
+        return new BigDecimal2(
+                dataRowToYCoordinate(p.getX()).toBigDecimal(),
+                dataColToXCoordinate(p.getY()).toBigDecimal());
     }
 
     /**
@@ -544,25 +541,12 @@ public abstract class Chart extends Chart_Runnable
      * @param x The x value.
      * @return the column in the image for the data with value titleTextWidth
      */
-    public int coordinateToScreenCol(BigDecimal x) {
-        return coordinateToScreenCol(x, getRoundingMode());
-    }
-
-    /**
-     * Calculates and returns the column in the image for the data with value
-     * titleTextWidth using RoundingMode aRoundingMode
-     *
-     * @param x The x value.
-     * @param rm The RoundingMode.
-     * @return the column in the image for the data with value titleTextWidth
-     */
-    public int coordinateToScreenCol(BigDecimal x, RoundingMode rm) {
+    public int coordinateToScreenCol(BigRational x) {
         int col = 0;
-        BigDecimal theCellWidth = getCellWidth();
-        if (minX != null) {
-            if (theCellWidth.compareTo(BigDecimal.ZERO) != 0) {
-                col = Math_BigDecimal.divideRoundToFixedDecimalPlaces(
-                        x.subtract(minX), theCellWidth, 0, rm).intValue();
+        BigRational cw = getCellWidth();
+        if (data.minX != null) {
+            if (cw.compareTo(BigRational.ZERO) != 0) {
+                col = x.subtract(data.minX).divide(cw).integerPart().toBigDecimal().intValue();
             }
         }
         col += dataStartCol;
@@ -576,26 +560,14 @@ public abstract class Chart extends Chart_Runnable
      * @param y The y value.
      * @return the row in the image for the data with value titleTextHeight
      */
-    public int coordinateToScreenRow(BigDecimal y) {
-        return coordinateToScreenRow(y, getRoundingMode());
-    }
-
-    /**
-     * Calculates and returns the row in the image for the data with value
-     * titleTextHeight using RoundingMode aRoundingMode
-     *
-     * @param y The y value.
-     * @param rm The RoundingMode.
-     * @return the row in the image for the data with value titleTextHeight
-     */
-    public int coordinateToScreenRow(BigDecimal y, RoundingMode rm) {
+    public int coordinateToScreenRow(BigRational y) {
         int row = 0;
-        BigDecimal theCellHeight = getCellHeight();
-        if (minY != null) {
-            if (theCellHeight != null) {
-                if (theCellHeight.compareTo(BigDecimal.ZERO) != 0) {
-                    row = getDataHeight() - Math_BigDecimal.divideRoundToFixedDecimalPlaces(
-                            y.subtract(minY), getCellHeight(), 0, rm).intValue();
+        BigRational ch = getCellHeight();
+        if (data.minY != null) {
+            if (ch != null) {
+                if (ch.compareTo(BigRational.ZERO) != 0) {
+                    row = getDataHeight()
+                            - y.subtract(data.minY).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
                 }
             }
         }
@@ -605,61 +577,47 @@ public abstract class Chart extends Chart_Runnable
 
     /**
      * Calculates and returns the row and column in the image for the data at
-     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
-     * RoundingMode roundingMode
+     * coordinate x, y as a Point2D.Double.
      *
      * @param x The x value.
      * @param y The y value.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Point2D coordinateToScreen(BigDecimal x, BigDecimal y) {
+    public Point2D coordinateToScreen(BigRational x, BigRational y) {
         Point2D r = new Point2D.Double();
-        //System.out.println("titleTextWidth " + titleTextWidth);
-        //System.out.println("titleTextHeight " + titleTextHeight);
         int row = coordinateToScreenRow(y);
         int col = coordinateToScreenCol(x);
         r.setLocation(col, row);
-        //System.out.println("result " + result);
         return r;
     }
 
-    //public abstract void initialiseParameters(Object[] data);
     public void setCellHeight() {
-        int dp = decimalPlacePrecisionForCalculations;
-        if (minY == null) {
-            cellHeight = BigDecimal.valueOf(2);
-            cellHeightDiv2 = BigDecimal.ONE;
+        if (data.minY == null) {
+            cellHeight = BigRational.valueOf(2);
         } else {
-            cellHeight = Math_BigDecimal.divideRoundIfNecessary(maxY.subtract(minY), BigDecimal.valueOf(getDataHeight()),
-                    dp, roundingMode);
-            cellHeightDiv2 = Math_BigDecimal.divideRoundIfNecessary(cellHeight, BigDecimal.valueOf(2), dp, roundingMode);
+            cellHeight = data.maxY.subtract(data.minY).divide(BigRational.valueOf(getDataHeight()));
         }
     }
 
     public void setCellWidth() {
-        int dp = decimalPlacePrecisionForCalculations;
-        if (minX == null) {
-            cellWidth = BigDecimal.valueOf(2);
-            cellWidthDiv2 = BigDecimal.ONE;
+        if (data.minX == null) {
+            cellWidth = BigRational.valueOf(2);
         } else {
-            cellWidth = Math_BigDecimal.divideRoundIfNecessary(maxX.subtract(minX), BigDecimal.valueOf(getDataWidth()),
-                    dp, roundingMode);
-            cellWidthDiv2 = Math_BigDecimal.divideRoundIfNecessary(cellWidth,
-                    BigDecimal.valueOf(2), dp, roundingMode);
+            cellWidth = data.maxX.subtract(data.minX).divide(BigRational.valueOf(getDataWidth()));
         }
     }
 
     public void setOriginRow() {
-        if (maxY == null) {
+        if (data.maxY == null) {
             originRow = dataEndRow;
         } else {
-            if (maxY.compareTo(BigDecimal.ZERO) == 0) {
+            if (data.maxY.compareTo(BigRational.ZERO) == 0) {
                 originRow = dataEndRow;
             } else {
-                if (cellHeight.compareTo(BigDecimal.ZERO) == 0) {
+                if (cellHeight.compareTo(BigRational.ZERO) == 0) {
                     originRow = dataEndRow;
                 } else {
-                    originRow = coordinateToScreenRow(BigDecimal.ZERO);
+                    originRow = coordinateToScreenRow(BigRational.ZERO);
                 }
             }
         }
@@ -828,24 +786,17 @@ public abstract class Chart extends Chart_Runnable
     }
 
     public void drawAxes(int interval, int startAgeOfEndYearInterval) {
-        int yAxisExtraWidthLeft;
-//        int yAxisExtraHeightTop = 0;
-//        int yAxisExtraHeightBottom = 0;
-        int xAxisExtraWidthLeft;
-        int xAxisExtraWidthRight;
-        int xAxisExtraHeightBottom;
         int scaleTickLength = getDefaultScaleTickLength();
         int scaleTickAndTextSeparation = getDefaultScaleTickAndTextSeparation();
         int partTitleGap = getDefaultPartTitleGap();
         int textHeight = getTextHeight();
         int seperationDistanceOfAxisAndData = textHeight;
         // Draw Y axis
-        int[] yAxisDimensions;
-        yAxisDimensions = drawYAxis(interval, textHeight,
+        int[] yAxisDimensions = drawYAxis(interval, textHeight,
                 startAgeOfEndYearInterval, scaleTickLength,
                 scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
-        yAxisExtraWidthLeft = yAxisDimensions[0];
+        int yAxisExtraWidthLeft = yAxisDimensions[0];
         if (yAxisExtraWidthLeft > extraWidthLeft) {
             int diff = yAxisExtraWidthLeft - extraWidthLeft;
             imageWidth += diff;
@@ -856,13 +807,12 @@ public abstract class Chart extends Chart_Runnable
         }
         yAxisWidth = yAxisExtraWidthLeft;
         // Draw X axis
-        int[] xAxisDimensions;
-        xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
+        int[] xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
                 scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
-        xAxisExtraWidthLeft = xAxisDimensions[0];
-        xAxisExtraWidthRight = xAxisDimensions[1];
-        xAxisExtraHeightBottom = xAxisDimensions[2];
+        int xAxisExtraWidthLeft = xAxisDimensions[0];
+        int xAxisExtraWidthRight = xAxisDimensions[1];
+        int xAxisExtraHeightBottom = xAxisDimensions[2];
         if (xAxisExtraWidthLeft > extraWidthLeft) {
             int diff = xAxisExtraWidthLeft - dataStartCol;
             imageWidth += diff;

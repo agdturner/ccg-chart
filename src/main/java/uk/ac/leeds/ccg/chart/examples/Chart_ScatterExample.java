@@ -15,30 +15,30 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import uk.ac.leeds.ccg.chart.core.Chart;
-import uk.ac.leeds.ccg.chart.data.Data_BiBigDecimal;
+import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
+import uk.ac.leeds.ccg.chart.data.BigRational2;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
 
 /**
  * An example of generating a Scatter Plot visualization.
  */
-public class Chart_Scatter extends Chart {
+public class Chart_ScatterExample extends Chart {
 
-    public Chart_Scatter(Generic_Environment e) {
+    public Chart_ScatterExample(Generic_Environment e) {
         super(e);
     }
 
@@ -58,7 +58,7 @@ public class Chart_Scatter extends Chart {
      * @param dpd decimal place precision for calculations
      * @param rm The RoundingMode.
      */
-    public Chart_Scatter(Generic_Environment e, ExecutorService es,
+    public Chart_ScatterExample(Generic_Environment e, ExecutorService es,
             Path f, String format, String title, int dataWidth,
             int dataHeight, String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, int dpc, int dpd, RoundingMode rm) {
@@ -97,23 +97,13 @@ public class Chart_Scatter extends Chart {
             String xAxisLabel = "Expected";
             String yAxisLabel = "Observed";
             boolean drawOriginLinesOnPlot = true;
-            int decimalPlacePrecisionForCalculations = 10;
-            int decimalPlacePrecisionForDisplay = 3;
-            RoundingMode aRoundingMode = RoundingMode.HALF_UP;
+            int dpc = 10;
+            int dpd = 3;
+            RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Chart_Scatter plot = new Chart_Scatter(e,
-                    executorService,
-                    file,
-                    format,
-                    title,
-                    dataWidth,
-                    dataHeight,
-                    xAxisLabel,
-                    yAxisLabel,
-                    drawOriginLinesOnPlot,
-                    decimalPlacePrecisionForCalculations,
-                    decimalPlacePrecisionForDisplay,
-                    aRoundingMode);
+            Chart_ScatterExample plot = new Chart_ScatterExample(e, executorService, file,
+                    format, title, dataWidth, dataHeight, xAxisLabel,
+                    yAxisLabel, drawOriginLinesOnPlot, dpc, dpd, rm);
             plot.setData(plot.getDefaultData());
             plot.vis.getHeadlessEnvironment();
             plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
@@ -125,7 +115,7 @@ public class Chart_Scatter extends Chart {
 
     @Override
     public void drawData() {
-        drawPoints(Color.DARK_GRAY, data);
+        drawPoints(Color.DARK_GRAY, getData());
     }
 
     /**
@@ -178,16 +168,14 @@ public class Chart_Scatter extends Chart {
             if (col >= dataStartCol) {
                 ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
-                BigDecimal x = imageColToXCoordinate(col);
-                if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
+                BigRational x = imageColToXCoordinate(col);
+                if (x.compareTo(BigRational.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
-                    text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(x,
-                            Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
-                            rm).toString();
+                    text_String = "" + x.toBigDecimal(new MathContext(significantDigits)).toString();
                 }
                 textWidth = getTextWidth(text_String);
                 xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
@@ -201,16 +189,14 @@ public class Chart_Scatter extends Chart {
             if (col >= dataStartCol) {
                 ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
-                BigDecimal x = imageColToXCoordinate(col);
-                if (x.compareTo(BigDecimal.ZERO) == 0 || col == startCol) {
+                BigRational x = imageColToXCoordinate(col);
+                if (x.compareTo(BigRational.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
                     //text_String = "" + x.round(mc).stripTrailingZeros().toString();
                     //text_String = "" + x.stripTrailingZeros().toString();
-                    text_String = "" + Math_BigDecimal.roundStrippingTrailingZeros(x,
-                            Math_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
-                            rm).toString();
+                    text_String = "" + x.toBigDecimal(new MathContext(significantDigits)).toString();
                 }
                 textWidth = getTextWidth(text_String);
                 xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
@@ -299,15 +285,13 @@ public class Chart_Scatter extends Chart {
             if (row <= dataEndRow) {
                 ab = new Line2D.Double(col, row, col - stl, row);
                 draw(ab);
-                BigDecimal y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigDecimal.ZERO) == 0 || row == originRow) {
+                BigRational y = imageRowToYCoordinate(row);
+                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
                     text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text = "" + Math_BigDecimal.roundStrippingTrailingZeros(y,
-                            Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
-                            rm).toString();
+                    text = "" + y.toBigDecimal(new MathContext(significantDigits)).toString();
                 }
                 tw = getTextWidth(text);
                 yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
@@ -326,15 +310,13 @@ public class Chart_Scatter extends Chart {
                         col - stl,
                         row);
                 draw(ab);
-                BigDecimal y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigDecimal.ZERO) == 0 || row == originRow) {
+                BigRational y = imageRowToYCoordinate(row);
+                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
                     text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
                     //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-                    text = "" + Math_BigDecimal.roundStrippingTrailingZeros(y,
-                            Math_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
-                            rm).toString();
+                    text = "" + y.toBigDecimal(new MathContext(significantDigits)).toString();
                 }
                 tw = getTextWidth(text);
                 yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
@@ -584,15 +566,13 @@ public class Chart_Scatter extends Chart {
 //        return result;
 //    
 //    }
-    protected void drawPoints(Color color, Object[] data) {
+    protected void drawPoints(Color color, Chart_ScatterData data) {
         if (data != null) {
-            ArrayList<Data_BiBigDecimal> xyData;
-            xyData = (ArrayList<Data_BiBigDecimal>) data[0];
-            Iterator<Data_BiBigDecimal> ite = xyData.iterator();
+            Iterator<BigRational2> ite = data.xyData.iterator();
             setPaint(color);
             while (ite.hasNext()) {
-                Data_BiBigDecimal xy = ite.next();
-                Point2D p = coordinateToScreen(xy.getX(), xy.getY());
+                BigRational2 xy = ite.next();
+                Point2D p = coordinateToScreen(xy.getX(),xy.getY());
                 draw(p);
             }
         }
@@ -600,7 +580,7 @@ public class Chart_Scatter extends Chart {
 
     @Override
     public void setOriginCol() {
-        originCol = coordinateToScreenCol(BigDecimal.ZERO);
+        originCol = coordinateToScreenCol(BigRational.ZERO);
 //        System.out.println("originCol " + originCol);
 //        
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {
@@ -620,23 +600,20 @@ public class Chart_Scatter extends Chart {
 //        }
     }
 
-    @Override
-    public Object[] getDefaultData() {
+    /**
+     * @return default data for this type of chart. 
+     */
+    public Chart_ScatterData getDefaultData() {
         return getDefaultData(true);
     }
 
-    public static Object[] getDefaultData(boolean ignore) {
+    public static Chart_ScatterData getDefaultData(boolean ignore) {
         Random random = new Random(0);
-        Object[] result = new Object[5];
-//        BigDecimal maxx = BigDecimal.valueOf(Double.NEGATIVE_INFINITY);
-//        BigDecimal minx = BigDecimal.valueOf(Double.POSITIVE_INFINITY);
-//        BigDecimal maxy = BigDecimal.valueOf(Double.NEGATIVE_INFINITY);
-//        BigDecimal miny = BigDecimal.valueOf(Double.POSITIVE_INFINITY);
-        BigDecimal maxx = BigDecimal.valueOf(Double.MIN_VALUE);
-        BigDecimal minx = BigDecimal.valueOf(Double.MAX_VALUE);
-        BigDecimal maxy = BigDecimal.valueOf(Double.MIN_VALUE);
-        BigDecimal miny = BigDecimal.valueOf(Double.MAX_VALUE);
-        ArrayList<Point2D> theGeneric_XYNumericalData = new ArrayList<>();
+        Chart_ScatterData r = new Chart_ScatterData();
+        r.maxX = BigRational.valueOf(Double.MIN_VALUE);
+        r.minX = BigRational.valueOf(Double.MAX_VALUE);
+        r.maxY = BigRational.valueOf(Double.MIN_VALUE);
+        r.minY = BigRational.valueOf(Double.MAX_VALUE);
 //        for (int i = -100; i < 328; i++) {         
 //            for (int j = -100; j < 0; j++) {
 //        for (int i = -100; i < 100; i++) {
@@ -646,22 +623,30 @@ public class Chart_Scatter extends Chart {
 //        for (int i = -15; i < 10; i++) {
 //            for (int j = -9; j < 12; j++) {
                 double random_0 = random.nextDouble();
-                BigDecimal x = BigDecimal.valueOf((i + random.nextDouble()) * random_0);
-                BigDecimal y = BigDecimal.valueOf(((j + i) / 2) * random_0);
+                BigRational x = BigRational.valueOf((i + random.nextDouble()) * random_0);
+                BigRational y = BigRational.valueOf(((j + i) / 2) * random_0);
                 //BigDecimal y = BigDecimal.valueOf((j + i) * random_0);
-                maxx = maxx.max(x);
-                minx = minx.min(x);
-                maxy = maxy.max(y);
-                miny = miny.min(y);
-                Point2D point = new Point2D.Double(x.doubleValue(), y.doubleValue());
-                theGeneric_XYNumericalData.add(point);
+                if (x.compareTo(r.maxX) == 1) {
+                    r.maxX = x;
+                }
+                if (x.compareTo(r.minX) == -1) {
+                    r.minX = x;
+                }
+                if (y.compareTo(r.maxY) == 1) {
+                    r.maxY = y;
+                }
+                if (y.compareTo(r.minY) == -1) {
+                    r.minY = y;
+                }
+                BigRational2 p = new BigRational2(x, y);
+                r.xyData.add(p);
             }
         }
-        result[0] = theGeneric_XYNumericalData;
-        result[1] = maxx;
-        result[2] = minx;
-        result[3] = maxy;
-        result[4] = miny;
-        return result;
+        return r;
+    }
+
+    @Override
+    public Chart_ScatterData getData() {
+        return (Chart_ScatterData) data;
     }
 }

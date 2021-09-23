@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.core;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -24,6 +25,8 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
+import uk.ac.leeds.ccg.chart.data.Chart_BarData;
+import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
@@ -38,7 +41,7 @@ public abstract class Chart_Bar extends Chart {
     protected int xAxisIncrement;
     protected int numberOfYAxisTicks;
     protected BigDecimal yPin;
-    protected BigDecimal yAxisIncrement;
+    protected BigRational yAxisIncrement;
     protected int barWidth;
     protected int barGap;
 
@@ -74,37 +77,25 @@ public abstract class Chart_Bar extends Chart {
     }
 
     @Override
-    public void initialiseParameters(Object[] data) {
-        Object[] intervalCountsAndLabels;
-        intervalCountsAndLabels = (Object[]) data[0];
-
-        TreeMap<Integer, Integer> map;
-        map = (TreeMap<Integer, Integer>) intervalCountsAndLabels[0];
-
-        BigDecimal[] minmMaxBigDecimal = (BigDecimal[]) data[1];
-        minX = minmMaxBigDecimal[0];
-        BigDecimal intervalWidth = (BigDecimal) data[2];
-        maxX = new BigDecimal(map.lastKey()).multiply(intervalWidth);
-        int[] minMax = Generic_Collections.getMinMaxInteger(map);
-        minY = BigDecimal.ZERO;
-        maxY = BigDecimal.valueOf(minMax[1]);
+    public void initialiseParameters(Chart_Data data) {
+        Chart_BarData d = (Chart_BarData) data;
+        minX = data.minX;
+        maxX = BigRational.valueOf(BigDecimal.valueOf(d.map.lastKey()).multiply(d.intervalWidth));
+        minY = BigRational.ZERO;
+        maxY = data.maxY;
         setCellHeight();
         setCellWidth();
         setOriginRow();
         setOriginCol();
-
-        BigDecimal cellWidth = getCellWidth();
-        if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
+        BigRational cellWidth = getCellWidth();
+        if (cellWidth.compareTo(BigRational.ZERO) == 0) {
             barWidth = 1;
         } else {
-            barWidth = Math_BigDecimal.divideRoundIfNecessary(
-                    intervalWidth, cellWidth, 0,
-                    roundingMode).intValue() - (2 * barGap);
+            barWidth = BigRational.valueOf(d.intervalWidth).divide(cellWidth).integerPart().toBigDecimal().intValue() - (2 * barGap);
         }
         if (barWidth < 1) {
             barWidth = 1;
         }
-
         int xIncrement;
         xIncrement = xAxisIncrement;
         if (xIncrement == 0) {
@@ -113,6 +104,11 @@ public abstract class Chart_Bar extends Chart {
         }
     }
 
+    @Override
+    public Chart_BarData getData() {
+        return (Chart_BarData) data;
+    }
+    
     @Override
     public void setOriginCol() {
         originCol = dataStartCol;
@@ -151,12 +147,12 @@ public abstract class Chart_Bar extends Chart {
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
         MathContext mc;
-        mc = new MathContext(decimalPlacePrecisionForCalculations,
+        mc = new MathContext(dpc,
                 RoundingMode.HALF_UP);
-        BigDecimal rowValue;
-        BigDecimal pin;
-        BigDecimal yIncrement;
-        pin = getyPin();
+        BigRational rowValue;
+        BigRational pin;
+        BigRational yIncrement;
+        pin = BigRational.valueOf(getyPin());
         yIncrement = getyIncrement();
 
         if (pin != null) {
@@ -191,16 +187,16 @@ public abstract class Chart_Bar extends Chart {
         int numberOfTicks;
         if (yIncrement != null) {
             if (rowValue != null) {
-                numberOfTicks = ((maxY.subtract(rowValue)).divide(yIncrement, mc)).intValue();
+                numberOfTicks = ((maxY.subtract(rowValue)).divide(yIncrement)).integerPart().toBigDecimal().intValue();
             } else {
-                numberOfTicks = ((maxY.subtract(minY)).divide(yIncrement, mc)).intValue();
+                numberOfTicks = ((maxY.subtract(minY)).divide(yIncrement)).integerPart().toBigDecimal().intValue();
             }
         } else {
             numberOfTicks = getnumberOfYAxisTicks();
             if (rowValue != null) {
-                yIncrement = (maxY.subtract(rowValue)).divide(new BigDecimal(numberOfTicks), mc);
+                yIncrement = (maxY.subtract(rowValue)).divide(BigRational.valueOf(numberOfTicks));
             } else {
-                yIncrement = (maxY.subtract(minY)).divide(new BigDecimal(numberOfTicks), mc);
+                yIncrement = (maxY.subtract(minY)).divide(BigRational.valueOf(numberOfTicks));
             }
         }
 
@@ -282,14 +278,14 @@ public abstract class Chart_Bar extends Chart {
             int seperationDistanceOfAxisAndData) {
 //        MathContext mc;
 //        mc = new MathContext(getDecimalPlacePrecisionForCalculations(), getRoundingMode());               
-        Object[] intervalCountsLabelsMins;
-        intervalCountsLabelsMins = (Object[]) data[0];
-        TreeMap<Integer, Integer> counts;
-        counts = (TreeMap<Integer, Integer>) intervalCountsLabelsMins[0];
-        TreeMap<Integer, String> labels;
-        labels = (TreeMap<Integer, String>) intervalCountsLabelsMins[1];
-        TreeMap<Integer, BigDecimal> mins;
-        mins = (TreeMap<Integer, BigDecimal>) intervalCountsLabelsMins[2];
+////        Object[] intervalCountsLabelsMins;
+////        intervalCountsLabelsMins = (Object[]) data[0];
+////        TreeMap<Integer, Integer> counts;
+////        counts = (TreeMap<Integer, Integer>) intervalCountsLabelsMins[0];
+////        TreeMap<Integer, String> labels;
+////        labels = (TreeMap<Integer, String>) intervalCountsLabelsMins[1];
+////        TreeMap<Integer, BigDecimal> mins;
+////        mins = (TreeMap<Integer, BigDecimal>) intervalCountsLabelsMins[2];
 //        int xIncrement;
 //        xIncrement = getxIncrement();
 //        if (xIncrement == 0) {
@@ -298,7 +294,7 @@ public abstract class Chart_Bar extends Chart {
 //        }
         int xAxisTickIncrement = xAxisIncrement;
         int xIncrementWidth = coordinateToScreenCol(
-                BigDecimal.valueOf(xAxisTickIncrement)) - dataStartCol;
+                BigRational.valueOf(xAxisTickIncrement)) - dataStartCol;
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
         int extraAxisLength;
@@ -323,12 +319,13 @@ public abstract class Chart_Bar extends Chart {
         int col = dataStartCol + colCenterer;
         int previousCol = col;
         boolean first = true;
+        Chart_BarData d = getData();
         Iterator<Integer> ite2;
-        ite2 = counts.keySet().iterator();
+        ite2 = d.counts.keySet().iterator();
         while (ite2.hasNext()) {
             Integer value = ite2.next();
-            String label = labels.get(value);
-            BigDecimal min = mins.get(value);
+            String label = d.labels.get(value);
+            BigRational min = BigRational.valueOf(d.mins.get(value));
             col = coordinateToScreenCol(min) + colCenterer;
             //col = value * xAxisTickIncrement + col0;
             //System.out.println("" + value + ", " + count + ", \"" + label +  "\"");        
@@ -537,14 +534,14 @@ public abstract class Chart_Bar extends Chart {
     /**
      * @return the yAxisIncrement
      */
-    public BigDecimal getyIncrement() {
+    public BigRational getyIncrement() {
         return yAxisIncrement;
     }
 
     /**
      * @param yIncrement the yAxisIncrement to set
      */
-    public void setyIncrement(BigDecimal yIncrement) {
+    public void setyIncrement(BigRational yIncrement) {
         this.yAxisIncrement = yIncrement;
     }
 }
