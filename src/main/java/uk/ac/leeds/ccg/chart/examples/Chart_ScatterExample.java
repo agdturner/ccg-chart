@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -32,6 +31,7 @@ import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.chart.data.BigRational2;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating a Scatter Plot visualization.
@@ -168,8 +168,8 @@ public class Chart_ScatterExample extends Chart {
             if (col >= dataStartCol) {
                 ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
-                BigRational x = imageColToXCoordinate(col);
-                if (x.compareTo(BigRational.ZERO) == 0 || col == startCol) {
+                Math_BigRational x = imageColToXCoordinate(col);
+                if (x.compareTo(Math_BigRational.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
@@ -189,8 +189,8 @@ public class Chart_ScatterExample extends Chart {
             if (col >= dataStartCol) {
                 ab = new Line2D.Double(col, row, col, row + stl);
                 draw(ab);
-                BigRational x = imageColToXCoordinate(col);
-                if (x.compareTo(BigRational.ZERO) == 0 || col == startCol) {
+                Math_BigRational x = imageColToXCoordinate(col);
+                if (x.compareTo(Math_BigRational.ZERO) == 0 || col == startCol) {
                     text_String = "0";
                 } else {
                     //text_String = "" + x.stripTrailingZeros().toPlainString();
@@ -285,8 +285,8 @@ public class Chart_ScatterExample extends Chart {
             if (row <= dataEndRow) {
                 ab = new Line2D.Double(col, row, col - stl, row);
                 draw(ab);
-                BigRational y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
+                Math_BigRational y = imageRowToYCoordinate(row);
+                if (y.compareTo(Math_BigRational.ZERO) == 0 || row == originRow) {
                     text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
@@ -310,8 +310,8 @@ public class Chart_ScatterExample extends Chart {
                         col - stl,
                         row);
                 draw(ab);
-                BigRational y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
+                Math_BigRational y = imageRowToYCoordinate(row);
+                if (y.compareTo(Math_BigRational.ZERO) == 0 || row == originRow) {
                     text = "0";
                 } else {
                     //text_String = "" + y.stripTrailingZeros().toPlainString();
@@ -580,7 +580,7 @@ public class Chart_ScatterExample extends Chart {
 
     @Override
     public void setOriginCol() {
-        originCol = coordinateToScreenCol(BigRational.ZERO);
+        originCol = coordinateToScreenCol(Math_BigRational.ZERO);
 //        System.out.println("originCol " + originCol);
 //        
 //        if (minX.compareTo(BigDecimal.ZERO) == 0) {
@@ -610,10 +610,10 @@ public class Chart_ScatterExample extends Chart {
     public static Chart_ScatterData getDefaultData(boolean ignore) {
         Random random = new Random(0);
         Chart_ScatterData r = new Chart_ScatterData();
-        r.maxX = BigRational.valueOf(Double.MIN_VALUE);
-        r.minX = BigRational.valueOf(Double.MAX_VALUE);
-        r.maxY = BigRational.valueOf(Double.MIN_VALUE);
-        r.minY = BigRational.valueOf(Double.MAX_VALUE);
+        r.maxX = Math_BigRational.valueOf(Double.MIN_VALUE);
+        r.minX = Math_BigRational.valueOf(Double.MAX_VALUE);
+        r.maxY = Math_BigRational.valueOf(Double.MIN_VALUE);
+        r.minY = Math_BigRational.valueOf(Double.MAX_VALUE);
 //        for (int i = -100; i < 328; i++) {         
 //            for (int j = -100; j < 0; j++) {
 //        for (int i = -100; i < 100; i++) {
@@ -623,8 +623,8 @@ public class Chart_ScatterExample extends Chart {
 //        for (int i = -15; i < 10; i++) {
 //            for (int j = -9; j < 12; j++) {
                 double random_0 = random.nextDouble();
-                BigRational x = BigRational.valueOf((i + random.nextDouble()) * random_0);
-                BigRational y = BigRational.valueOf(((j + i) / 2) * random_0);
+                Math_BigRational x = Math_BigRational.valueOf((i + random.nextDouble()) * random_0);
+                Math_BigRational y = Math_BigRational.valueOf(((j + i) / 2) * random_0);
                 //BigDecimal y = BigDecimal.valueOf((j + i) * random_0);
                 if (x.compareTo(r.maxX) == 1) {
                     r.maxX = x;

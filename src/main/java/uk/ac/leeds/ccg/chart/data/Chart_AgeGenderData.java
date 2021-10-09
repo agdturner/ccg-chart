@@ -15,9 +15,9 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.util.TreeMap;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
 
 /**
@@ -37,10 +37,10 @@ public class Chart_AgeGenderData extends Chart_Data {
     public TreeMap<Long, Stats_BigDecimal1> mss;
 
     //public BigDecimal min;
-    public BigRational min;
+    public Math_BigRational min;
 
     //public BigDecimal max;
-    public BigRational max;
+    public Math_BigRational max;
 
     public Chart_AgeGenderData() {
         super();

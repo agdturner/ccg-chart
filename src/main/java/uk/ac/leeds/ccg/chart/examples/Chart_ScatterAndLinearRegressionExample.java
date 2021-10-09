@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Line2D;
@@ -35,6 +34,7 @@ import uk.ac.leeds.ccg.chart.data.BigRational2;
 import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating a Scatter Plot visualization with a linear
@@ -654,10 +654,10 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
                 dataAsDoubleArray);
         setPaint(Color.LIGHT_GRAY);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][0])),
-                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][0])),
-                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][1])),
-                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][1]))));
+                coordinateToScreenCol(Math_BigRational.valueOf(yEqualsXLineData[1][0])),
+                coordinateToScreenRow(Math_BigRational.valueOf(yEqualsXLineData[0][0])),
+                coordinateToScreenCol(Math_BigRational.valueOf(yEqualsXLineData[1][1])),
+                coordinateToScreenRow(Math_BigRational.valueOf(yEqualsXLineData[0][1]))));
     }
 
     protected void drawRegressionLine(
@@ -668,10 +668,10 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
                 rp);
         setPaint(Color.BLACK);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][0])),
-                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][0])),
-                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][1])),
-                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][1]))));
+                coordinateToScreenCol(Math_BigRational.valueOf(regressionLineXYLineData[1][0])),
+                coordinateToScreenRow(Math_BigRational.valueOf(regressionLineXYLineData[0][0])),
+                coordinateToScreenCol(Math_BigRational.valueOf(regressionLineXYLineData[1][1])),
+                coordinateToScreenRow(Math_BigRational.valueOf(regressionLineXYLineData[0][1]))));
 //                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][1])),
 //                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[1][0])),
 //                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][0])),

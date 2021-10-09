@@ -15,36 +15,36 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
-import ch.obermuhlner.math.big.BigRational;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 public class BigRational2 {
 
-    public BigRational x;
-    public BigRational y;
+    public Math_BigRational x;
+    public Math_BigRational y;
 
     public BigRational2() {
     }
 
     public BigRational2(
-            BigRational x,
-            BigRational y) {
+            Math_BigRational x,
+            Math_BigRational y) {
         this.x = x;
         this.y = y;
     }
 
-    public BigRational getX() {
+    public Math_BigRational getX() {
         return x;
     }
 
-    public void setX(BigRational x) {
+    public void setX(Math_BigRational x) {
         this.x = x;
     }
 
-    public BigRational getY() {
+    public Math_BigRational getY() {
         return y;
     }
 
-    public void setY(BigRational y) {
+    public void setY(Math_BigRational y) {
         this.y = y;
     }
 

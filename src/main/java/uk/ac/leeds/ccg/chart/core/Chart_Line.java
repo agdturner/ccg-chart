@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.core;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -31,14 +30,14 @@ import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.chart.data.Chart_LineData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An abstract class for creating Line Charts.
  */
 public abstract class Chart_Line extends Chart {
 
-    protected BigRational yMax;
+    protected Math_BigRational yMax;
 
     /**
      * yPin are a set of values that must appear if possible on the Y axis. The
@@ -46,12 +45,12 @@ public abstract class Chart_Line extends Chart {
      * the last. It is expected that only those that can fit on the axis will be
      * included.
      */
-    protected ArrayList<BigRational> yPin;
+    protected ArrayList<Math_BigRational> yPin;
 
     /**
      * If this is set, this is the distance desired between Y axis ticks.
      */
-    protected BigRational yIncrement;
+    protected Math_BigRational yIncrement;
 
     /**
      * The number of Y axis ticks wanted in total (other than yPins).
@@ -69,10 +68,10 @@ public abstract class Chart_Line extends Chart {
     protected int numberOfYAxisTicksLT0;
 
     //ArrayList<String> labels;
-    protected TreeMap<BigRational, ?> xAxisLabels;
-    protected BigRational xMax;
+    protected TreeMap<Math_BigRational, ?> xAxisLabels;
+    protected Math_BigRational xMax;
     protected BigDecimal xPin;
-    protected BigRational xIncrement;
+    protected Math_BigRational xIncrement;
     protected int numberOfXAxisTicks;
 
     private Color[] colours;
@@ -149,17 +148,17 @@ public abstract class Chart_Line extends Chart {
             int seperationDistanceOfAxisAndData) {
         RoundingMode rm = RoundingMode.HALF_UP;
         MathContext mc = new MathContext(dpc, rm);
-        BigRational y;
+        Math_BigRational y;
         if (yPin != null) {
-            BigRational maxYPin;
-            BigRational minYPin;
+            Math_BigRational maxYPin;
+            Math_BigRational minYPin;
             maxYPin = Generic_Collections.getMax(yPin);
             minYPin = Generic_Collections.getMin(yPin);
             if (minYPin != null) {
-                minY = BigRational.min(minYPin, minY);
+                minY = Math_BigRational.min(minYPin, minY);
             }
             if (maxYPin != null) {
-                maxY = BigRational.max(maxYPin, maxY);
+                maxY = Math_BigRational.max(maxYPin, maxY);
             }
             setCellHeight();
         }
@@ -197,9 +196,9 @@ public abstract class Chart_Line extends Chart {
 //            rowValue = minY;
 //        }
         boolean hasPositives;
-        hasPositives = maxY.compareTo(BigRational.ZERO) == 1;
+        hasPositives = maxY.compareTo(Math_BigRational.ZERO) == 1;
         boolean hasNegatives;
-        hasNegatives = minY.compareTo(BigRational.ZERO) == -1;
+        hasNegatives = minY.compareTo(Math_BigRational.ZERO) == -1;
 
         /**
          * If yIncrement is not set, then set it. If it is set, then set
@@ -219,11 +218,11 @@ public abstract class Chart_Line extends Chart {
 //            }
             if (numberOfYAxisTicks > 0) {
                 yIncrement = (maxY.subtract(minY)).divide(
-                        BigRational.valueOf(numberOfYAxisTicks));
+                        Math_BigRational.valueOf(numberOfYAxisTicks));
                 initNumberOfYAxisTicksGT0(hasPositives, mc);
                 initNumberOfYAxisTicksLT0(hasNegatives, mc);
                 yIncrement = (maxY.subtract(minY)).divide(
-                        BigRational.valueOf(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0));
+                        Math_BigRational.valueOf(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0));
             } else {
                 yIncrement = maxY.subtract(minY);
             }
@@ -247,7 +246,7 @@ public abstract class Chart_Line extends Chart {
         BitSet rows = new BitSet();
         // Add the yPins that fit
         if (yPin != null) {
-            Iterator<BigRational> ite = yPin.iterator();
+            Iterator<Math_BigRational> ite = yPin.iterator();
             while (ite.hasNext()) {
                 y = ite.next();
                 row = coordinateToScreenRow(y);
@@ -259,8 +258,8 @@ public abstract class Chart_Line extends Chart {
 
         // Add a pin at zero
         if (hasNegatives && hasPositives) {
-            y = BigRational.ZERO;
-            row = coordinateToScreenRow(BigRational.ZERO);
+            y = Math_BigRational.ZERO;
+            row = coordinateToScreenRow(Math_BigRational.ZERO);
             // Add Y Axis Mark
             maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                     maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
@@ -331,7 +330,7 @@ public abstract class Chart_Line extends Chart {
      * @return The y axis mark.
      */
     protected int addYAxisMark(int row, int col, int scaleTickLength,
-            BigRational y, int maxTickTextWidth, int textHeight, BitSet rows,
+            Math_BigRational y, int maxTickTextWidth, int textHeight, BitSet rows,
             int tickTextEndCol, RoundingMode rm) {
         int r = maxTickTextWidth;
         //System.out.println(textHeight);
@@ -390,7 +389,7 @@ public abstract class Chart_Line extends Chart {
     ) {
         int[] result = new int[3];
 //        Object[] data = getData();
-        BigRational colValue;
+        Math_BigRational colValue;
         if (xPin != null) {
             // Initialise colValue
             int pinCompareToMinX;
@@ -400,7 +399,7 @@ public abstract class Chart_Line extends Chart {
                     int pinCompareToMaxX;
                     pinCompareToMaxX = xPin.compareTo(maxX.toBigDecimal());
                     if (pinCompareToMaxX != 1) {
-                        colValue = BigRational.valueOf(xPin);
+                        colValue = Math_BigRational.valueOf(xPin);
                         while (colValue.compareTo(minX) != 1) {
                             colValue = colValue.subtract(xIncrement);
                         }
@@ -408,7 +407,7 @@ public abstract class Chart_Line extends Chart {
                         throw new UnsupportedOperationException(this.getClass().getName() + ".drawXAxis(int, int, int, int, int)");
                     }
                 } else {
-                    colValue = BigRational.valueOf(xPin);
+                    colValue = Math_BigRational.valueOf(xPin);
                     while (colValue.compareTo(minX) == -1) {
                         colValue = colValue.add(xIncrement);
                     }
@@ -456,10 +455,10 @@ public abstract class Chart_Line extends Chart {
         int previousCol = col;
         if (getData().xAxisLabels != null) {
             boolean first = true;
-            Iterator<BigRational> ite;
+            Iterator<Math_BigRational> ite;
             ite = getData().xAxisLabels.keySet().iterator();
             while (ite.hasNext()) {
-                BigRational x = ite.next();
+                Math_BigRational x = ite.next();
                 Object label = getData().xAxisLabels.get(x);
                 col = coordinateToScreenCol(x);
                 if (col >= dataStartCol) {
@@ -486,7 +485,7 @@ public abstract class Chart_Line extends Chart {
 //        for (int i = 0; i < numberOfTicks; i ++) {
                 //String label = labels.get(value);
                 x = minX.toBigDecimal().add(BigDecimal.valueOf(i));
-                col = coordinateToScreenCol(BigRational.valueOf(x).multiply(xIncrement));
+                col = coordinateToScreenCol(Math_BigRational.valueOf(x).multiply(xIncrement));
                 if (col >= dataStartCol) {
                     ab = new Line2D.Double(col, row, col,
                             row + scaleTickLength);
@@ -563,14 +562,14 @@ public abstract class Chart_Line extends Chart {
     /**
      * @return the xAxisLabels
      */
-    public TreeMap<BigRational, ?> getxAxisLabels() {
+    public TreeMap<Math_BigRational, ?> getxAxisLabels() {
         return xAxisLabels;
     }
 
     /**
      * @param xAxisLabels the xAxisLabels to set
      */
-    public final void setxAxisLabels(TreeMap<BigRational, ?> xAxisLabels) {
+    public final void setxAxisLabels(TreeMap<Math_BigRational, ?> xAxisLabels) {
         this.xAxisLabels = xAxisLabels;
     }
 

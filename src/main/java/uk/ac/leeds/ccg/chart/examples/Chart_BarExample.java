@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.math.BigDecimal;
@@ -32,12 +31,14 @@ import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.chart.core.Chart_Bar;
 import uk.ac.leeds.ccg.chart.data.Chart_BarData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
-import uk.ac.leeds.ccg.generic.util.Generic_Collections.CountsLabelsMins;
-import uk.ac.leeds.ccg.generic.util.Generic_Collections.MinMaxBigDecimal;
+import uk.ac.leeds.ccg.math.util.Math_Collections;
+import uk.ac.leeds.ccg.math.util.Math_Collections.CountsLabelsMins;
+import uk.ac.leeds.ccg.math.util.Math_Collections.MinMaxBigDecimal;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating a Bar Chart Visualization.
@@ -84,7 +85,7 @@ public class Chart_BarExample extends Chart_Bar {
         this.xAxisIncrement = xIncrement;
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.yPin = yPin;
-        this.yAxisIncrement = BigRational.valueOf(yIncrement);
+        this.yAxisIncrement = Math_BigRational.valueOf(yIncrement);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot,
                 dpc,
@@ -107,13 +108,13 @@ public class Chart_BarExample extends Chart_Bar {
             interval = entry.getKey();
             count = entry.getValue();
             BigDecimal centre = d.centres.get(interval);
-            int row = coordinateToScreenRow(BigRational.valueOf(count));
+            int row = coordinateToScreenRow(Math_BigRational.valueOf(count));
             int barHeight = dataEndRow - row;
             if (barHeight == 0) {
                 barHeight = 1;
                 row -= 1;
             }
-            int col = coordinateToScreenCol(BigRational.valueOf(centre))
+            int col = coordinateToScreenCol(Math_BigRational.valueOf(centre))
                     + barGap;
             setPaint(Color.DARK_GRAY);
             fillRect(col, row, barWidth, barHeight);
@@ -283,11 +284,11 @@ public class Chart_BarExample extends Chart_Bar {
         map.put("Y", new BigDecimal(16.0d));
         map.put("Z", new BigDecimal(4.0d));
         MinMaxBigDecimal minMaxBigDecimal;
-        minMaxBigDecimal = Generic_Collections.getMinMaxBigDecimal(map);
+        minMaxBigDecimal = Math_Collections.getMinMaxBigDecimal(map);
         r.min = minMaxBigDecimal.min;
         r.max = minMaxBigDecimal.max;
         MathContext mc = new MathContext(dpc, getRoundingMode());
-        CountsLabelsMins intervalCountsLabelsMins = Generic_Collections.getIntervalCountsLabelsMins(
+        CountsLabelsMins intervalCountsLabelsMins = Math_Collections.getIntervalCountsLabelsMins(
                 r.min, r.intervalWidth, map, mc);
         r.counts = intervalCountsLabelsMins.counts;
         return r;
@@ -296,7 +297,7 @@ public class Chart_BarExample extends Chart_Bar {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        int barHeight = Math_BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
     }
 

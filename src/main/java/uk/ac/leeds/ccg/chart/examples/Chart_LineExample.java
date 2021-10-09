@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Line2D;
@@ -35,6 +34,9 @@ import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.util.Generic_Collections;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
+import uk.ac.leeds.ccg.math.util.Math_Collections;
+import uk.ac.leeds.ccg.math.util.Math_Collections.MinMaxBigDecimal;
 
 /**
  * An example of generating a Line Graph visualization.
@@ -72,16 +74,16 @@ public class Chart_LineExample extends Chart_Line {
     public Chart_LineExample(Generic_Environment e, ExecutorService es, Path f,
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, BigDecimal yMax,
-            ArrayList<BigRational> yPin, BigDecimal yIncrement,
+            ArrayList<Math_BigRational> yPin, BigDecimal yIncrement,
             int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd,
             RoundingMode rm) {
         super(e);
         if (yMax != null) {
-            this.yMax = BigRational.valueOf(yMax);
+            this.yMax = Math_BigRational.valueOf(yMax);
         }
         this.yPin = yPin;
         if (yIncrement != null) {
-            this.yIncrement = BigRational.valueOf(yIncrement);
+            this.yIncrement = Math_BigRational.valueOf(yIncrement);
         }
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.drawYZero = drawYZero;
@@ -141,8 +143,8 @@ public class Chart_LineExample extends Chart_Line {
         while (ite.hasNext()) {
             BigDecimal x = ite.next();
             BigDecimal y = map.get(x);
-            int row = coordinateToScreenRow(BigRational.valueOf(y));
-            int col = coordinateToScreenCol(BigRational.valueOf(x));
+            int row = coordinateToScreenRow(Math_BigRational.valueOf(y));
+            int col = coordinateToScreenCol(Math_BigRational.valueOf(x));
             if (first) {
                 row0 = row;
                 col0 = col;
@@ -211,9 +213,9 @@ public class Chart_LineExample extends Chart_Line {
             int numberOfYAxisTicks = 11;
             BigDecimal yMax;
             yMax = null;
-            ArrayList<BigRational> yPin;
+            ArrayList<Math_BigRational> yPin;
             yPin = new ArrayList<>();
-            yPin.add(BigRational.ZERO);
+            yPin.add(Math_BigRational.ZERO);
             //BigDecimal yIncrement = BigDecimal.ONE;
             BigDecimal yIncrement = null;
             //int yAxisStartOfEndInterval = 60;
@@ -248,7 +250,7 @@ public class Chart_LineExample extends Chart_Line {
             Line2D ab;
             // Draw Y axis scale to the left side
             setPaint(Color.LIGHT_GRAY);
-            int zero = coordinateToScreenRow(BigRational.ZERO);
+            int zero = coordinateToScreenRow(Math_BigRational.ZERO);
             ab = new Line2D.Double(dataStartCol, zero, dataEndCol, zero);
             draw(ab);
         }
@@ -364,55 +366,55 @@ public class Chart_LineExample extends Chart_Line {
         map2.put(new BigDecimal(53.0d), new BigDecimal(37.0d));
         map2.put(new BigDecimal(54.0d), new BigDecimal(37.0d));
         r.maps.put("map2", map2);
-        Generic_Collections.MinMaxBigDecimal minMax;
-        minMax = Generic_Collections.getMinMaxBigDecimal(map);
-        minY = BigRational.valueOf(minMax.min);
-        maxY = BigRational.valueOf(minMax.max);
-        minX = BigRational.valueOf(map.firstKey());
-        maxX = BigRational.valueOf(map.lastKey());
-        minMax = Generic_Collections.getMinMaxBigDecimal(map2);
-        if (minY.compareTo(BigRational.valueOf(minMax.min)) == 1) {
-            minY = BigRational.valueOf(minMax.min);
+        MinMaxBigDecimal minMax;
+        minMax = Math_Collections.getMinMaxBigDecimal(map);
+        minY = Math_BigRational.valueOf(minMax.min);
+        maxY = Math_BigRational.valueOf(minMax.max);
+        minX = Math_BigRational.valueOf(map.firstKey());
+        maxX = Math_BigRational.valueOf(map.lastKey());
+        minMax = Math_Collections.getMinMaxBigDecimal(map2);
+        if (minY.compareTo(Math_BigRational.valueOf(minMax.min)) == 1) {
+            minY = Math_BigRational.valueOf(minMax.min);
         }
-        if (maxY.compareTo(BigRational.valueOf(minMax.max)) == -1) {
-            maxY = BigRational.valueOf(minMax.max);
+        if (maxY.compareTo(Math_BigRational.valueOf(minMax.max)) == -1) {
+            maxY = Math_BigRational.valueOf(minMax.max);
         }
-        if (minX.compareTo(BigRational.valueOf(map2.firstKey())) == 1) {
-            minX = BigRational.valueOf(map2.firstKey());
+        if (minX.compareTo(Math_BigRational.valueOf(map2.firstKey())) == 1) {
+            minX = Math_BigRational.valueOf(map2.firstKey());
         }
-        if (maxX.compareTo(BigRational.valueOf(map2.lastKey())) == -1) {
-            maxX = BigRational.valueOf(map2.lastKey());
+        if (maxX.compareTo(Math_BigRational.valueOf(map2.lastKey())) == -1) {
+            maxX = Math_BigRational.valueOf(map2.lastKey());
         }
         r.minY = minY;
         r.maxY = maxY;
         r.minX = minX;
         r.maxX = maxX;
-        r.xAxisLabels.put(BigRational.valueOf(0), "2008 April");
-        r.xAxisLabels.put(BigRational.valueOf(6), "2008 October");
-        r.xAxisLabels.put(BigRational.valueOf(12), "2009 April");
-        r.xAxisLabels.put(BigRational.valueOf(18), "2009 October");
-        r.xAxisLabels.put(BigRational.valueOf(24), "2010 April");
-        r.xAxisLabels.put(BigRational.valueOf(27), "2010 July");
-        r.xAxisLabels.put(BigRational.valueOf(30), "2010 October");
-        r.xAxisLabels.put(BigRational.valueOf(33), "2010 January");
-        r.xAxisLabels.put(BigRational.valueOf(36), "2011 April");
-        r.xAxisLabels.put(BigRational.valueOf(39), "2011 July");
-        r.xAxisLabels.put(BigRational.valueOf(42), "2011 October");
-        r.xAxisLabels.put(BigRational.valueOf(45), "2012 January");
-        r.xAxisLabels.put(BigRational.valueOf(48), "2012 April");
-        r.xAxisLabels.put(BigRational.valueOf(49), "2012 May");
-        r.xAxisLabels.put(BigRational.valueOf(50), "2012 June");
-        r.xAxisLabels.put(BigRational.valueOf(51), "2012 April");
-        r.xAxisLabels.put(BigRational.valueOf(52), "2012 August");
-        r.xAxisLabels.put(BigRational.valueOf(53), "2012 September");
-        r.xAxisLabels.put(BigRational.valueOf(54), "2012 October");
+        r.xAxisLabels.put(Math_BigRational.valueOf(0), "2008 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(6), "2008 October");
+        r.xAxisLabels.put(Math_BigRational.valueOf(12), "2009 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(18), "2009 October");
+        r.xAxisLabels.put(Math_BigRational.valueOf(24), "2010 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(27), "2010 July");
+        r.xAxisLabels.put(Math_BigRational.valueOf(30), "2010 October");
+        r.xAxisLabels.put(Math_BigRational.valueOf(33), "2010 January");
+        r.xAxisLabels.put(Math_BigRational.valueOf(36), "2011 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(39), "2011 July");
+        r.xAxisLabels.put(Math_BigRational.valueOf(42), "2011 October");
+        r.xAxisLabels.put(Math_BigRational.valueOf(45), "2012 January");
+        r.xAxisLabels.put(Math_BigRational.valueOf(48), "2012 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(49), "2012 May");
+        r.xAxisLabels.put(Math_BigRational.valueOf(50), "2012 June");
+        r.xAxisLabels.put(Math_BigRational.valueOf(51), "2012 April");
+        r.xAxisLabels.put(Math_BigRational.valueOf(52), "2012 August");
+        r.xAxisLabels.put(Math_BigRational.valueOf(53), "2012 September");
+        r.xAxisLabels.put(Math_BigRational.valueOf(54), "2012 October");
         return r;
     }
 
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        int barHeight = Math_BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
     }
 

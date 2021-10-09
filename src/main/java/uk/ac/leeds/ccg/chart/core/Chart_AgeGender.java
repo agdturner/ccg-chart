@@ -15,18 +15,15 @@
  */
 package uk.ac.leeds.ccg.chart.core;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import uk.ac.leeds.ccg.chart.data.Chart_AgeGenderData;
 import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.Math_BigRational;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An abstract class for creating Age by Gender Population visualisations and
@@ -71,8 +68,8 @@ public abstract class Chart_AgeGender extends Chart {
         Chart_AgeGenderData d = (Chart_AgeGenderData) data;
         maxX = d.maxX;
         minX = maxX.negate();
-        maxY = BigRational.valueOf(getStartAgeOfEndYearInterval() + getAgeInterval());
-        minY = BigRational.ZERO;
+        maxY = Math_BigRational.valueOf(getStartAgeOfEndYearInterval() + getAgeInterval());
+        minY = Math_BigRational.ZERO;
         setCellHeight();
         setCellWidth();
         setOriginRow();
@@ -137,12 +134,12 @@ public abstract class Chart_AgeGender extends Chart {
 //                dataStartRow);
 //        draw(ab);
         setPaint(Color.GRAY);
-        BigRational cellHeight = getCellHeight();
+        Math_BigRational cellHeight = getCellHeight();
         int barHeight;
-        if (cellHeight.compareTo(BigRational.ZERO) == 0) {
+        if (cellHeight.compareTo(Math_BigRational.ZERO) == 0) {
             barHeight = 1;
         } else {
-            barHeight = BigRational.valueOf(interval).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+            barHeight = Math_BigRational.valueOf(interval).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         }
         int barHeightdiv2 = barHeight / 2;
 
@@ -158,7 +155,7 @@ public abstract class Chart_AgeGender extends Chart {
         for (int i = miny_int; i <= maxY.integerPart().toBigDecimal().intValue(); i += increment) {
 
             // int row = coordinateToScreenRow(BigDecimal.valueOf(i));
-            int row = coordinateToScreenRow(BigRational.valueOf(i)) - barHeightdiv2;
+            int row = coordinateToScreenRow(Math_BigRational.valueOf(i)) - barHeightdiv2;
             //int row = coordinateToScreenRow(BigDecimal.valueOf(i)) - barHeight;
 
             setPaint(Color.GRAY);

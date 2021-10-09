@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -35,6 +34,7 @@ import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating an Age by Gender Population Line Chart
@@ -149,11 +149,11 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
             Integer age = entry.getKey();
             Stats_BigDecimal1 stats = entry.getValue();
-            BigRational stdDev = BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
-            BigRational meanAddStdDev = stats.getMean().add(stdDev);
-            BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
+            Math_BigRational stdDev = Math_BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
+            Math_BigRational meanAddStdDev = stats.getMean().add(stdDev);
+            Math_BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
             int meanPointCol = coordinateToScreenCol(stats.getMean());
-            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int pointRow = coordinateToScreenRow(Math_BigRational.valueOf(age - ageInterval / 2));
             int meanAddStdDevPointCol = coordinateToScreenCol(meanAddStdDev);
             int meanSubtractStdDevPointCol = coordinateToScreenCol(meanSubtractStdDev);
             if (firstPoint) {
@@ -199,11 +199,11 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
             Integer age = entry.getKey();
             Stats_BigDecimal1 stats = entry.getValue();
-            BigRational stdDev = BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
-            BigRational meanAddStdDev = stats.getMean().add(stdDev);
-            BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
+            Math_BigRational stdDev = Math_BigRational.valueOf(stats.getMoments().getStandardDeviation(0).toBigDecimal(0)); // not sure if 0 is sensible for oom here!
+            Math_BigRational meanAddStdDev = stats.getMean().add(stdDev);
+            Math_BigRational meanSubtractStdDev = stats.getMean().subtract(stdDev);
             int meanPointCol = coordinateToScreenCol(stats.getMean().negate());
-            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int pointRow = coordinateToScreenRow(Math_BigRational.valueOf(age - ageInterval / 2));
             int meanAddStdDevPointCol = coordinateToScreenCol(meanAddStdDev.negate());
             int meanSubtractStdDevPointCol = coordinateToScreenCol(meanSubtractStdDev.negate());
             if (firstPoint) {
@@ -262,12 +262,12 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
             Integer age = entry.getKey();
             Stats_BigDecimal1 stats = entry.getValue();
-            int minPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin()));
-            int q1PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ1()));
+            int minPointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMin()));
+            int q1PointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ1()));
             int medianPointCol = coordinateToScreenCol(stats.getMedian());
-            int q3PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ3()));
-            int maxPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax()));
-            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int q3PointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ3()));
+            int maxPointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMax()));
+            int pointRow = coordinateToScreenRow(Math_BigRational.valueOf(age - ageInterval / 2));
             if (firstPoint) {
                 last_minPointCol = minPointCol;
                 last_q1PointCol = q1PointCol;
@@ -334,12 +334,12 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             Map.Entry<Integer, Stats_BigDecimal1> entry = ite.next();
             Integer age = entry.getKey();
             Stats_BigDecimal1 stats = entry.getValue();
-            int minPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin().negate()));
-            int q1PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ1().negate()));
+            int minPointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMin().negate()));
+            int q1PointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ1().negate()));
             int medianPointCol = coordinateToScreenCol(stats.getMedian().negate());
-            int q3PointCol = coordinateToScreenCol(BigRational.valueOf(stats.getQ3().negate()));
-            int maxPointCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax().negate()));
-            int pointRow = coordinateToScreenRow(BigRational.valueOf(age - ageInterval / 2));
+            int q3PointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ3().negate()));
+            int maxPointCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMax().negate()));
+            int pointRow = coordinateToScreenRow(Math_BigRational.valueOf(age - ageInterval / 2));
             if (firstPoint) {
                 last_minPointCol = minPointCol;
                 last_q1PointCol = q1PointCol;
@@ -561,7 +561,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
         BigDecimal pop9900;
         BigDecimal pop9950;
         BigDecimal pop9800;
-        r.max = BigRational.ZERO;
+        r.max = Math_BigRational.ZERO;
         iterator = ((TreeMap<Integer, BigDecimal>) data10000[0]).keySet().iterator();
         ArrayList<BigDecimal> values = null;
         while (iterator.hasNext()) {
@@ -600,7 +600,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             System.out.println("Female age " + age);
             // Set r.max to be the maximum of the median added to the standard 
             // deviation
-            r.max = BigRational.max(r.max, BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
+            r.max = Math_BigRational.max(r.max, Math_BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
             if (age < saeyi) {
                 fss.put(age, ss);
             } else {
@@ -646,7 +646,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
             Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
             // Set r.max to be the maximum of the median added to the standard 
             // deviation
-            r.max = BigRational.max(r.max, BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
+            r.max = Math_BigRational.max(r.max, Math_BigRational.valueOf(ss.getMax()).add(ss.getMedian()));
             if (age < saeyi) {
                 mss.put(age, ss);
             } else {
