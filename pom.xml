@@ -41,9 +41,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <agdt-java-generic.version>2.0</agdt-java-generic.version>
-        <ccg-math.version>1.17</ccg-math.version>
-        <agdt-java-stats.version>0.5</agdt-java-stats.version>
+        <agdt-java-generic.version>2.1-SNAPSHOT</agdt-java-generic.version>
+        <ccg-math.version>1.18-SNAPSHOT</ccg-math.version>
+        <agdt-java-stats.version>0.6-SNAPSHOT</agdt-java-stats.version>
         <agdt-java-data.version>0.3</agdt-java-data.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <!--
