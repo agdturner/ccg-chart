@@ -1,5 +1,6 @@
 package uk.ac.leeds.ccg.chart.core;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -39,7 +40,6 @@ import uk.ac.leeds.ccg.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.visualisation.Generic_Visualisation;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An class for creating 2D plot visualisations.
@@ -166,34 +166,34 @@ public abstract class Chart extends Chart_Runnable
     /**
      * For storing the maximum value of x in the data area.
      */
-    protected Math_BigRational maxX;
+    protected BigRational maxX;
 
     /**
      * For storing the minimum value of x in the data area.
      */
-    protected Math_BigRational minX;
+    protected BigRational minX;
 
     /**
      * For storing the maximum value of y in the data area.
      */
-    protected Math_BigRational maxY;
+    protected BigRational maxY;
 
     /**
      * For storing the minimum value of y in the data area.
      */
-    protected Math_BigRational minY;
+    protected BigRational minY;
 
     /**
      * For storing the number of decimal places used in calculations needed for
      * the plot.
      */
-    protected int dpc;
+    protected int oomc;
 
     /**
      * For storing the number of decimal places used for numerical values
      * displayed on the plot.
      */
-    protected int dpd;
+    protected int oomd;
 
     protected int significantDigits;
     protected RoundingMode rm;
@@ -201,12 +201,12 @@ public abstract class Chart extends Chart_Runnable
     /**
      * cellHeight is for storing the height of a pixel in the data units of y
      */
-    private Math_BigRational cellHeight;
+    private BigRational cellHeight;
 
     /**
      * cellWidth is for storing the width of a pixel in the data units of x
      */
-    private Math_BigRational cellWidth;
+    private BigRational cellWidth;
 
     /**
      * originRow the row index on which the origin is located (y = 0).
@@ -375,16 +375,16 @@ public abstract class Chart extends Chart_Runnable
         return rm;
     }
 
-    public Math_BigRational getCellHeight() {
+    public BigRational getCellHeight() {
         if (cellHeight == null) {
-            return Math_BigRational.valueOf(0);
+            return BigRational.valueOf(0);
         }
         return cellHeight;
     }
 
-    public Math_BigRational getCellWidth() {
+    public BigRational getCellWidth() {
         if (cellWidth == null) {
-            return Math_BigRational.valueOf(0);
+            return BigRational.valueOf(0);
         }
         return cellWidth;
     }
@@ -418,7 +418,7 @@ public abstract class Chart extends Chart_Runnable
      * @param yAxisLabel What {@link #yAxisLabel} is set to.
      * @param drawOriginLinesOnPlot What {@link #drawOriginLinesOnPlot} is set
      * to.
-     * @param decimalPlacePrecisionForCalculations What {@link #dpc} is set to.
+     * @param decimalPlacePrecisionForCalculations What {@link #oomc} is set to.
      * @param significantDigits What {@link #significantDigits} is set to.
      * @param rm What {@link #rm} is set to.
      */
@@ -445,8 +445,8 @@ public abstract class Chart extends Chart_Runnable
         this.dataEndRow = dataStartRow + dataHeight;
         this.dataStartCol = 0;
         this.dataEndCol = dataStartCol + dataWidth;
-        this.dpc = decimalPlacePrecisionForCalculations;
-        this.dpd = significantDigits;
+        this.oomc = decimalPlacePrecisionForCalculations;
+        this.oomd = significantDigits;
         this.significantDigits = significantDigits;
         this.rm = rm;
 //        if (data == null) {
@@ -485,13 +485,13 @@ public abstract class Chart extends Chart_Runnable
         //mediaTracker.addImage(bi, 0);
     }
 
-    public Math_BigRational imageRowToYCoordinate(double row) {
+    public BigRational imageRowToYCoordinate(double row) {
         return dataRowToYCoordinate(row - dataStartRow);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight).subtract(halfCellHeight);
         //return BigDecimal.valueOf(dataHeight - row).multiply(cellHeight);
     }
 
-    public Math_BigRational imageColToXCoordinate(double col) {
+    public BigRational imageColToXCoordinate(double col) {
         return dataColToXCoordinate(col - dataStartCol);
 //        //return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth).add(this.minX);
 //        return BigDecimal.valueOf(dataWidth - col).multiply(cellWidth);
@@ -502,19 +502,19 @@ public abstract class Chart extends Chart_Runnable
      * @param row
      * @return
      */
-    public Math_BigRational dataRowToYCoordinate(double row) {
+    public BigRational dataRowToYCoordinate(double row) {
         if (data.minY != null) {
-            return Math_BigRational.valueOf(getDataHeight() - row)
+            return BigRational.valueOf(getDataHeight() - row)
                     .multiply(getCellHeight()).add(data.minY);
         }
-        return Math_BigRational.ONE; // default value
+        return BigRational.ONE; // default value
     }
 
-    public Math_BigRational dataColToXCoordinate(double col) {
+    public BigRational dataColToXCoordinate(double col) {
         if (data.minX != null) {
-            return Math_BigRational.valueOf(col).multiply(getCellWidth()).add(data.minX);
+            return BigRational.valueOf(col).multiply(getCellWidth()).add(data.minX);
         }
-        return Math_BigRational.ONE; // default value
+        return BigRational.ONE; // default value
     }
 
     /**
@@ -538,11 +538,11 @@ public abstract class Chart extends Chart_Runnable
      * @param x The x value.
      * @return the column in the image for the data with value titleTextWidth
      */
-    public int coordinateToScreenCol(Math_BigRational x) {
+    public int coordinateToScreenCol(BigRational x) {
         int col = 0;
-        Math_BigRational cw = getCellWidth();
+        BigRational cw = getCellWidth();
         if (data.minX != null) {
-            if (cw.compareTo(Math_BigRational.ZERO) != 0) {
+            if (cw.compareTo(BigRational.ZERO) != 0) {
                 col = x.subtract(data.minX).divide(cw).integerPart().toBigDecimal().intValue();
             }
         }
@@ -557,12 +557,12 @@ public abstract class Chart extends Chart_Runnable
      * @param y The y value.
      * @return the row in the image for the data with value titleTextHeight
      */
-    public int coordinateToScreenRow(Math_BigRational y) {
+    public int coordinateToScreenRow(BigRational y) {
         int row = 0;
-        Math_BigRational ch = getCellHeight();
+        BigRational ch = getCellHeight();
         if (data.minY != null) {
             if (ch != null) {
-                if (ch.compareTo(Math_BigRational.ZERO) != 0) {
+                if (ch.compareTo(BigRational.ZERO) != 0) {
                     row = getDataHeight()
                             - y.subtract(data.minY).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
                 }
@@ -580,7 +580,7 @@ public abstract class Chart extends Chart_Runnable
      * @param y The y value.
      * @return a Point2D.Double located at pixel(col, row)
      */
-    public Point2D coordinateToScreen(Math_BigRational x, Math_BigRational y) {
+    public Point2D coordinateToScreen(BigRational x, BigRational y) {
         Point2D r = new Point2D.Double();
         int row = coordinateToScreenRow(y);
         int col = coordinateToScreenCol(x);
@@ -590,17 +590,17 @@ public abstract class Chart extends Chart_Runnable
 
     public void setCellHeight() {
         if (data.minY == null) {
-            cellHeight = Math_BigRational.valueOf(2);
+            cellHeight = BigRational.valueOf(2);
         } else {
-            cellHeight = data.maxY.subtract(data.minY).divide(Math_BigRational.valueOf(getDataHeight()));
+            cellHeight = data.maxY.subtract(data.minY).divide(BigRational.valueOf(getDataHeight()));
         }
     }
 
     public void setCellWidth() {
         if (data.minX == null) {
-            cellWidth = Math_BigRational.valueOf(2);
+            cellWidth = BigRational.valueOf(2);
         } else {
-            cellWidth = data.maxX.subtract(data.minX).divide(Math_BigRational.valueOf(getDataWidth()));
+            cellWidth = data.maxX.subtract(data.minX).divide(BigRational.valueOf(getDataWidth()));
         }
     }
 
@@ -608,13 +608,13 @@ public abstract class Chart extends Chart_Runnable
         if (data.maxY == null) {
             originRow = dataEndRow;
         } else {
-            if (data.maxY.compareTo(Math_BigRational.ZERO) == 0) {
+            if (data.maxY.compareTo(BigRational.ZERO) == 0) {
                 originRow = dataEndRow;
             } else {
-                if (cellHeight.compareTo(Math_BigRational.ZERO) == 0) {
+                if (cellHeight.compareTo(BigRational.ZERO) == 0) {
                     originRow = dataEndRow;
                 } else {
-                    originRow = coordinateToScreenRow(Math_BigRational.ZERO);
+                    originRow = coordinateToScreenRow(BigRational.ZERO);
                 }
             }
         }

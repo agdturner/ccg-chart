@@ -15,10 +15,9 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.TreeMap;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  *
@@ -29,7 +28,7 @@ public class Chart_LineData extends Chart_Data {
     /**
      * Labels added to the xAxis.
      */
-    public TreeMap<Math_BigRational, String> xAxisLabels;
+    public TreeMap<BigRational, String> xAxisLabels;
     
     /**
      * Keys are labels, values are plot coordinates. 

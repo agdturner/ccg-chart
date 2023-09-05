@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.core;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
@@ -26,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import uk.ac.leeds.ccg.chart.data.Chart_BarData;
 import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An abstract class for creating Age by Gender Population visualisations and
@@ -38,7 +38,7 @@ public abstract class Chart_Bar extends Chart {
     protected int xAxisIncrement;
     protected int numberOfYAxisTicks;
     protected BigDecimal yPin;
-    protected Math_BigRational yAxisIncrement;
+    protected BigRational yAxisIncrement;
     protected int barWidth;
     protected int barGap;
 
@@ -77,18 +77,18 @@ public abstract class Chart_Bar extends Chart {
     public void initialiseParameters(Chart_Data data) {
         Chart_BarData d = (Chart_BarData) data;
         minX = data.minX;
-        maxX = Math_BigRational.valueOf(BigDecimal.valueOf(d.map.lastKey()).multiply(d.intervalWidth));
-        minY = Math_BigRational.ZERO;
+        maxX = BigRational.valueOf(d.map.lastKey()).multiply(d.intervalWidth);
+        minY = BigRational.ZERO;
         maxY = data.maxY;
         setCellHeight();
         setCellWidth();
         setOriginRow();
         setOriginCol();
-        Math_BigRational cellWidth = getCellWidth();
-        if (cellWidth.compareTo(Math_BigRational.ZERO) == 0) {
+        BigRational cellWidth = getCellWidth();
+        if (cellWidth.compareTo(BigRational.ZERO) == 0) {
             barWidth = 1;
         } else {
-            barWidth = Math_BigRational.valueOf(d.intervalWidth).divide(cellWidth).integerPart().toBigDecimal().intValue() - (2 * barGap);
+            barWidth = d.intervalWidth.divide(cellWidth).integerPart().toBigDecimal().intValue() - (2 * barGap);
         }
         if (barWidth < 1) {
             barWidth = 1;
@@ -143,13 +143,12 @@ public abstract class Chart_Bar extends Chart {
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
-        MathContext mc;
-        mc = new MathContext(dpc,
+        MathContext mc = new MathContext(oomc,
                 RoundingMode.HALF_UP);
-        Math_BigRational rowValue;
-        Math_BigRational pin;
-        Math_BigRational yIncrement;
-        pin = Math_BigRational.valueOf(getyPin());
+        BigRational rowValue;
+        BigRational pin;
+        BigRational yIncrement;
+        pin = BigRational.valueOf(getyPin());
         yIncrement = getyIncrement();
 
         if (pin != null) {
@@ -191,9 +190,9 @@ public abstract class Chart_Bar extends Chart {
         } else {
             numberOfTicks = getnumberOfYAxisTicks();
             if (rowValue != null) {
-                yIncrement = (maxY.subtract(rowValue)).divide(Math_BigRational.valueOf(numberOfTicks));
+                yIncrement = (maxY.subtract(rowValue)).divide(BigRational.valueOf(numberOfTicks));
             } else {
-                yIncrement = (maxY.subtract(minY)).divide(Math_BigRational.valueOf(numberOfTicks));
+                yIncrement = (maxY.subtract(minY)).divide(BigRational.valueOf(numberOfTicks));
             }
         }
 
@@ -291,7 +290,7 @@ public abstract class Chart_Bar extends Chart {
 //        }
         int xAxisTickIncrement = xAxisIncrement;
         int xIncrementWidth = coordinateToScreenCol(
-                Math_BigRational.valueOf(xAxisTickIncrement)) - dataStartCol;
+                BigRational.valueOf(xAxisTickIncrement)) - dataStartCol;
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
         int extraAxisLength;
@@ -322,7 +321,7 @@ public abstract class Chart_Bar extends Chart {
         while (ite2.hasNext()) {
             Integer value = ite2.next();
             String label = d.labels.get(value);
-            Math_BigRational min = Math_BigRational.valueOf(d.mins.get(value));
+            BigRational min = d.mins.get(value);
             col = coordinateToScreenCol(min) + colCenterer;
             //col = value * xAxisTickIncrement + col0;
             //System.out.println("" + value + ", " + count + ", \"" + label +  "\"");        
@@ -531,14 +530,14 @@ public abstract class Chart_Bar extends Chart {
     /**
      * @return the yAxisIncrement
      */
-    public Math_BigRational getyIncrement() {
+    public BigRational getyIncrement() {
         return yAxisIncrement;
     }
 
     /**
      * @param yIncrement the yAxisIncrement to set
      */
-    public void setyIncrement(Math_BigRational yIncrement) {
+    public void setyIncrement(BigRational yIncrement) {
         this.yAxisIncrement = yIncrement;
     }
 }

@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 
@@ -26,19 +27,19 @@ public class Chart_BarData extends Chart_Data {
 
     public TreeMap<Integer, Integer> map;
 
-    public BigDecimal intervalWidth;
+    public BigRational intervalWidth;
 
     public TreeMap<Integer, Integer> counts;
 
     public TreeMap<Integer, String> labels;
     
-    public TreeMap<Integer, BigDecimal> centres;
+    public TreeMap<Integer, BigRational> centres;
 
-    public TreeMap<Integer, BigDecimal> mins;
+    public TreeMap<Integer, BigRational> mins;
     
-    public BigDecimal min;
+    public BigRational min;
             
-    public BigDecimal max;
+    public BigRational max;
 
     public Chart_BarData() {
         super();

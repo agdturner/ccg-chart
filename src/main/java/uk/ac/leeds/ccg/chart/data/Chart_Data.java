@@ -15,7 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
+import ch.obermuhlner.math.big.BigRational;
 
 /**
  *
@@ -23,10 +23,10 @@ import uk.ac.leeds.ccg.math.number.Math_BigRational;
  */
 public class Chart_Data {
     
-    public Math_BigRational maxX;
-    public Math_BigRational minX;
-    public Math_BigRational maxY;
-    public Math_BigRational minY;
+    public BigRational maxX;
+    public BigRational minX;
+    public BigRational maxY;
+    public BigRational minY;
     
     public Chart_Data() {
     

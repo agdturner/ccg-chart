@@ -22,6 +22,8 @@ import java.util.EventObject;
  * @author Andy Turner
  */
 public class Chart_RenderingCompleteEvent extends EventObject {
+
+    private static final long serialVersionUID = 1L;
     
         public Chart_RenderingCompleteEvent(Object source) {
                 super(source);

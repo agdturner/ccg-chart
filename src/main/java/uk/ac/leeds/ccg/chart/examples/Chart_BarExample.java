@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,14 +33,10 @@ import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.chart.core.Chart_Bar;
 import uk.ac.leeds.ccg.chart.data.Chart_BarData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
-import uk.ac.leeds.ccg.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.math.util.Math_Collections;
 import uk.ac.leeds.ccg.math.util.Math_Collections.CountsLabelsMins;
-import uk.ac.leeds.ccg.math.util.Math_Collections.MinMaxBigDecimal;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating a Bar Chart Visualization.
@@ -85,7 +83,7 @@ public class Chart_BarExample extends Chart_Bar {
         this.xAxisIncrement = xIncrement;
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.yPin = yPin;
-        this.yAxisIncrement = Math_BigRational.valueOf(yIncrement);
+        this.yAxisIncrement = BigRational.valueOf(yIncrement);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot,
                 dpc,
@@ -107,15 +105,14 @@ public class Chart_BarExample extends Chart_Bar {
             entry = ite.next();
             interval = entry.getKey();
             count = entry.getValue();
-            BigDecimal centre = d.centres.get(interval);
-            int row = coordinateToScreenRow(Math_BigRational.valueOf(count));
+            BigRational centre = d.centres.get(interval);
+            int row = coordinateToScreenRow(BigRational.valueOf(count));
             int barHeight = dataEndRow - row;
             if (barHeight == 0) {
                 barHeight = 1;
                 row -= 1;
             }
-            int col = coordinateToScreenCol(Math_BigRational.valueOf(centre))
-                    + barGap;
+            int col = coordinateToScreenCol(centre) + barGap;
             setPaint(Color.DARK_GRAY);
             fillRect(col, row, barWidth, barHeight);
         }
@@ -255,41 +252,40 @@ public class Chart_BarExample extends Chart_Bar {
      */
     public Chart_BarData getDefaultData() {
         Chart_BarData r = new Chart_BarData();
-        r.intervalWidth = new BigDecimal(xAxisIncrement);
-        TreeMap<String, BigDecimal> map = new TreeMap<>();
-        map.put("A", new BigDecimal(0.0d));
-        map.put("B", new BigDecimal(1.0d));
-        map.put("C", new BigDecimal(2.0d));
-        map.put("D", new BigDecimal(3.0d));
-        map.put("E", new BigDecimal(4.0d));
-        map.put("F", new BigDecimal(5.0d));
-        map.put("G", new BigDecimal(6.0d));
-        map.put("H", new BigDecimal(7.0d));
-        map.put("I", new BigDecimal(8.0d));
-        map.put("J", new BigDecimal(9.0d));
-        map.put("K", new BigDecimal(10.0d));
-        map.put("L", new BigDecimal(11.0d));
-        map.put("M", new BigDecimal(12.0d));
-        map.put("N", new BigDecimal(13.0d));
-        map.put("O", new BigDecimal(14.0d));
-        map.put("P", new BigDecimal(15.0d));
-        map.put("Q", new BigDecimal(16.0d));
-        map.put("R", new BigDecimal(2.0d));
-        map.put("S", new BigDecimal(4.0d));
-        map.put("T", new BigDecimal(6.0d));
-        map.put("U", new BigDecimal(8.0d));
-        map.put("V", new BigDecimal(10.0d));
-        map.put("W", new BigDecimal(12.0d));
-        map.put("X", new BigDecimal(14.0d));
-        map.put("Y", new BigDecimal(16.0d));
-        map.put("Z", new BigDecimal(4.0d));
-        MinMaxBigDecimal minMaxBigDecimal;
-        minMaxBigDecimal = Math_Collections.getMinMaxBigDecimal(map);
-        r.min = minMaxBigDecimal.min;
-        r.max = minMaxBigDecimal.max;
-        MathContext mc = new MathContext(dpc, getRoundingMode());
+        r.intervalWidth = BigRational.valueOf(xAxisIncrement);
+        TreeMap<String, BigRational> map = new TreeMap<>();
+        map.put("A", BigRational.valueOf(0));
+        map.put("B", BigRational.valueOf(1.0d));
+        map.put("C", BigRational.valueOf(2.0d));
+        map.put("D", BigRational.valueOf(3.0d));
+        map.put("E", BigRational.valueOf(4.0d));
+        map.put("F", BigRational.valueOf(5.0d));
+        map.put("G", BigRational.valueOf(6.0d));
+        map.put("H", BigRational.valueOf(7.0d));
+        map.put("I", BigRational.valueOf(8.0d));
+        map.put("J", BigRational.valueOf(9.0d));
+        map.put("K", BigRational.valueOf(10.0d));
+        map.put("L", BigRational.valueOf(11.0d));
+        map.put("M", BigRational.valueOf(12.0d));
+        map.put("N", BigRational.valueOf(13.0d));
+        map.put("O", BigRational.valueOf(14.0d));
+        map.put("P", BigRational.valueOf(15.0d));
+        map.put("Q", BigRational.valueOf(16.0d));
+        map.put("R", BigRational.valueOf(2.0d));
+        map.put("S", BigRational.valueOf(4.0d));
+        map.put("T", BigRational.valueOf(6.0d));
+        map.put("U", BigRational.valueOf(8.0d));
+        map.put("V", BigRational.valueOf(10.0d));
+        map.put("W", BigRational.valueOf(12.0d));
+        map.put("X", BigRational.valueOf(14.0d));
+        map.put("Y", BigRational.valueOf(16.0d));
+        map.put("Z", BigRational.valueOf(4.0d));
+        ArrayList<BigRational> minMax = Math_Collections.getMinMax(map);
+        r.min = minMax.get(0);
+        r.max = minMax.get(1);
+        MathContext mc = new MathContext(oomc, getRoundingMode());
         CountsLabelsMins intervalCountsLabelsMins = Math_Collections.getIntervalCountsLabelsMins(
-                r.min, r.intervalWidth, map, mc);
+                r.min, r.intervalWidth, map);
         r.counts = intervalCountsLabelsMins.counts;
         return r;
     }
@@ -297,7 +293,7 @@ public class Chart_BarExample extends Chart_Bar {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Math_BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
     }
 

@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.chart.examples;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
@@ -33,7 +34,6 @@ import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
 import uk.ac.leeds.ccg.stats.summary.Stats_Moments;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * An example of generating an Age by Gender Population Box Plot Visualization.
@@ -168,11 +168,11 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 //                getCellHeight(),
 //                0,
 //                getRoundingMode()).intValueExact()) - 4;
-        int boxHeight = Math_BigRational.valueOf(ageInterval).divide(getCellHeight()).integerPart().toBigDecimal().intValue() - 4;
+        int boxHeight = BigRational.valueOf(ageInterval).divide(getCellHeight()).integerPart().toBigDecimal().intValue() - 4;
         int whiskerHeight = boxHeight / 2;
 
         // Calculate plot drawing metrics
-        Math_BigRational cellWidth = getCellWidth();
+        BigRational cellWidth = getCellWidth();
         /*
          * Draw Female Box Plots
          */
@@ -186,18 +186,18 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 //            int boxWidth = Math_BigDecimal.divideRoundIfNecessary(
 //                    stats[4].subtract(stats[3]), cellWidth, 0,
 //                    getRoundingMode()).intValueExact();
-            int boxWidth = Math_BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(cellWidth).integerPart().toBigDecimal().intValue();
+            int boxWidth = BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(cellWidth).integerPart().toBigDecimal().intValue();
 
-            int boxTopRow = coordinateToScreenRow(Math_BigRational.valueOf(age + 1)) + 2;
+            int boxTopRow = coordinateToScreenRow(BigRational.valueOf(age + 1)) + 2;
             //int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age));
             int boxMiddleRow = boxTopRow + (boxHeight / 2);
             int boxBottomRow = boxTopRow + boxHeight;
-            int q1Col = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ1()));
-            int q3Col = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ3()));
+            int q1Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ1()));
+            int q3Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ3()));
 
             // Draw min line
             setPaint(Color.DARK_GRAY);
-            int minCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMin()));
+            int minCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin()));
             System.out.println();
             abLine2D = new Line2D.Double(minCol, boxMiddleRow, q1Col, boxMiddleRow);
             draw(abLine2D);
@@ -207,7 +207,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             draw(abLine2D);
 
             // Draw max line
-            int maxCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMax()));
+            int maxCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax()));
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col,
                     boxMiddleRow);
             draw(abLine2D);
@@ -250,17 +250,17 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             Stats_BigDecimal1 stats = entry.getValue();
 
             // Calculate plot drawing metrics
-            int boxWidth = Math_BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(getCellWidth()).integerPart().toBigDecimal().intValueExact();
-            int boxTopRow = coordinateToScreenRow(Math_BigRational.valueOf(age + 1)) + 2;
+            int boxWidth = BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(getCellWidth()).integerPart().toBigDecimal().intValueExact();
+            int boxTopRow = coordinateToScreenRow(BigRational.valueOf(age + 1)) + 2;
             //int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age));
             int boxMiddleRow = boxTopRow + (boxHeight / 2);
             int boxBottomRow = boxTopRow + boxHeight;
-            int q1Col = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ1().negate()));
-            int q3Col = coordinateToScreenCol(Math_BigRational.valueOf(stats.getQ3().negate()));
+            int q1Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ1().negate()));
+            int q3Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ3().negate()));
 
             // Draw min line
             setPaint(Color.DARK_GRAY);
-            int minCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMin().negate()));
+            int minCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin().negate()));
             abLine2D = new Line2D.Double(minCol, boxMiddleRow, q1Col, boxMiddleRow);
             draw(abLine2D);
             abLine2D = new Line2D.Double(minCol, boxMiddleRow + (whiskerHeight / 2),
@@ -269,7 +269,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 
             // Draw max line
             setPaint(Color.DARK_GRAY);
-            int maxCol = coordinateToScreenCol(Math_BigRational.valueOf(stats.getMax().negate()));
+            int maxCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax().negate()));
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col, boxMiddleRow);
             draw(abLine2D);
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow + (whiskerHeight / 2),
@@ -298,10 +298,10 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
     public Chart_AgeGenderBoxPlotData getDefaultData() {
         int ageInterval = 5;
         int startAgeOfEndYearInterval = 70;//95;
-        dpc = 10;
+        oomc = 10;
         RoundingMode rm = RoundingMode.HALF_UP;
         return getDefaultData(ageInterval, startAgeOfEndYearInterval,
-                dpc, rm);
+                oomc, rm);
     }
 
     /**
@@ -426,7 +426,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
         BigDecimal pop9900;
         BigDecimal pop9950;
         BigDecimal pop9800;
-        r.max = Math_BigRational.ZERO;
+        r.max = BigRational.ZERO;
         iterator = r.femalePops.get(10000).keySet().iterator();
         ArrayList<BigDecimal> values = null;
         while (iterator.hasNext()) {
@@ -454,11 +454,11 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             if (age < saeyi) {
                 values = new ArrayList<>();
             }
-            r.max = r.max.max(Math_BigRational.valueOf(pop10000));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9000));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9900));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9950));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9800));
+            r.max = r.max.max(BigRational.valueOf(pop10000));
+            r.max = r.max.max(BigRational.valueOf(pop9000));
+            r.max = r.max.max(BigRational.valueOf(pop9900));
+            r.max = r.max.max(BigRational.valueOf(pop9950));
+            r.max = r.max.max(BigRational.valueOf(pop9800));
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -498,11 +498,11 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             if (age < saeyi) {
                 values = new ArrayList<>();
             }
-            r.max = r.max.max(Math_BigRational.valueOf(pop10000));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9000));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9900));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9950));
-            r.max = r.max.max(Math_BigRational.valueOf(pop9800));
+            r.max = r.max.max(BigRational.valueOf(pop10000));
+            r.max = r.max.max(BigRational.valueOf(pop9000));
+            r.max = r.max.max(BigRational.valueOf(pop9900));
+            r.max = r.max.max(BigRational.valueOf(pop9950));
+            r.max = r.max.max(BigRational.valueOf(pop9800));
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -538,48 +538,48 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
         Iterator<Long> iterator;
         Long age;
         BigDecimal pop;
-        r.max = Math_BigRational.ZERO;
+        r.max = BigRational.ZERO;
         iterator = r.femalePops.get(10000).keySet().iterator();
         while (iterator.hasNext()) {
             age = iterator.next();
             pop = r.femalePops.get(10000).get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9000).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9900).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9950).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9800).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
             r.fss.put(age, ss);
         }
-        r.max = Math_BigRational.ZERO;
+        r.max = BigRational.ZERO;
         iterator = r.malePops.get(10000).keySet().iterator();
         while (iterator.hasNext()) {
             age = iterator.next();
             pop = r.malePops.get(10000).get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9000).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9900).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9950).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9800).get(age);
-            r.max = r.max.max(Math_BigRational.valueOf(pop));
+            r.max = r.max.max(BigRational.valueOf(pop));
             values.add(pop);
             Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
             r.mss.put(age, ss);
@@ -590,7 +590,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = Math_BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
         extraHeightTop += barHeight;
     }
 }
