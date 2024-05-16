@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 //import org.apache.commons.math.stat.regression.SimpleRegression;
-import uk.ac.leeds.ccg.chart.data.BigDecimal2;
 import uk.ac.leeds.ccg.chart.data.BigRational2;
 import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
@@ -57,17 +56,16 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
      * @param xAxisLabel The x axis label.
      * @param yAxisLabel The y axis label.
      * @param drawOriginLinesOnPlot If {@code true} origin lines are drawn.
-     * @param dpc decimalPlacePrecisionForCalculations
-     * @param dpd decimalPlacePrecisionForDisplay
+     * @param oom The Order of Magnitude for rounding precision.
      * @param rm The RoundingMode.
      */
     public Chart_ScatterAndLinearRegressionExample(Generic_Environment e,
             ExecutorService es, Path f, String format, String title,
             int dataWidth, int dataHeight, String xAxisLabel, String yAxisLabel,
-            boolean drawOriginLinesOnPlot, int dpc, int dpd, RoundingMode rm) {
+            boolean drawOriginLinesOnPlot, int oomx, int oomy, RoundingMode rm) {
         super(e);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawOriginLinesOnPlot, dpc, dpd, rm);
+                yAxisLabel, drawOriginLinesOnPlot, oomx, oomy, rm);
     }
 
     public static void main(String[] args) {
@@ -97,15 +95,14 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
             String xAxisLabel = "Expected (X)";
             String yAxisLabel = "Observed (Y)";
             boolean drawOriginLinesOnPlot = false;//true;
-            int decimalPlacePrecisionForCalculations = 100;
-            int decimalPlacePrecisionForDisplay = 3;
+            int oomx = -2;
+            int oomy = -1;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
             Chart_ScatterAndLinearRegressionExample plot;
             plot = new Chart_ScatterAndLinearRegressionExample(e, es, file, format,
                     title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
-                    drawOriginLinesOnPlot, decimalPlacePrecisionForCalculations,
-                    decimalPlacePrecisionForDisplay, rm);
+                    drawOriginLinesOnPlot, oomx, oomy, rm);
             plot.vis.getHeadlessEnvironment();
             plot.run();
         } catch (Exception ex) {
@@ -425,7 +422,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
 //
 //    @Override
 //    public void setOriginCol() {
-//        originCol = coordinateToScreenCol(BigDecimal.ZERO);
+//        originCol = getCol(BigDecimal.ZERO);
 //        System.out.println("originCol " + originCol);
 ////        if (minX.compareTo(BigDecimal.ZERO) == 0) {
 ////            originCol = dataStartCol;
@@ -654,10 +651,10 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
                 dataAsDoubleArray);
         setPaint(Color.LIGHT_GRAY);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][0])),
-                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][0])),
-                coordinateToScreenCol(BigRational.valueOf(yEqualsXLineData[1][1])),
-                coordinateToScreenRow(BigRational.valueOf(yEqualsXLineData[0][1]))));
+                getCol(BigRational.valueOf(yEqualsXLineData[1][0])),
+                getRow(BigRational.valueOf(yEqualsXLineData[0][0])),
+                getCol(BigRational.valueOf(yEqualsXLineData[1][1])),
+                getRow(BigRational.valueOf(yEqualsXLineData[0][1]))));
     }
 
     protected void drawRegressionLine(
@@ -668,14 +665,14 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
                 rp);
         setPaint(Color.BLACK);
         draw(new Line2D.Double(
-                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][0])),
-                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][0])),
-                coordinateToScreenCol(BigRational.valueOf(regressionLineXYLineData[1][1])),
-                coordinateToScreenRow(BigRational.valueOf(regressionLineXYLineData[0][1]))));
-//                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][1])),
-//                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[1][0])),
-//                coordinateToScreenCol(BigDecimal.valueOf(regressionLineXYLineData[0][0])),
-//                coordinateToScreenRow(BigDecimal.valueOf(regressionLineXYLineData[1][1]))));
+                getCol(BigRational.valueOf(regressionLineXYLineData[1][0])),
+                getRow(BigRational.valueOf(regressionLineXYLineData[0][0])),
+                getCol(BigRational.valueOf(regressionLineXYLineData[1][1])),
+                getRow(BigRational.valueOf(regressionLineXYLineData[0][1]))));
+//                getCol(BigDecimal.valueOf(regressionLineXYLineData[0][1])),
+//                getRow(BigDecimal.valueOf(regressionLineXYLineData[1][0])),
+//                getCol(BigDecimal.valueOf(regressionLineXYLineData[0][0])),
+//                getRow(BigDecimal.valueOf(regressionLineXYLineData[1][1]))));
     }
 
     /**

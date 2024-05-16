@@ -16,7 +16,7 @@
 package uk.ac.leeds.ccg.chart.data;
 
 import java.util.TreeMap;
-import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
+import uk.ac.leeds.ccg.stats.summary.Stats_BigRational1;
 
 /**
  *
@@ -25,10 +25,10 @@ import uk.ac.leeds.ccg.stats.summary.Stats_BigDecimal1;
 public class Chart_AgeGenderLineData extends Chart_AgeGenderData {
 
     // Female
-    public TreeMap<Integer, Stats_BigDecimal1> fData;
+    public TreeMap<Integer, Stats_BigRational1> fData;
     
     // Male
-    public  TreeMap<Integer, Stats_BigDecimal1> mData;
+    public  TreeMap<Integer, Stats_BigRational1> mData;
 
     public Chart_AgeGenderLineData() {
         super();

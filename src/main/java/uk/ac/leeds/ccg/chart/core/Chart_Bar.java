@@ -58,19 +58,17 @@ public abstract class Chart_Bar extends Chart {
      * @param drawAxesOnPlot if {@code true} draw lines on the plot.
      * @param ageInterval The age interval.
      * @param startAgeOfEndYearInterval The start age of the end year interval.
-     * @param dpc The decimal place precision for calculations.
-     * @param sd significant digits
+     * @param oom The Order of Magnitude for rounding precision.
      * @param rm The RoundingMode.
      */
     protected final void init(ExecutorService es, Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
-            Integer startAgeOfEndYearInterval, int dpc, int sd,
-            RoundingMode rm) {
+            Integer startAgeOfEndYearInterval, int oomx, int oomy, RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawAxesOnPlot, dpc, sd, rm);
+                yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
 
     @Override
@@ -143,8 +141,6 @@ public abstract class Chart_Bar extends Chart {
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         int[] result = new int[1];
-        MathContext mc = new MathContext(oomc,
-                RoundingMode.HALF_UP);
         BigRational rowValue;
         BigRational pin;
         BigRational yIncrement;
@@ -209,10 +205,10 @@ public abstract class Chart_Bar extends Chart {
         int textWidth;
         int maxTickTextWidth = 0;
         boolean first = true;
-        int row0 = coordinateToScreenRow(rowValue);
+        int row0 = getRow(rowValue);
         int previousRow = row0;
         for (int i = 0; i < numberOfTicks; i++) {
-            int row = coordinateToScreenRow(rowValue);
+            int row = getRow(rowValue);
             setPaint(Color.GRAY);
             ab = new Line2D.Double(col, row, col - scaleTickLength, row);
             draw(ab);
@@ -230,7 +226,7 @@ public abstract class Chart_Bar extends Chart {
             rowValue = rowValue.add(yIncrement);
         }
         // <drawEndOfYAxisTick>
-        int row = coordinateToScreenRow(maxY);
+        int row = getRow(maxY);
         setPaint(Color.GRAY);
         ab = new Line2D.Double(col, row, col - scaleTickLength, row);
         draw(ab);
@@ -289,7 +285,7 @@ public abstract class Chart_Bar extends Chart {
 //            setxIncrement(xIncrement);
 //        }
         int xAxisTickIncrement = xAxisIncrement;
-        int xIncrementWidth = coordinateToScreenCol(
+        int xIncrementWidth = getCol(
                 BigRational.valueOf(xAxisTickIncrement)) - dataStartCol;
         int[] result = new int[3];
         int xAxisExtraWidthLeft = 0;
@@ -322,7 +318,7 @@ public abstract class Chart_Bar extends Chart {
             Integer value = ite2.next();
             String label = d.labels.get(value);
             BigRational min = d.mins.get(value);
-            col = coordinateToScreenCol(min) + colCenterer;
+            col = getCol(min) + colCenterer;
             //col = value * xAxisTickIncrement + col0;
             //System.out.println("" + value + ", " + count + ", \"" + label +  "\"");        
             ab = new Line2D.Double(col, row, col, row + scaleTickLength);
@@ -379,7 +375,7 @@ public abstract class Chart_Bar extends Chart {
 //            int seperationDistanceOfAxisAndData) {
 //
 //        int xAxisTickIncrement = getxIncrement();
-//        int xIncrementWidth = coordinateToScreenCol(BigDecimal.valueOf(xAxisTickIncrement)) - getDataStartCol();
+//        int xIncrementWidth = getCol(BigDecimal.valueOf(xAxisTickIncrement)) - getDataStartCol();
 //
 //        int[] result = new int[3];
 //        int xAxisExtraWidthLeft = 0;
@@ -462,7 +458,7 @@ public abstract class Chart_Bar extends Chart {
 //                xAxisExtraWidthLeft += textHeight;
 //            }
 //            x = x.add(xIncrement);
-//            col += coordinateToScreenCol(x);
+//            col += getCol(x);
 //
 //            
 //

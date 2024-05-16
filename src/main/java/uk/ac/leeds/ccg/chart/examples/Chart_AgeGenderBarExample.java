@@ -60,19 +60,18 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
      * on the plot.
      * @param ageInterval The age interval.
      * @param startAgeOfEndYearInterval The start age of the end year interval.
-     * @param dpc The decimal place precision for calculations.
-     * @param dpd The decimal place precision for display.
+     * @param oom The order of magnitude for the precision.
      * @param rm The RoundingMode.
      */
     public Chart_AgeGenderBarExample(Generic_Environment e, ExecutorService es,
             Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawOriginLinesOnPlot, int ageInterval,
-            int startAgeOfEndYearInterval, int dpc, int dpd, RoundingMode rm) {
+            int startAgeOfEndYearInterval, int oomx, int oomy, RoundingMode rm) {
         super(e);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot, ageInterval,
-                startAgeOfEndYearInterval, dpc, dpd, rm);
+                startAgeOfEndYearInterval, oomx, oomy, rm);
     }
 
     @Override
@@ -122,10 +121,10 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
 
             population = entry.getValue();
             int barWidth = BigRational.valueOf(population).divide(cellWidth).integerPart().toBigDecimal().intValue();
-//            int barTopRow = coordinateToScreenRow(
+//            int barTopRow = getRow(
 //                    BigDecimal.valueOf(age + ageInterval))
 //                    + barGapDiv2;
-            int barTopRow = coordinateToScreenRow(
+            int barTopRow = getRow(
                     BigRational.valueOf(age + ageInterval))
                     + barGap;
             setPaint(Color.DARK_GRAY);
@@ -147,10 +146,10 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
 
             population = entry.getValue();
             int barWidth = BigRational.valueOf(population).divide(cellWidth).integerPart().toBigDecimal().intValueExact();
-//            int barTopRow = coordinateToScreenRow(
+//            int barTopRow = getRow(
 //                    BigDecimal.valueOf(age + ageInterval))
 //                    + barGapDiv2;
-            int barTopRow = coordinateToScreenRow(
+            int barTopRow = getRow(
                     BigRational.valueOf(age + ageInterval))
                     + barGap;
             setPaint(Color.LIGHT_GRAY);
@@ -203,20 +202,14 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
             boolean drawOriginLinesOnPlot = true;
             int ageInterval = 5;
             int startAgeOfEndYearInterval = 60;
-            /**
-             * decimalPlacePrecisionForCalculations
-             */
-            int dpc = 10;
-            /**
-             * decimalPlacePrecisionForDisplay
-             */
-            int dpd = 3;
+            int oomx = -3;
+            int oomy = 0;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
             Chart_AgeGenderBarExample chart = new Chart_AgeGenderBarExample(e, es, file,
                     format, title, dataWidth, dataHeight, xAxisLabel,
                     yAxisLabel, drawOriginLinesOnPlot, ageInterval,
-                    startAgeOfEndYearInterval, dpc, dpd, rm);
+                    startAgeOfEndYearInterval, oomx, oomy, rm);
             chart.setData(chart.getDefaultData());
             chart.vis.getHeadlessEnvironment();
             chart.run();

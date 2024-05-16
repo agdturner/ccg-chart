@@ -65,15 +65,14 @@ public class Chart_LineExample extends Chart_Line {
      * @param yIncrement The increment between values on the y axis.
      * @param numberOfYAxisTicks The number of y axis ticks.
      * @param drawYZero Whether or not y = zero is drawn on the map.
-     * @param dcp decimalPlacePrecisionForCalculations
-     * @param dcd decimalPlacePrecisionForDisplay
+     * @param oom The Order of Magnitude for rounding precision.
      * @param rm The RoundingMode.
      */
     public Chart_LineExample(Generic_Environment e, ExecutorService es, Path f,
             String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, BigDecimal yMax,
             ArrayList<BigRational> yPin, BigDecimal yIncrement,
-            int numberOfYAxisTicks, boolean drawYZero, int dcp, int dcd,
+            int numberOfYAxisTicks, boolean drawYZero, int oomx, int oomy,
             RoundingMode rm) {
         super(e);
         if (yMax != null) {
@@ -86,8 +85,7 @@ public class Chart_LineExample extends Chart_Line {
         this.numberOfYAxisTicks = numberOfYAxisTicks;
         this.drawYZero = drawYZero;
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, false, dcp,
-                dcd, rm);
+                yAxisLabel, false, oomx, oomy, rm);
     }
 
     @Override
@@ -141,8 +139,8 @@ public class Chart_LineExample extends Chart_Line {
         while (ite.hasNext()) {
             BigDecimal x = ite.next();
             BigDecimal y = map.get(x);
-            int row = coordinateToScreenRow(BigRational.valueOf(y));
-            int col = coordinateToScreenCol(BigRational.valueOf(x));
+            int row = getRow(BigRational.valueOf(y));
+            int col = getCol(BigRational.valueOf(x));
             if (first) {
                 row0 = row;
                 col0 = col;
@@ -217,16 +215,13 @@ public class Chart_LineExample extends Chart_Line {
             //BigDecimal yIncrement = BigDecimal.ONE;
             BigDecimal yIncrement = null;
             //int yAxisStartOfEndInterval = 60;
-            int decimalPlacePrecisionForCalculations = 10;
-            int decimalPlacePrecisionForDisplay = 3;
-            RoundingMode roundingMode = RoundingMode.HALF_UP;
+            int oomx = -2;
+            int oomy = -1;
+            RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
             Chart_LineExample chart = new Chart_LineExample(e, es, file, format, title,
                     dataWidth, dataHeight, xAxisLabel, yAxisLabel, yMax, yPin,
-                    yIncrement, numberOfYAxisTicks, drawYZero,
-                    decimalPlacePrecisionForCalculations,
-                    decimalPlacePrecisionForDisplay,
-                    roundingMode);
+                    yIncrement, numberOfYAxisTicks, drawYZero, oomx, oomy, rm);
             chart.setData(chart.getDefaultData());
             chart.vis.getHeadlessEnvironment();
             chart.run();
@@ -248,7 +243,7 @@ public class Chart_LineExample extends Chart_Line {
             Line2D ab;
             // Draw Y axis scale to the left side
             setPaint(Color.LIGHT_GRAY);
-            int zero = coordinateToScreenRow(BigRational.ZERO);
+            int zero = getRow(BigRational.ZERO);
             ab = new Line2D.Double(dataStartCol, zero, dataEndCol, zero);
             draw(ab);
         }

@@ -49,19 +49,17 @@ public abstract class Chart_AgeGender extends Chart {
      * @param drawAxesOnPlot if {@code true} draw lines on the plot.
      * @param ageInterval The age interval.
      * @param startAgeOfEndYearInterval The start age of the end year interval.
-     * @param dpc The decimal place precision for calculations.
-     * @param sd significant digits
+     * @param oom The order of magnitude for the precision.
      * @param rm The RoundingMode.
      */
     protected final void init(ExecutorService es, Path f, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
-            Integer startAgeOfEndYearInterval, int dpc, int sd,
-            RoundingMode rm) {
+            Integer startAgeOfEndYearInterval, int oomx, int oomy, RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawAxesOnPlot, dpc, sd, rm);
+                yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
 
     @Override
@@ -155,9 +153,9 @@ public abstract class Chart_AgeGender extends Chart {
         //for (int i = miny_int; i <= startAgeOfEndYearInterval; i += increment) {
         for (int i = miny_int; i <= maxY.integerPart().toBigDecimal().intValue(); i += increment) {
 
-            // int row = coordinateToScreenRow(BigDecimal.valueOf(i));
-            int row = coordinateToScreenRow(BigRational.valueOf(i)) - barHeightdiv2;
-            //int row = coordinateToScreenRow(BigDecimal.valueOf(i)) - barHeight;
+            // int row = getRow(BigDecimal.valueOf(i));
+            int row = getRow(BigRational.valueOf(i)) - barHeightdiv2;
+            //int row = getRow(BigDecimal.valueOf(i)) - barHeight;
 
             setPaint(Color.GRAY);
 //            ab = new Line2D.Double(col, row, col - scaleTickLength, row);
@@ -214,19 +212,19 @@ public abstract class Chart_AgeGender extends Chart {
         // Add ticks and labels
         // origin tick and label
         int textRow = row + scaleTickLength + scaleTickAndTextSeparation + th;
-        String text_String = "0";
-        int textWidth = getTextWidth(text_String);
+        String s = "0";
+        int textWidth = getTextWidth(s);
         ab = new Line2D.Double(originCol, row, originCol, row + scaleTickLength);
         draw(ab);
-        drawString(text_String, originCol - (textWidth / 2), textRow);
+        drawString(s, originCol - (textWidth / 2), textRow);
         // Left end scale tick and label
         if (maxX != null) {
-            text_String = Math_BigRational.round(maxX, oomd, rm).toPlainString();
-            textWidth = getTextWidth(text_String);
+            s = Math_BigRational.round(maxX, oomx, rm).toPlainString();
+            textWidth = getTextWidth(s);
         }
         ab = new Line2D.Double(dataStartCol, row, dataStartCol, row + scaleTickLength);
         draw(ab);
-        drawString(text_String, dataStartCol - (textWidth / 2), textRow);
+        drawString(s, dataStartCol - (textWidth / 2), textRow);
         // Add to imageWidth as this label sticks out
         xAxisExtraWidthLeft += (textWidth / 2) + th;
 //        // Check to see if plot needs to grow
@@ -240,11 +238,11 @@ public abstract class Chart_AgeGender extends Chart {
 //        }
         // Right end scale tick and label
         //text_String = maxX.toBigInteger().toString();
-        text_String = Math_BigRational.round(maxX, oomd, rm).toPlainString();
-        textWidth = getTextWidth(text_String);
+        s = Math_BigRational.round(maxX, oomx, rm).toPlainString();
+        textWidth = getTextWidth(s);
         ab = new Line2D.Double(dataEndCol, row, dataEndCol, row + scaleTickLength);
         draw(ab);
-        drawString(text_String, dataEndCol - (textWidth / 2), textRow);
+        drawString(s, dataEndCol - (textWidth / 2), textRow);
         // Add to imageWidth as this label sticks out
         xAxisExtraWidthRight += (textWidth / 2) + th;
 //        if (xAxisExtraWidthRight > xAxisExtraWidthRight) {
@@ -254,24 +252,24 @@ public abstract class Chart_AgeGender extends Chart {
         // Add axis labels
         setPaint(Color.DARK_GRAY);
         textRow += th + partTitleGap;
-        text_String = "Male";
-        textWidth = getTextWidth(text_String);
+        s = "Male";
+        textWidth = getTextWidth(s);
         xAxisExtraHeightBottom += th + partTitleGap;
-        drawString(text_String,
+        drawString(s,
                 ((dataStartCol + originCol) / 2) - (textWidth / 2),
                 textRow);
         setPaint(Color.DARK_GRAY);
-        text_String = "Female";
-        textWidth = getTextWidth(text_String);
-        drawString(text_String,
+        s = "Female";
+        textWidth = getTextWidth(s);
+        drawString(s,
                 ((dataEndCol + originCol) / 2) - (textWidth / 2), textRow);
         textRow += th + partTitleGap;
         xAxisExtraHeightBottom += th + partTitleGap;
         setPaint(Color.BLACK);
-        text_String = xAxisLabel;
+        s = xAxisLabel;
 //        text_String = "Population";
-        textWidth = getTextWidth(text_String);
-        drawString(text_String, originCol - (textWidth / 2), textRow);
+        textWidth = getTextWidth(s);
+        drawString(s, originCol - (textWidth / 2), textRow);
         xAxisExtraHeightBottom += th;
         result[0] = xAxisExtraWidthLeft;
         result[1] = xAxisExtraWidthRight;

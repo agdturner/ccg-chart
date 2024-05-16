@@ -93,7 +93,7 @@ public abstract class Chart_Line extends Chart {
      * @param yAxisLabel -
      * @param drawAxesOnPlot -
      * @param ageInterval -
-     * @param startAgeOfEndYearInterval -
+     * @param startAgeOfEndYearInterval - strings
      * @param decimalPlacePrecisionForCalculations -
      * @param significantDigits -
      * @param rm -
@@ -101,14 +101,12 @@ public abstract class Chart_Line extends Chart {
     protected final void init(ExecutorService es, Path f, String fmt,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
-            Integer startAgeOfEndYearInterval,
-            int decimalPlacePrecisionForCalculations, int significantDigits,
+            Integer startAgeOfEndYearInterval, int oomx, int oomy, 
             RoundingMode rm) {
         setAgeInterval(ageInterval);
         setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, fmt, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawAxesOnPlot,
-                decimalPlacePrecisionForCalculations, significantDigits, rm);
+                yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
 
     /**
@@ -147,7 +145,6 @@ public abstract class Chart_Line extends Chart {
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         RoundingMode rm = RoundingMode.HALF_UP;
-        MathContext mc = new MathContext(oomc, rm);
         BigRational y;
         if (yPin != null) {
             BigRational maxYPin;
@@ -219,16 +216,16 @@ public abstract class Chart_Line extends Chart {
             if (numberOfYAxisTicks > 0) {
                 yIncrement = (maxY.subtract(minY)).divide(
                         BigRational.valueOf(numberOfYAxisTicks));
-                initNumberOfYAxisTicksGT0(hasPositives, mc);
-                initNumberOfYAxisTicksLT0(hasNegatives, mc);
+                initNumberOfYAxisTicksGT0(hasPositives);
+                initNumberOfYAxisTicksLT0(hasNegatives);
                 yIncrement = (maxY.subtract(minY)).divide(
                         BigRational.valueOf(numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0));
             } else {
                 yIncrement = maxY.subtract(minY);
             }
         } else {
-            initNumberOfYAxisTicksGT0(hasPositives, mc);
-            initNumberOfYAxisTicksLT0(hasNegatives, mc);
+            initNumberOfYAxisTicksGT0(hasPositives);
+            initNumberOfYAxisTicksLT0(hasNegatives);
         }
         int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation
                 + seperationDistanceOfAxisAndData;
@@ -249,7 +246,7 @@ public abstract class Chart_Line extends Chart {
             Iterator<BigRational> ite = yPin.iterator();
             while (ite.hasNext()) {
                 y = ite.next();
-                row = coordinateToScreenRow(y);
+                row = getRow(y);
                 // Add Y Axis Mark
                 maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                         maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
@@ -259,7 +256,7 @@ public abstract class Chart_Line extends Chart {
         // Add a pin at zero
         if (hasNegatives && hasPositives) {
             y = BigRational.ZERO;
-            row = coordinateToScreenRow(BigRational.ZERO);
+            row = getRow(BigRational.ZERO);
             // Add Y Axis Mark
             maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                     maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
@@ -268,7 +265,7 @@ public abstract class Chart_Line extends Chart {
         // Add incremental scale elemnts greater than zero
         y = yIncrement;
         for (int i = 0; i < numberOfYAxisTicksGT0; i++) {
-            row = coordinateToScreenRow(y);
+            row = getRow(y);
             System.out.println(row);
             if (row >= dataStartRow) {
                 // Add Y Axis Mark
@@ -279,7 +276,7 @@ public abstract class Chart_Line extends Chart {
         }
 
         // drawEndOfYAxisTick
-        row = coordinateToScreenRow(maxY);
+        row = getRow(maxY);
         // Add Y Axis Mark
         maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                 maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
@@ -287,7 +284,7 @@ public abstract class Chart_Line extends Chart {
         // Add incremental scale elements less than zero
         y = yIncrement.negate();
         for (int i = 0; i < numberOfYAxisTicksLT0; i++) {
-            row = coordinateToScreenRow(y);
+            row = getRow(y);
             if (row <= dataEndRow) {
                 // Add Y Axis Mark
                 maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
@@ -297,7 +294,7 @@ public abstract class Chart_Line extends Chart {
         }
 
         // drawStartOfYAxisTick
-        row = coordinateToScreenRow(minY);
+        row = getRow(minY);
         maxTickTextWidth = addYAxisMark(row, col, scaleTickLength, y,
                 maxTickTextWidth, textHeight, rows, tickTextEndCol, rm);
 
@@ -358,13 +355,13 @@ public abstract class Chart_Line extends Chart {
         return r;
     }
 
-    public void initNumberOfYAxisTicksGT0(boolean hasPositives, MathContext mc) {
+    public void initNumberOfYAxisTicksGT0(boolean hasPositives) {
         if (hasPositives) {
             numberOfYAxisTicksGT0 = maxY.divide(yIncrement).integerPart().toBigDecimal().intValue() + 1;
         }
     }
 
-    public void initNumberOfYAxisTicksLT0(boolean hasNegatives, MathContext mc) {
+    public void initNumberOfYAxisTicksLT0(boolean hasNegatives) {
         if (hasNegatives) {
             numberOfYAxisTicksLT0 = minY.divide(yIncrement).negate().integerPart().toBigDecimal().intValue() + 1;
         }
@@ -460,7 +457,7 @@ public abstract class Chart_Line extends Chart {
             while (ite.hasNext()) {
                 BigRational x = ite.next();
                 Object label = getData().xAxisLabels.get(x);
-                col = coordinateToScreenCol(x);
+                col = getCol(x);
                 if (col >= dataStartCol) {
                     ab = new Line2D.Double(col, row, col, row
                             + scaleTickLength);
@@ -485,7 +482,7 @@ public abstract class Chart_Line extends Chart {
 //        for (int i = 0; i < numberOfTicks; i ++) {
                 //String label = labels.get(value);
                 x = minX.toBigDecimal().add(BigDecimal.valueOf(i));
-                col = coordinateToScreenCol(BigRational.valueOf(x).multiply(xIncrement));
+                col = getCol(BigRational.valueOf(x).multiply(xIncrement));
                 if (col >= dataStartCol) {
                     ab = new Line2D.Double(col, row, col,
                             row + scaleTickLength);

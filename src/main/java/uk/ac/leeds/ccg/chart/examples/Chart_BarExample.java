@@ -19,7 +19,6 @@ import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,8 +64,7 @@ public class Chart_BarExample extends Chart_Bar {
      * @param yPin A value that must be on the y axis.
      * @param yIncrement The increment between values on the y axis.
      * @param numberOfYAxisTicks The number of y axis ticks.
-     * @param dpc The decimal place precision for calculations.
-     * @param dpd The decimal place precision for display.
+     * @param oom The Order of Magnitude for rounding precision.
      * @param rm The RoundingMode.
      */
     public Chart_BarExample(Generic_Environment e, ExecutorService es, Path f,
@@ -74,9 +72,7 @@ public class Chart_BarExample extends Chart_Bar {
             String xAxisLabel, String yAxisLabel,
             boolean drawOriginLinesOnPlot, //Ignored
             int barGap, int xIncrement, BigDecimal yMax, BigDecimal yPin,
-            BigDecimal yIncrement, int numberOfYAxisTicks,
-            int dpc,
-            int dpd,
+            BigDecimal yIncrement, int numberOfYAxisTicks, int oomx, int oomy, 
             RoundingMode rm) {
         super(e);
         this.barGap = barGap;
@@ -85,10 +81,7 @@ public class Chart_BarExample extends Chart_Bar {
         this.yPin = yPin;
         this.yAxisIncrement = BigRational.valueOf(yIncrement);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
-                yAxisLabel, drawOriginLinesOnPlot,
-                dpc,
-                dpd,
-                rm);
+                yAxisLabel, drawOriginLinesOnPlot, oomx, oomy, rm);
     }
 
     @Override
@@ -106,13 +99,13 @@ public class Chart_BarExample extends Chart_Bar {
             interval = entry.getKey();
             count = entry.getValue();
             BigRational centre = d.centres.get(interval);
-            int row = coordinateToScreenRow(BigRational.valueOf(count));
+            int row = getRow(BigRational.valueOf(count));
             int barHeight = dataEndRow - row;
             if (barHeight == 0) {
                 barHeight = 1;
                 row -= 1;
             }
-            int col = coordinateToScreenCol(centre) + barGap;
+            int col = getCol(centre) + barGap;
             setPaint(Color.DARK_GRAY);
             fillRect(col, row, barWidth, barHeight);
         }
@@ -156,14 +149,14 @@ public class Chart_BarExample extends Chart_Bar {
             BigDecimal yPin = BigDecimal.ZERO;
             BigDecimal yIncrement = BigDecimal.ONE;
             //int yAxisStartOfEndInterval = 60;
-            int dpc = 10;
-            int dpd = 3;
+            int oomx = -2;
+            int oomy = -1;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
             Chart_BarExample chart = new Chart_BarExample(e, es, file, format, title,
                     dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, barGap, xIncrement, yMax, yPin,
-                    yIncrement, numberOfYAxisTicks, dpc, dpd, rm);
+                    yIncrement, numberOfYAxisTicks, oomx, oomy, rm);
             chart.setData(chart.getDefaultData());
             chart.vis.getHeadlessEnvironment();
             chart.run();
@@ -283,7 +276,6 @@ public class Chart_BarExample extends Chart_Bar {
         ArrayList<BigRational> minMax = Math_Collections.getMinMax(map);
         r.min = minMax.get(0);
         r.max = minMax.get(1);
-        MathContext mc = new MathContext(oomc, getRoundingMode());
         CountsLabelsMins intervalCountsLabelsMins = Math_Collections.getIntervalCountsLabelsMins(
                 r.min, r.intervalWidth, map);
         r.counts = intervalCountsLabelsMins.counts;

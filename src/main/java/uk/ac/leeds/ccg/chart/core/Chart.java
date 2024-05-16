@@ -184,18 +184,19 @@ public abstract class Chart extends Chart_Runnable
     protected BigRational minY;
 
     /**
-     * For storing the number of decimal places used in calculations needed for
-     * the plot.
+     * The order of magnitude for the precision of x value strings.
      */
-    protected int oomc;
+    protected int oomx;
 
     /**
-     * For storing the number of decimal places used for numerical values
-     * displayed on the plot.
+     * The order of magnitude for the precision of y value strings.
      */
-    protected int oomd;
+    protected int oomy;
 
-    protected int significantDigits;
+    /**
+     * The rounding mode for any rounding necessary for display of numerical 
+     * values.
+     */
     protected RoundingMode rm;
 
     /**
@@ -356,14 +357,6 @@ public abstract class Chart extends Chart_Runnable
         return dataHeight;
     }
 
-    public int getSignificantDigits() {
-        return significantDigits;
-    }
-
-    protected void setSignificantDigits(int significantDigits) {
-        this.significantDigits = significantDigits;
-    }
-
     protected RoundingMode getDefaultRoundingMode() {
         return RoundingMode.HALF_DOWN;
     }
@@ -418,15 +411,14 @@ public abstract class Chart extends Chart_Runnable
      * @param yAxisLabel What {@link #yAxisLabel} is set to.
      * @param drawOriginLinesOnPlot What {@link #drawOriginLinesOnPlot} is set
      * to.
-     * @param decimalPlacePrecisionForCalculations What {@link #oomc} is set to.
-     * @param significantDigits What {@link #significantDigits} is set to.
+     * @param oomx The order of magnitude for rounding precision for x values.
+     * @param oomy The order of magnitude for rounding precision for y values.
      * @param rm What {@link #rm} is set to.
      */
     protected final void init(ExecutorService es, Path file, String format,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
-            String yAxisLabel, boolean drawOriginLinesOnPlot,
-            int decimalPlacePrecisionForCalculations, int significantDigits,
-            RoundingMode rm) {
+            String yAxisLabel, boolean drawOriginLinesOnPlot, int oomx, 
+            int oomy, RoundingMode rm) {
         this.executorService = es;
         this.file = file;
         this.format = format;
@@ -445,9 +437,8 @@ public abstract class Chart extends Chart_Runnable
         this.dataEndRow = dataStartRow + dataHeight;
         this.dataStartCol = 0;
         this.dataEndCol = dataStartCol + dataWidth;
-        this.oomc = decimalPlacePrecisionForCalculations;
-        this.oomd = significantDigits;
-        this.significantDigits = significantDigits;
+        this.oomx = oomx;
+        this.oomy = oomy;
         this.rm = rm;
 //        if (data == null) {
 //            setData(getDefaultData());
@@ -518,27 +509,13 @@ public abstract class Chart extends Chart_Runnable
     }
 
     /**
-     * Calculates and returns the row and column in the image for the data at
-     * coordinate titleTextWidth, titleTextHeight as a Point2D.Double using
-     * RoundingMode roundingMode
-     *
-     * @param p A pixel location as a Point2D.
-     * @return a Point2D.Double located at pixel(col, row)
-     */
-    public BigDecimal2 dataPointToCoordinate(Point2D p) {
-        return new BigDecimal2(
-                dataRowToYCoordinate(p.getX()).toBigDecimal(),
-                dataColToXCoordinate(p.getY()).toBigDecimal());
-    }
-
-    /**
      * Calculates and returns the column in the image for the data with value
      * titleTextWidth RoundingMode roundingMode is used.
      *
      * @param x The x value.
      * @return the column in the image for the data with value titleTextWidth
      */
-    public int coordinateToScreenCol(BigRational x) {
+    public int getCol(BigRational x) {
         int col = 0;
         BigRational cw = getCellWidth();
         if (data.minX != null) {
@@ -557,7 +534,7 @@ public abstract class Chart extends Chart_Runnable
      * @param y The y value.
      * @return the row in the image for the data with value titleTextHeight
      */
-    public int coordinateToScreenRow(BigRational y) {
+    public int getRow(BigRational y) {
         int row = 0;
         BigRational ch = getCellHeight();
         if (data.minY != null) {
@@ -582,8 +559,8 @@ public abstract class Chart extends Chart_Runnable
      */
     public Point2D coordinateToScreen(BigRational x, BigRational y) {
         Point2D r = new Point2D.Double();
-        int row = coordinateToScreenRow(y);
-        int col = coordinateToScreenCol(x);
+        int row = getRow(y);
+        int col = getCol(x);
         r.setLocation(col, row);
         return r;
     }
@@ -614,7 +591,7 @@ public abstract class Chart extends Chart_Runnable
                 if (cellHeight.compareTo(BigRational.ZERO) == 0) {
                     originRow = dataEndRow;
                 } else {
-                    originRow = coordinateToScreenRow(BigRational.ZERO);
+                    originRow = getRow(BigRational.ZERO);
                 }
             }
         }

@@ -58,20 +58,18 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
      * on the plot.
      * @param ageInterval The age interval.
      * @param startAgeOfEndYearInterval The start age of the end year interval.
-     * @param dpc The decimal place precision for calculations.
-     * @param dpd The decimal place precision for display.
+     * @param oom The Order of Magnitude for rounding precision.
      * @param rm The RoundingMode.
      */
     public Chart_AgeGenderBoxPlotExample(Generic_Environment e, ExecutorService es,
             Path f, String format, String title, int dataWidth, int dataHeight,
             String xAxisLabel, String yAxisLabel, boolean drawOriginLinesOnPlot,
-            int ageInterval, int startAgeOfEndYearInterval, int dpc, int dpd,
+            int ageInterval, int startAgeOfEndYearInterval, int oomx, int oomy,
             RoundingMode rm) {
         super(e);
         init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawOriginLinesOnPlot, ageInterval,
-                startAgeOfEndYearInterval, dpc,
-                dpd, rm);
+                startAgeOfEndYearInterval, oomx, oomy, rm);
     }
 
     public static void main(String[] args) {
@@ -104,15 +102,14 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             boolean drawOriginLinesOnPlot = true;
             int ageInterval = 5;
             int startAgeOfEndYearInterval = 70;//95;
-            int decimalPlacePrecisionForCalculations = 10;
-            int decimalPlacePrecisionForDisplay = 3;
+            int oomx = -2;
+            int oomy = -2;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
             Chart_AgeGenderBoxPlotExample plot = new Chart_AgeGenderBoxPlotExample(e, es, file,
                     format, title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, ageInterval, startAgeOfEndYearInterval,
-                    decimalPlacePrecisionForCalculations,
-                    decimalPlacePrecisionForDisplay, rm);
+                    oomx, oomy, rm);
             plot.setData(plot.getDefaultData());
             plot.vis.getHeadlessEnvironment();
             //plot.run();
@@ -188,16 +185,16 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 //                    getRoundingMode()).intValueExact();
             int boxWidth = BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(cellWidth).integerPart().toBigDecimal().intValue();
 
-            int boxTopRow = coordinateToScreenRow(BigRational.valueOf(age + 1)) + 2;
-            //int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age));
+            int boxTopRow = getRow(BigRational.valueOf(age + 1)) + 2;
+            //int boxTopRow = getRow(BigDecimal.valueOf(age));
             int boxMiddleRow = boxTopRow + (boxHeight / 2);
             int boxBottomRow = boxTopRow + boxHeight;
-            int q1Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ1()));
-            int q3Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ3()));
+            int q1Col = getCol(BigRational.valueOf(stats.getQ1()));
+            int q3Col = getCol(BigRational.valueOf(stats.getQ3()));
 
             // Draw min line
             setPaint(Color.DARK_GRAY);
-            int minCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin()));
+            int minCol = getCol(BigRational.valueOf(stats.getMin()));
             System.out.println();
             abLine2D = new Line2D.Double(minCol, boxMiddleRow, q1Col, boxMiddleRow);
             draw(abLine2D);
@@ -207,7 +204,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             draw(abLine2D);
 
             // Draw max line
-            int maxCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax()));
+            int maxCol = getCol(BigRational.valueOf(stats.getMax()));
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col,
                     boxMiddleRow);
             draw(abLine2D);
@@ -225,7 +222,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             draw(r2);
 
             // Draw median line
-            int medianCol = coordinateToScreenCol(stats.getMedian());
+            int medianCol = getCol(stats.getMedian());
             abLine2D = new Line2D.Double(medianCol, boxTopRow, medianCol,
                     boxBottomRow);
             draw(abLine2D);
@@ -251,16 +248,16 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 
             // Calculate plot drawing metrics
             int boxWidth = BigRational.valueOf(stats.getQ3().subtract(stats.getQ1())).divide(getCellWidth()).integerPart().toBigDecimal().intValueExact();
-            int boxTopRow = coordinateToScreenRow(BigRational.valueOf(age + 1)) + 2;
-            //int boxTopRow = coordinateToScreenRow(BigDecimal.valueOf(age));
+            int boxTopRow = getRow(BigRational.valueOf(age + 1)) + 2;
+            //int boxTopRow = getRow(BigDecimal.valueOf(age));
             int boxMiddleRow = boxTopRow + (boxHeight / 2);
             int boxBottomRow = boxTopRow + boxHeight;
-            int q1Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ1().negate()));
-            int q3Col = coordinateToScreenCol(BigRational.valueOf(stats.getQ3().negate()));
+            int q1Col = getCol(BigRational.valueOf(stats.getQ1().negate()));
+            int q3Col = getCol(BigRational.valueOf(stats.getQ3().negate()));
 
             // Draw min line
             setPaint(Color.DARK_GRAY);
-            int minCol = coordinateToScreenCol(BigRational.valueOf(stats.getMin().negate()));
+            int minCol = getCol(BigRational.valueOf(stats.getMin().negate()));
             abLine2D = new Line2D.Double(minCol, boxMiddleRow, q1Col, boxMiddleRow);
             draw(abLine2D);
             abLine2D = new Line2D.Double(minCol, boxMiddleRow + (whiskerHeight / 2),
@@ -269,7 +266,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
 
             // Draw max line
             setPaint(Color.DARK_GRAY);
-            int maxCol = coordinateToScreenCol(BigRational.valueOf(stats.getMax().negate()));
+            int maxCol = getCol(BigRational.valueOf(stats.getMax().negate()));
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow, q3Col, boxMiddleRow);
             draw(abLine2D);
             abLine2D = new Line2D.Double(maxCol, boxMiddleRow + (whiskerHeight / 2),
@@ -286,7 +283,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             draw(r2);
 
             // Draw median line
-            int medianCol = coordinateToScreenCol(stats.getMedian().negate());
+            int medianCol = getCol(stats.getMedian().negate());
             abLine2D = new Line2D.Double(medianCol, boxTopRow, medianCol, boxBottomRow);
             draw(abLine2D);
         }
@@ -298,10 +295,8 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
     public Chart_AgeGenderBoxPlotData getDefaultData() {
         int ageInterval = 5;
         int startAgeOfEndYearInterval = 70;//95;
-        oomc = 10;
         RoundingMode rm = RoundingMode.HALF_UP;
-        return getDefaultData(ageInterval, startAgeOfEndYearInterval,
-                oomc, rm);
+        return getDefaultData(ageInterval, startAgeOfEndYearInterval);
     }
 
     /**
