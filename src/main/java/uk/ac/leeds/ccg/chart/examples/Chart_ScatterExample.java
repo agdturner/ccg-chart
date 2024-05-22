@@ -19,6 +19,7 @@ import ch.obermuhlner.math.big.BigRational;
 import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.nio.file.Path;
@@ -72,8 +73,8 @@ public class Chart_ScatterExample extends Chart {
     public static void main(String[] args) {
         try {
             Generic_Environment e = new Generic_Environment(new Generic_Defaults());
-            /*
-         * Initialise title and Path to write image to
+            /**
+             * Initialise title and Path to write image to.
              */
             String title;
             Path file;
@@ -142,11 +143,7 @@ public class Chart_ScatterExample extends Chart {
         int[] r = new int[3];
         int xAxisExtraWidthLeft = 0;
         int xAxisExtraWidthRight = 0;
-        //int seperationDistanceOfAxisAndData = partTitleGap;
-        //int seperationDistanceOfAxisAndData = partTitleGap * 2;
-        //int seperationDistanceOfAxisAndData = textHeight;
         int xAxisExtraHeightBottom = stl + sd1 + sd2;
-//                    row + scaleTickLength + (textHeight / 3));;
         setPaint(Color.LIGHT_GRAY);
         // Draw X axis below the data
         setPaint(Color.GRAY);
@@ -292,16 +289,31 @@ public class Chart_ScatterExample extends Chart {
         }
         System.out.println("maximum number of ticks " + mtu);
         // Calculate the number of ticks.
-        int oommsdmaxY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(data.maxY.toBigDecimal());
+        BigDecimal maxYbd = data.maxY.toBigDecimal();
+        int oommsdmaxY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(maxYbd);
         BigRational maxYr = Math_BigRational.round(maxY, oommsdmaxY, RoundingMode.UP);
-        //BigRational maxYr = Math_BigRational.round(maxY, oommsd, RoundingMode.DOWN);
+        BigDecimal unit = new BigDecimal(BigInteger.ONE, oommsdmaxY);
+        int msd = Math_BigDecimal.getMostSignificantDigit(maxYr.toBigDecimal());
+        BigDecimal floor = unit.multiply(new BigDecimal(msd));
+        if (msd == 9) {
+            maxYbd = floor.add(unit);
+        } else if (msd == 7 || msd == 3) {
+            maxYbd = floor.add(unit);
+        } else if (msd == 6){
+            maxYbd = floor.add(unit.add(unit));
+        } else if (msd == 5){
+            maxYbd = floor.add(unit.add(unit).add(unit));
+        } else {
+            maxYbd = floor;
+        }
+        maxYr = BigRational.valueOf(maxYbd);        
         int maxYri = maxYr.intValue();
         while (maxYri < mtu) {
             maxYri *= 2;
         }
         maxYri /= 2;
         int nt = (originRow - dataStartRow) / maxYri;
-        System.out.println("number of ticks " + nt);
+        System.out.println("rounded number of ticks " + nt);
         // Calculate the yIncrement
         BigRational yInc = maxYr.divide(nt);
         System.out.println("yInc " + yInc);
@@ -343,7 +355,7 @@ public class Chart_ScatterExample extends Chart {
         // From the origin down
         // draw
         y = BigRational.ZERO;
-        while (y.compareTo(maxYr) == -1) {
+        while (y.compareTo(maxYr) == 1 ) {
             row = getRow(y);
             if (row <= dataEndRow) {
                 ab = new Line2D.Double(col, row, col - stl, row);
