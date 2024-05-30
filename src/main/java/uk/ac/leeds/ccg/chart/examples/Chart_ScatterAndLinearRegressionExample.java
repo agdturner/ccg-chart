@@ -710,9 +710,9 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
     public static double[][] getXYLineData(double[][] data, double[] lp) {
         double[][] r = new double[2][2];
         double miny = Double.MAX_VALUE;
-        double maxy = Double.MIN_VALUE;
+        double maxy = -Double.MAX_VALUE;
         double minx = Double.MAX_VALUE;
-        double maxx = Double.MIN_VALUE;
+        double maxx = -Double.MAX_VALUE;
         for (int j = 0; j < data[0].length; j++) {
             minx = Math.min(minx, data[0][j]);
             maxx = Math.max(maxx, data[0][j]);
@@ -803,11 +803,11 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
         // minx is the minimum x value in data[1]
         double minx = Double.MAX_VALUE;
         // maxx is the maximum x value in data[1]
-        double maxx = Double.MIN_VALUE;
+        double maxx = -Double.MAX_VALUE;
         // miny is the minimum y value in data[0]
         double miny = Double.MAX_VALUE;
         // maxy is the maximum y value in data[1]
-        double maxy = Double.MIN_VALUE;
+        double maxy = -Double.MAX_VALUE;
         for (int j = 0; j < data[0].length; j++) {
             miny = Math.min(miny, data[0][j]);
             maxy = Math.max(maxy, data[0][j]);
@@ -818,15 +818,6 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
         lineChartData[0][1] = maxy;
         lineChartData[1][0] = minx;
         lineChartData[1][1] = maxx;
-        //System.out.println("miny " + miny);
-        if (maxy == Double.MIN_VALUE) {
-            maxy = miny;
-        }
-        //System.out.println("maxy " + maxy);
-        //System.out.println("minx " + minx);
-        if (maxx == Double.MIN_VALUE) {
-            maxx = minx;
-        }
         //System.out.println("maxx " + maxx);
         if (maxx < maxy) {
             lineChartData[0][1] = maxx;

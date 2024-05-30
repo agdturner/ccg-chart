@@ -542,7 +542,7 @@ public abstract class Chart extends Chart_Runnable
             if (ch != null) {
                 if (ch.compareTo(BigRational.ZERO) != 0) {
                     row = getDataHeight()
-                            - y.subtract(data.minY).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+                            - y.subtract(data.minY).divide(ch).integerPart().toBigDecimal().intValue();
                 }
             }
         }

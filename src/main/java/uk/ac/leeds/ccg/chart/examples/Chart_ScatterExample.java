@@ -149,7 +149,29 @@ public class Chart_ScatterExample extends Chart {
         /*
          * Draw X axis ticks and labels below the X axis
          */
-        BigRational range = data.maxX.subtract(data.minX);
+        BigRational range = data.
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                maxX.subtract(data.minX);
         int width = dataEndCol - dataStartCol;
         /**
          * Calculate the maximum number of ticks mt
@@ -164,8 +186,6 @@ public class Chart_ScatterExample extends Chart {
         BigDecimal minIncbd = minInc.toBigDecimal();
         int oommsd = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minIncbd);
         int mmsd = Math_BigDecimal.getMostSignificantDigit(minIncbd);
-        int smsd = Math_BigDecimal.getScaleOfMostSignificantDigit(minIncbd);
-        BigRational ru = Math_BigRational.round(minInc, oommsd, RoundingMode.UP);
         // Rounding
         int minc;
         if (mmsd >= 8) {
@@ -181,58 +201,57 @@ public class Chart_ScatterExample extends Chart {
         }
         BigDecimal incBd = new BigDecimal(BigInteger.valueOf(minc), -oommsd);
         BigRational inc = BigRational.valueOf(incBd, BigDecimal.ONE);
-
-        // draw
         // Draw X axis below the data
         setPaint(Color.GRAY);
         int row = dataEndRow + sd2;
         Line2D ab = new Line2D.Double(dataStartCol, row, dataEndCol, row);
         draw(ab);
-
         /*
          * Draw X axis ticks and labels below the X axis
          */
-        int increment = th;
-        while (((dataWidth * th) + 4) / increment > dataWidth) {
-            increment += th;
-        }
         int xAxisMaxLabelHeight = 0;
         String s;
         int textWidth;
         double angle;
-        // From the origin right
-        int startCol = originCol;
-        //int startCol = getDataStartCol();
-        RoundingMode rm = getRoundingMode();
         int tw;
-        int col = startCol;
         BigRational x = BigRational.ZERO;
-        int xAxisMaxLabelWidth = 0;
+        // init maxXr
         BigDecimal maxXbd = data.maxX.toBigDecimal();
         int oommsdmaxX = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(maxXbd);
         BigRational maxXr;
         if (maxX.compareTo(BigRational.ZERO) == -1) {
-            maxXr = Math_BigRational.round(maxX, oommsdmaxX, RoundingMode.UP);
-        } else {
             maxXr = Math_BigRational.round(maxX, oommsdmaxX, RoundingMode.DOWN);
+        } else {
+            maxXr = Math_BigRational.round(maxX, oommsdmaxX, RoundingMode.UP);
         }
-        //BigRational maxXr = Math_BigRational.round(data.maxX, oommsdmaxX, RoundingMode.UP);
+        // init minYr
+        BigDecimal minXbd = data.minX.toBigDecimal();
+        int oommsdminX = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minXbd);
+        BigRational minXr;
+        if (minX.compareTo(BigRational.ZERO) == -1) {
+            minXr = Math_BigRational.round(minX, oommsdminX, RoundingMode.UP);
+        } else {
+            minXr = Math_BigRational.round(minX, oommsdminX, RoundingMode.DOWN);
+        }
+        // Draw to the right of the origin. 
         while (x.compareTo(maxXr) != 1) {
-            col = getCol(x);
-            if (col >= dataStartCol && col <= dataEndCol) {
-                ab = new Line2D.Double(col, row, col, row + stl);
-                draw(ab);
-                if (x.compareTo(BigRational.ZERO) == 0 || col == originCol) {
-                    s = "0";
-                } else {
-                    s = Math_BigRational.round(x, oomx, rm).toString();
-                }
-                tw = getTextWidth(s);
-                xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, tw);
-                angle = Math.PI / 2;
-                writeText(s, angle, col - (th / 3),
-                        row + sd1 + stl);
+            if (x.compareTo(minXr) != -1) {
+                int col = getCol(x);
+                if (col >= dataStartCol && col <= dataEndCol) {
+                    ab = new Line2D.Double(col, row, col, row + stl);
+                    draw(ab);
+                    if (x.compareTo(BigRational.ZERO) == 0 || col == originCol) {
+                        s = "0";
+                    } else {
+                        s = Math_BigRational.round(x, oomx, rm).toString();
+                    }
+                    tw = getTextWidth(s);
+                    xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, tw);
+                    angle = Math.PI / 2;
+                    writeText(s, angle, col - (th / 3),
+                            row + sd1 + stl);
 //                    row + scaleTickLength + (textHeight / 3));
+                }
             }
             x = x.add(inc);
         }
@@ -258,31 +277,24 @@ public class Chart_ScatterExample extends Chart {
         /**
          * From the origin left.
          */
-        BigDecimal minXbd = data.minX.toBigDecimal();
-        int oommsdminX = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minXbd);
-        BigRational minXr;
-        if (minX.compareTo(BigRational.ZERO) == -1) {
-            minXr = Math_BigRational.round(minX, oommsdminX, RoundingMode.UP);
-        } else {
-            minXr = Math_BigRational.round(minX, oommsdminX, RoundingMode.DOWN);
-        }
-        //BigRational minXr = Math_BigRational.round(data.minX, oommsdminX, RoundingMode.DOWN);
         while (x.compareTo(minXr) != -1) {
-            col = getCol(x);
-            if (col >= dataStartCol && col <= dataEndCol) {
-                ab = new Line2D.Double(col, row, col, row + stl);
-                draw(ab);
-                if (x.compareTo(BigRational.ZERO) == 0 || col == originCol) {
-                    s = "0";
-                } else {
-                    s = Math_BigRational.round(x, oomx, rm).toString();
-                }
-                tw = getTextWidth(s);
-                xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, tw);
-                angle = Math.PI / 2;
-                writeText(s, angle, col - (th / 3),
-                        row + sd1 + stl);
+            if (x.compareTo(maxXr) != 1) {
+                int col = getCol(x);
+                if (col >= dataStartCol && col <= dataEndCol) {
+                    ab = new Line2D.Double(col, row, col, row + stl);
+                    draw(ab);
+                    if (x.compareTo(BigRational.ZERO) == 0 || col == originCol) {
+                        s = "0";
+                    } else {
+                        s = Math_BigRational.round(x, oomx, rm).toString();
+                    }
+                    tw = getTextWidth(s);
+                    xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, tw);
+                    angle = Math.PI / 2;
+                    writeText(s, angle, col - (th / 3),
+                            row + sd1 + stl);
 //                    row + scaleTickLength + (textHeight / 3));
+                }
             }
             x = x.subtract(inc);
         }
@@ -408,7 +420,9 @@ public class Chart_ScatterExample extends Chart {
         }
         BigDecimal incBd = new BigDecimal(BigInteger.valueOf(minc), -oommsd);
         BigRational inc = BigRational.valueOf(incBd, BigDecimal.ONE);
+        // yAxisMaxLabelWidth is for storing the maximum yAxis label width.
         int yAxisMaxLabelWidth = 0;
+        // Init maxYr.
         BigDecimal maxYbd = data.maxY.toBigDecimal();
         int oommsdmaxY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(maxYbd);
         BigRational maxYr;
@@ -417,23 +431,33 @@ public class Chart_ScatterExample extends Chart {
         } else {
             maxYr = Math_BigRational.round(maxY, oommsdmaxY, RoundingMode.DOWN);
         }
-        //BigRational maxYr = Math_BigRational.round(maxY, oommsdmaxY, RoundingMode.UP);
+        // Init minYr.
+        BigDecimal minYbd = data.minY.toBigDecimal();
+        int oommsdminY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minYbd);
+        BigRational minYr;
+        if (minY.compareTo(BigRational.ZERO) == -1) {
+            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.UP);
+        } else {
+            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.DOWN);
+        }
 
         // Draw above the origin.
         BigRational y = BigRational.ZERO;
         while (y.compareTo(maxYr) != 1) {
-            row = getRow(y);
-            if (row >= dataStartRow && row <= dataEndRow) {
-                ab = new Line2D.Double(col, row, col - stl, row);
-                draw(ab);
-                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
-                    s = "0";
-                } else {
-                    s = Math_BigRational.round(y, oomy, rm).toString();
+            if (y.compareTo(minYr) != -1) {
+                row = getRow(y);
+                if (row >= dataStartRow && row <= dataEndRow) {
+                    ab = new Line2D.Double(col, row, col - stl, row);
+                    draw(ab);
+                    if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
+                        s = "0";
+                    } else {
+                        s = Math_BigRational.round(y, oomy, rm).toString();
+                    }
+                    tw = getTextWidth(s);
+                    yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
+                    drawString(s, col - sd1 - stl - tw, row + (th / 3));
                 }
-                tw = getTextWidth(s);
-                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
-                drawString(s, col - sd1 - stl - tw, row + (th / 3));
             }
             y = y.add(inc);
         }
@@ -456,14 +480,6 @@ public class Chart_ScatterExample extends Chart {
          */
         // Draw below the origin.
         y = BigRational.ZERO;
-        BigDecimal minYbd = data.minY.toBigDecimal();
-        int oommsdminY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minYbd);
-        BigRational minYr;
-        if (minY.compareTo(BigRational.ZERO) == -1) {
-            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.UP);
-        } else {
-            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.DOWN);
-        }
         while (y.compareTo(minYr) != -1) {
             if (y.compareTo(maxYr) != 1) {
                 row = getRow(y);
@@ -576,7 +592,7 @@ public class Chart_ScatterExample extends Chart {
                 BigRational x = BigRational.valueOf(random.nextDouble(xmin, xmax));
                 BigRational y = BigRational.valueOf(random.nextDouble(ymin, ymax));
                 Chart_Point p = new Chart_Point(x, y);
-                id ++;
+                id++;
                 data.add(new Chart_ID(id), p);
             }
         }
