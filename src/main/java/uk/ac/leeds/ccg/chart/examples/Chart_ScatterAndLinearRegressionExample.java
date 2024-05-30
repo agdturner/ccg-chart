@@ -24,13 +24,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 //import org.apache.commons.math.stat.regression.SimpleRegression;
-import uk.ac.leeds.ccg.chart.data.BigRational2;
+import uk.ac.leeds.ccg.chart.data.Chart_ID;
+import uk.ac.leeds.ccg.chart.data.Chart_Point;
 import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
@@ -84,8 +85,9 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
                 title = "Scatter Plot And Linear Regression";
                 System.out.println("Default title: " + title);
                 file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
                         title.replace(" ", "_") + "." + format);
-                System.out.println("Default Path: " + file.toString());
+                System.out.println("Use default Path: " + file.toString());
             } else {
                 title = args[0];
                 file = Paths.get(args[1]);
@@ -103,6 +105,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
             plot = new Chart_ScatterAndLinearRegressionExample(e, es, file, format,
                     title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, oomx, oomy, rm);
+            plot.setData(plot.getDefaultData());
             plot.vis.getHeadlessEnvironment();
             plot.run();
         } catch (Exception ex) {
@@ -113,7 +116,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
     @Override
     public void drawData() {
         double[][] dataD;
-        dataD = getDataAsDoubleArray(getData().xyData);
+        dataD = getDataAsDoubleArray(getData().data);
         drawYEqualsXLineData(dataD);
         /*
          * rp[0] is the y axis intercept;
@@ -141,7 +144,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
         }
         Chart_ScatterData d = getData();
         drawPoints(Color.DARK_GRAY, d);
-        double[][] dataAsDoubleArray = getDataAsDoubleArray(getData().xyData);
+        double[][] dataAsDoubleArray = getDataAsDoubleArray(getData().data);
         drawYEqualsXLineData(dataAsDoubleArray);
         /*
          * rp[0] is the y axis intercept;
@@ -625,14 +628,14 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
     }
 
     protected double[][] getDataAsDoubleArray() {
-        return getDataAsDoubleArray(getData().xyData);
+        return getDataAsDoubleArray(getData().data);
     }
 
     protected double[][] getDataAsDoubleArray(
-            ArrayList<BigRational2> d) {
-        double[][] r = new double[2][d.size()];
-        Iterator<BigRational2> ite = d.iterator();
-        BigRational2 xyData;
+            HashMap<Chart_ID, Chart_Point> data) {
+        double[][] r = new double[2][data.size()];
+        Iterator<Chart_Point> ite = data.values().iterator();
+        Chart_Point xyData;
         /*
          * data[0][] are the y values data[1][] are the x values
          */

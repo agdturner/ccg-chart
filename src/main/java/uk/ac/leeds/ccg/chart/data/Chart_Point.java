@@ -17,35 +17,45 @@ package uk.ac.leeds.ccg.chart.data;
 
 import ch.obermuhlner.math.big.BigRational;
 
-public class BigRational2 {
+public class Chart_Point {
 
-    public BigRational x;
-    public BigRational y;
+    /**
+     * The x coordinate.
+     */
+    protected BigRational x;
+    
+    /**
+     * The y coordinate.
+     */
+    protected BigRational y;
 
-    public BigRational2() {
+    /**
+     * Create a new instance
+     */
+    protected Chart_Point() {
     }
 
-    public BigRational2(
-            BigRational x,
-            BigRational y) {
+    /**
+     * @param x What {@link x} is set to.
+     * @param y What {@link y} is set to.
+     */
+    public Chart_Point(BigRational x, BigRational y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * @return {@link x}. 
+     */
     public BigRational getX() {
         return x;
     }
 
-    public void setX(BigRational x) {
-        this.x = x;
-    }
-
+    /**
+     * @return {@link y}. 
+     */
     public BigRational getY() {
         return y;
-    }
-
-    public void setY(BigRational y) {
-        this.y = y;
     }
 
     @Override
@@ -56,7 +66,7 @@ public class BigRational2 {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BigRational2 other = (BigRational2) obj;
+        final Chart_Point other = (Chart_Point) obj;
         if (this.x != other.x && (this.x == null || !this.x.equals(other.x))) {
             return false;
         }

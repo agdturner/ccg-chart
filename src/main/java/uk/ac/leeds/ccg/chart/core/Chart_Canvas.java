@@ -27,6 +27,8 @@ import java.awt.image.BufferedImage;
 
 public class Chart_Canvas extends Canvas {
 
+    private static final long serialVersionUID = 1L;
+
     public Chart_Canvas() {
     }
 

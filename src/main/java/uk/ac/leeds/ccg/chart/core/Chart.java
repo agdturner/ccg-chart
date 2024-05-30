@@ -35,7 +35,6 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.chart.data.Chart_Data;
-import uk.ac.leeds.ccg.chart.data.BigDecimal2;
 import uk.ac.leeds.ccg.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
@@ -528,13 +527,15 @@ public abstract class Chart extends Chart_Runnable
     }
 
     /**
-     * Calculates and returns the row in the image for the data with value
-     * titleTextHeight. RoundingMode roundingMode is used.
+     * Calculates and returns the row in the image for the data with value y.
      *
      * @param y The y value.
-     * @return the row in the image for the data with value titleTextHeight
+     * @return the row in the image for the data with value y
      */
     public int getRow(BigRational y) {
+        if (y.compareTo(data.maxY) != -1) {
+            return -1;
+        }
         int row = 0;
         BigRational ch = getCellHeight();
         if (data.minY != null) {
@@ -668,8 +669,7 @@ public abstract class Chart extends Chart_Runnable
         }
     }
 
-    public void draw(
-            Point2D point) {
+    public void draw(Point2D point) {
 //        // draw as a line with zero length
 //        draw(new Line2D.Double(point, point));
         // draw as an x cross

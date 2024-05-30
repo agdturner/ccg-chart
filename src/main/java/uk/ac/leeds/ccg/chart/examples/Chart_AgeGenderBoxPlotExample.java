@@ -449,11 +449,11 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             if (age < saeyi) {
                 values = new ArrayList<>();
             }
-            r.max = r.max.max(BigRational.valueOf(pop10000));
-            r.max = r.max.max(BigRational.valueOf(pop9000));
-            r.max = r.max.max(BigRational.valueOf(pop9900));
-            r.max = r.max.max(BigRational.valueOf(pop9950));
-            r.max = r.max.max(BigRational.valueOf(pop9800));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop10000));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9000));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9900));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9950));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9800));
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -493,11 +493,11 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             if (age < saeyi) {
                 values = new ArrayList<>();
             }
-            r.max = r.max.max(BigRational.valueOf(pop10000));
-            r.max = r.max.max(BigRational.valueOf(pop9000));
-            r.max = r.max.max(BigRational.valueOf(pop9900));
-            r.max = r.max.max(BigRational.valueOf(pop9950));
-            r.max = r.max.max(BigRational.valueOf(pop9800));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop10000));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9000));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9900));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9950));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop9800));
             values.add(pop10000);
             values.add(pop9000);
             values.add(pop9900);
@@ -539,19 +539,19 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             age = iterator.next();
             pop = r.femalePops.get(10000).get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9000).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9900).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9950).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.femalePops.get(9800).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
             r.fss.put(age, ss);
@@ -562,19 +562,19 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
             age = iterator.next();
             pop = r.malePops.get(10000).get(age);
             ArrayList<BigDecimal> values = new ArrayList<>();
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9000).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9900).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9950).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             pop = r.malePops.get(9800).get(age);
-            r.max = r.max.max(BigRational.valueOf(pop));
+            r.max = BigRational.max(r.max, BigRational.valueOf(pop));
             values.add(pop);
             Stats_BigDecimal1 ss = new Stats_BigDecimal1(values);
             r.mss.put(age, ss);

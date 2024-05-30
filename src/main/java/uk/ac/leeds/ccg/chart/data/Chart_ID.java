@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Centre for Computational Geography, University of Leeds.
+ * Copyright 2024 Centre for Computational Geography, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,37 +15,20 @@
  */
 package uk.ac.leeds.ccg.chart.data;
 
-import ch.obermuhlner.math.big.BigRational;
+import uk.ac.leeds.ccg.data.id.Data_ID_long;
 
 /**
  *
  * @author Andy Turner
  */
-public class Chart_Data {
-    
-    /**
-     * For storing the maximum X value.
-     */
-    public BigRational maxX;
-
-    /**
-     * For storing the minimum X value.
-     */
-    public BigRational minX;
-    
-    /**
-     * For storing the maximum Y value.
-     */
-    public BigRational maxY;
-
-    /**
-     * For storing the minimum Y value.
-     */
-    public BigRational minY;
+public class Chart_ID extends Data_ID_long {
     
     /**
      * Create a new instance.
+     * @param l What {@link #id} is set to.
      */
-    public Chart_Data() {}
+    public Chart_ID(long l) {
+        super(l);
+    }
     
 }
