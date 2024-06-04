@@ -90,18 +90,17 @@ public class Chart_LineExample extends Chart_Line {
 
     @Override
     public void drawData() {
-        TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps = getData().maps;
+        TreeMap<String, TreeMap<BigRational, BigRational>> maps = getData().maps;
         TreeMap<String, Boolean> nonZero = getData().nonZero;
         Color[] colours;
         colours = getColours();
         int i = 1;
-        Iterator<String> ite;
-        ite = maps.keySet().iterator();
+        Iterator<String> ite = maps.keySet().iterator();
         while (ite.hasNext()) {
             String type;
             type = ite.next();
             if (nonZero == null) {
-                TreeMap<BigDecimal, BigDecimal> map;
+                TreeMap<BigRational, BigRational> map;
                 map = maps.get(type);
                 int j = i;
                 while (j >= colours.length) {
@@ -111,7 +110,7 @@ public class Chart_LineExample extends Chart_Line {
                 i++;
             } else {
                 if (nonZero.get(type)) {
-                    TreeMap<BigDecimal, BigDecimal> map;
+                    TreeMap<BigRational, BigRational> map;
                     map = maps.get(type);
                     int j = i;
                     while (j >= colours.length) {
@@ -128,19 +127,19 @@ public class Chart_LineExample extends Chart_Line {
      * @param map The map to draw.
      * @param c The colour.
      */
-    public void drawMap(TreeMap<BigDecimal, BigDecimal> map, Color c) {
+    public void drawMap(TreeMap<BigRational, BigRational> map, Color c) {
         int length;
         length = 3;
         int row0 = 0;
         int col0 = 0;
         setPaint(c);
         boolean first = true;
-        Iterator<BigDecimal> ite = map.keySet().iterator();
+        Iterator<BigRational> ite = map.keySet().iterator();
         while (ite.hasNext()) {
-            BigDecimal x = ite.next();
-            BigDecimal y = map.get(x);
-            int row = getRow(BigRational.valueOf(y));
-            int col = getCol(BigRational.valueOf(x));
+            BigRational x = ite.next();
+            BigRational y = map.get(x);
+            int row = getRow(y);
+            int col = getCol(x);
             if (first) {
                 row0 = row;
                 col0 = col;
@@ -193,7 +192,9 @@ public class Chart_LineExample extends Chart_Line {
                 title = "Example Line Graph";
                 System.out.println("Use default title: " + title);
                 Path outdir = e.files.getOutputDir();
-                file = Paths.get(outdir.toString(), title.replace(" ", "_") + "." + format);
+                file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
+                        title.replace(" ", "_") + "." + format);
                 System.out.println("Use default Path: " + file.toString());
             } else {
                 title = args[0];
@@ -263,11 +264,11 @@ public class Chart_LineExample extends Chart_Line {
         int scaleTickLength = getDefaultScaleTickLength();
         int scaleTickAndTextSeparation = getDefaultScaleTickAndTextSeparation();
         int partTitleGap = getDefaultPartTitleGap();
-        int textHeight = getTextHeight();
+        int th = getTextHeight();
         //int seperationDistanceOfAxisAndData = textHeight;
         int seperationDistanceOfAxisAndData = 2;
         // Draw Y axis
-        int[] yAxisDimensions = drawYAxis(textHeight, scaleTickLength,
+        int[] yAxisDimensions = drawYAxis(th, scaleTickLength,
                 scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         yAxisExtraWidthLeft = yAxisDimensions[0];
@@ -283,7 +284,7 @@ public class Chart_LineExample extends Chart_Line {
         }
         //setYAxisWidth(yAxisExtraWidthLeft);
         // Draw X axis
-        int[] xAxisDimensions = drawXAxis(textHeight, scaleTickLength,
+        int[] xAxisDimensions = drawXAxis(th, scaleTickLength,
                 scaleTickAndTextSeparation, partTitleGap,
                 seperationDistanceOfAxisAndData);
         xAxisExtraWidthLeft = xAxisDimensions[0];
@@ -316,66 +317,66 @@ public class Chart_LineExample extends Chart_Line {
      */
     public Chart_LineData getDefaultData() {
         Chart_LineData r = new Chart_LineData();
-        TreeMap<BigDecimal, BigDecimal> map = new TreeMap<>();
+        TreeMap<BigRational, BigRational> map = new TreeMap<>();
         //map.put(new BigDecimal(0.0d), new BigDecimal(10.0d));
-        map.put(new BigDecimal(0.0d), new BigDecimal(-10.0d));
-        map.put(new BigDecimal(6.0d), new BigDecimal(11.0d));
-        map.put(new BigDecimal(12.0d), new BigDecimal(12.0d));
-        map.put(new BigDecimal(18.0d), new BigDecimal(13.0d));
-        map.put(new BigDecimal(24.0d), new BigDecimal(14.0d));
-        map.put(new BigDecimal(27.0d), new BigDecimal(15.0d));
-        map.put(new BigDecimal(30.0d), new BigDecimal(16.0d));
-        map.put(new BigDecimal(33.0d), new BigDecimal(15.0d));
-        map.put(new BigDecimal(36.0d), new BigDecimal(14.0d));
-        map.put(new BigDecimal(39.0d), new BigDecimal(15.0d));
-        map.put(new BigDecimal(42.0d), new BigDecimal(17.0d));
-        map.put(new BigDecimal(45.0d), new BigDecimal(18.0d));
-        map.put(new BigDecimal(48.0d), new BigDecimal(29.0d));
-        map.put(new BigDecimal(49.0d), new BigDecimal(30.0d));
-        map.put(new BigDecimal(50.0d), new BigDecimal(15.0d));
-        map.put(new BigDecimal(51.0d), new BigDecimal(25.0d));
-        map.put(new BigDecimal(52.0d), new BigDecimal(35.0d));
-        map.put(new BigDecimal(53.0d), new BigDecimal(36.0d));
-        map.put(new BigDecimal(54.0d), new BigDecimal(37.0d));
+        map.put(BigRational.ZERO, BigRational.valueOf(-10.0d));
+        map.put(BigRational.valueOf(6.0d), BigRational.valueOf(11.0d));
+        map.put(BigRational.valueOf(12.0d), BigRational.valueOf(12.0d));
+        map.put(BigRational.valueOf(18.0d), BigRational.valueOf(13.0d));
+        map.put(BigRational.valueOf(24.0d), BigRational.valueOf(14.0d));
+        map.put(BigRational.valueOf(27.0d), BigRational.valueOf(15.0d));
+        map.put(BigRational.valueOf(30.0d), BigRational.valueOf(16.0d));
+        map.put(BigRational.valueOf(33.0d), BigRational.valueOf(15.0d));
+        map.put(BigRational.valueOf(36.0d), BigRational.valueOf(14.0d));
+        map.put(BigRational.valueOf(39.0d), BigRational.valueOf(15.0d));
+        map.put(BigRational.valueOf(42.0d), BigRational.valueOf(17.0d));
+        map.put(BigRational.valueOf(45.0d), BigRational.valueOf(18.0d));
+        map.put(BigRational.valueOf(48.0d), BigRational.valueOf(29.0d));
+        map.put(BigRational.valueOf(49.0d), BigRational.valueOf(30.0d));
+        map.put(BigRational.valueOf(50.0d), BigRational.valueOf(15.0d));
+        map.put(BigRational.valueOf(51.0d), BigRational.valueOf(25.0d));
+        map.put(BigRational.valueOf(52.0d), BigRational.valueOf(35.0d));
+        map.put(BigRational.valueOf(53.0d), BigRational.valueOf(36.0d));
+        map.put(BigRational.valueOf(54.0d), BigRational.valueOf(37.0d));
         r.maps.put("map1", map);
-        TreeMap<BigDecimal, BigDecimal> map2 = new TreeMap<>();
-        map2.put(new BigDecimal(0.0d), new BigDecimal(9.0d));
-        map2.put(new BigDecimal(6.0d), new BigDecimal(10.0d));
-        map2.put(new BigDecimal(12.0d), new BigDecimal(12.0d));
-        map2.put(new BigDecimal(18.0d), new BigDecimal(14.0d));
-        map2.put(new BigDecimal(24.0d), new BigDecimal(15.0d));
-        map2.put(new BigDecimal(27.0d), new BigDecimal(16.0d));
-        map2.put(new BigDecimal(30.0d), new BigDecimal(17.0d));
-        map2.put(new BigDecimal(33.0d), new BigDecimal(18.0d));
-        map2.put(new BigDecimal(36.0d), new BigDecimal(13.0d));
-        map2.put(new BigDecimal(39.0d), new BigDecimal(16.0d));
-        map2.put(new BigDecimal(42.0d), new BigDecimal(18.0d));
-        map2.put(new BigDecimal(45.0d), new BigDecimal(19.0d));
-        map2.put(new BigDecimal(48.0d), new BigDecimal(25.0d));
-        map2.put(new BigDecimal(49.0d), new BigDecimal(31.0d));
-        map2.put(new BigDecimal(50.0d), new BigDecimal(25.0d));
-        map2.put(new BigDecimal(51.0d), new BigDecimal(25.0d));
-        map2.put(new BigDecimal(52.0d), new BigDecimal(25.0d));
-        map2.put(new BigDecimal(53.0d), new BigDecimal(37.0d));
-        map2.put(new BigDecimal(54.0d), new BigDecimal(37.0d));
+        TreeMap<BigRational, BigRational> map2 = new TreeMap<>();
+        map2.put(BigRational.valueOf(0.0d), BigRational.valueOf(9.0d));
+        map2.put(BigRational.valueOf(6.0d), BigRational.valueOf(10.0d));
+        map2.put(BigRational.valueOf(12.0d), BigRational.valueOf(12.0d));
+        map2.put(BigRational.valueOf(18.0d), BigRational.valueOf(14.0d));
+        map2.put(BigRational.valueOf(24.0d), BigRational.valueOf(15.0d));
+        map2.put(BigRational.valueOf(27.0d), BigRational.valueOf(16.0d));
+        map2.put(BigRational.valueOf(30.0d), BigRational.valueOf(17.0d));
+        map2.put(BigRational.valueOf(33.0d), BigRational.valueOf(18.0d));
+        map2.put(BigRational.valueOf(36.0d), BigRational.valueOf(13.0d));
+        map2.put(BigRational.valueOf(39.0d), BigRational.valueOf(16.0d));
+        map2.put(BigRational.valueOf(42.0d), BigRational.valueOf(18.0d));
+        map2.put(BigRational.valueOf(45.0d), BigRational.valueOf(19.0d));
+        map2.put(BigRational.valueOf(48.0d), BigRational.valueOf(25.0d));
+        map2.put(BigRational.valueOf(49.0d), BigRational.valueOf(31.0d));
+        map2.put(BigRational.valueOf(50.0d), BigRational.valueOf(25.0d));
+        map2.put(BigRational.valueOf(51.0d), BigRational.valueOf(25.0d));
+        map2.put(BigRational.valueOf(52.0d), BigRational.valueOf(25.0d));
+        map2.put(BigRational.valueOf(53.0d), BigRational.valueOf(37.0d));
+        map2.put(BigRational.valueOf(54.0d), BigRational.valueOf(37.0d));
         r.maps.put("map2", map2);
-        ArrayList<BigDecimal> minMax = Math_Collections.getMinMax(map);
-        minY = BigRational.valueOf(minMax.get(0));
-        maxY = BigRational.valueOf(minMax.get(1));
-        minX = BigRational.valueOf(map.firstKey());
-        maxX = BigRational.valueOf(map.lastKey());
+        ArrayList<BigRational> minMax = Math_Collections.getMinMax(map);
+        minY = minMax.get(0);
+        maxY = minMax.get(1);
+        minX = map.firstKey();
+        maxX = map.lastKey();
         minMax = Math_Collections.getMinMax(map2);
-        if (minY.compareTo(BigRational.valueOf(minMax.get(0))) == 1) {
-            minY = BigRational.valueOf(minMax.get(0));
+        if (minY.compareTo(minMax.get(0)) == 1) {
+            minY = minMax.get(0);
         }
-        if (maxY.compareTo(BigRational.valueOf(minMax.get(1))) == -1) {
-            maxY = BigRational.valueOf(minMax.get(1));
+        if (maxY.compareTo(minMax.get(1)) == -1) {
+            maxY = minMax.get(1);
         }
-        if (minX.compareTo(BigRational.valueOf(map2.firstKey())) == 1) {
-            minX = BigRational.valueOf(map2.firstKey());
+        if (minX.compareTo(map2.firstKey()) == 1) {
+            minX = map2.firstKey();
         }
-        if (maxX.compareTo(BigRational.valueOf(map2.lastKey())) == -1) {
-            maxX = BigRational.valueOf(map2.lastKey());
+        if (maxX.compareTo(map2.lastKey()) == -1) {
+            maxX = map2.lastKey();
         }
         r.minY = minY;
         r.maxY = maxY;
@@ -406,8 +407,9 @@ public class Chart_LineExample extends Chart_Line {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
-        extraHeightTop += barHeight;
+        //int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        //extraHeightTop += barHeight;
+        extraHeightTop += maxY.divide(getCellHeight()).integerPart().toBigDecimal().intValue();
     }
 
     protected void drawLegend() {
@@ -485,10 +487,5 @@ public class Chart_LineExample extends Chart_Line {
         }
         legendHeight = newLegendHeight;
         imageHeight += newLegendHeight;
-    }
-
-    @Override
-    public int[] drawYAxis(int interval, int textHeight, int startOfEndInterval, int scaleTickLength, int scaleTickAndTextSeparation, int partTitleGap, int seperationDistanceOfAxisAndData) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

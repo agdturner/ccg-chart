@@ -28,11 +28,13 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import uk.ac.leeds.ccg.chart.core.Chart;
 import uk.ac.leeds.ccg.chart.data.Chart_ID;
 import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.chart.data.Chart_Point;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
@@ -105,15 +107,17 @@ public class Chart_ScatterExample extends Chart {
             int oomx = -1;
             int oomy = -2;
             RoundingMode rm = RoundingMode.HALF_UP;
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Chart_ScatterExample plot = new Chart_ScatterExample(e,
-                    executorService, file,
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Chart_ScatterExample chart = new Chart_ScatterExample(e,
+                    es, file,
                     format, title, dataWidth, dataHeight, xAxisLabel,
                     yAxisLabel, drawOriginLinesOnPlot, oomx, oomy, rm);
-            plot.setData(plot.getDefaultData());
-            plot.vis.getHeadlessEnvironment();
-            plot.setStartAgeOfEndYearInterval(0); // To avoid null pointer
-            plot.run();
+            chart.setData(chart.getDefaultData());
+            chart.vis.getHeadlessEnvironment();
+            chart.run();
+            Future future = chart.future;
+            Generic_Execution exec = new Generic_Execution(e);
+            exec.shutdownExecutorService(es, future, chart);
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -149,29 +153,7 @@ public class Chart_ScatterExample extends Chart {
         /*
          * Draw X axis ticks and labels below the X axis
          */
-        BigRational range = data.
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                maxX.subtract(data.minX);
+        BigRational range = data.maxX.subtract(data.minX);
         int width = dataEndCol - dataStartCol;
         /**
          * Calculate the maximum number of ticks mt
@@ -354,185 +336,6 @@ public class Chart_ScatterExample extends Chart {
         r[0] = xAxisExtraWidthLeft;
         r[1] = xAxisExtraWidthRight;
         r[2] = xAxisExtraHeightBottom;
-        return r;
-    }
-
-    /**
-     *
-     * @param interval ignored
-     * @param th textHeight
-     * @param saeyi startAgeOfEndYearInterval ignored
-     * @param stl scaleTickLength
-     * @param sd1 scaleTickAndTextSeparation
-     * @param ptg partTitleGap
-     * @param sd2 seperationDistanceOfAxisAndData
-     * @return
-     */
-    @Override
-    public int[] drawYAxis(int interval, int th, int saeyi, int stl,
-            int sd1, int ptg, int sd2) {
-        int[] r = new int[1];
-        int yAxisExtraWidthLeft = stl + sd1 + sd2;
-        Line2D ab;
-        String s;
-        int tw;
-        int row;
-
-        RoundingMode rm = getRoundingMode();
-        // Draw Y axis to left of data
-        //setOriginCol();
-        setPaint(Color.GRAY);
-        int col = dataStartCol - sd2;
-        ab = new Line2D.Double(col, dataEndRow, col, dataStartRow);
-        draw(ab);
-        /*
-         * Draw Y axis ticks and labels to left of Y axis
-         */
-        BigRational range = data.maxY.subtract(data.minY);
-        int height = dataEndRow - dataStartRow;
-        /**
-         * Calculate the maximum number of ticks mt
-         */
-        int mt = BigRational.valueOf(height).divide(BigRational.valueOf(th + 2)).intValue();
-        System.out.println("maximum number of ticks = " + mt);
-        /**
-         * minInc is the minimum pixel spacing.
-         */
-        BigRational minInc = range.divide(mt);
-        // minInc is to be be rounded up so as to produce sensible increments/labels. 
-        BigDecimal minIncbd = minInc.toBigDecimal();
-        int oommsd = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minIncbd);
-        int mmsd = Math_BigDecimal.getMostSignificantDigit(minIncbd);
-        int smsd = Math_BigDecimal.getScaleOfMostSignificantDigit(minIncbd);
-        BigRational ru = Math_BigRational.round(minInc, oommsd, RoundingMode.UP);
-        // Rounding
-        int minc;
-        if (mmsd >= 8) {
-            minc = 10;
-        } else if (mmsd >= 5) {
-            minc = 8;
-        } else if (mmsd >= 4) {
-            minc = 5;
-        } else if (mmsd >= 2) {
-            minc = 4;
-        } else {
-            minc = 2;
-        }
-        BigDecimal incBd = new BigDecimal(BigInteger.valueOf(minc), -oommsd);
-        BigRational inc = BigRational.valueOf(incBd, BigDecimal.ONE);
-        // yAxisMaxLabelWidth is for storing the maximum yAxis label width.
-        int yAxisMaxLabelWidth = 0;
-        // Init maxYr.
-        BigDecimal maxYbd = data.maxY.toBigDecimal();
-        int oommsdmaxY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(maxYbd);
-        BigRational maxYr;
-        if (maxY.compareTo(BigRational.ZERO) == -1) {
-            maxYr = Math_BigRational.round(maxY, oommsdmaxY, RoundingMode.UP);
-        } else {
-            maxYr = Math_BigRational.round(maxY, oommsdmaxY, RoundingMode.DOWN);
-        }
-        // Init minYr.
-        BigDecimal minYbd = data.minY.toBigDecimal();
-        int oommsdminY = Math_BigDecimal.getOrderOfMagnitudeOfMostSignificantDigit(minYbd);
-        BigRational minYr;
-        if (minY.compareTo(BigRational.ZERO) == -1) {
-            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.UP);
-        } else {
-            minYr = Math_BigRational.round(minY, oommsdminY, RoundingMode.DOWN);
-        }
-
-        // Draw above the origin.
-        BigRational y = BigRational.ZERO;
-        while (y.compareTo(maxYr) != 1) {
-            if (y.compareTo(minYr) != -1) {
-                row = getRow(y);
-                if (row >= dataStartRow && row <= dataEndRow) {
-                    ab = new Line2D.Double(col, row, col - stl, row);
-                    draw(ab);
-                    if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
-                        s = "0";
-                    } else {
-                        s = Math_BigRational.round(y, oomy, rm).toString();
-                    }
-                    tw = getTextWidth(s);
-                    yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
-                    drawString(s, col - sd1 - stl - tw, row + (th / 3));
-                }
-            }
-            y = y.add(inc);
-        }
-        /*
-        for (row = originRow; row >= dataStartRow; row -= increment) {
-            if (row <= dataEndRow) {
-                ab = new Line2D.Double(col, row, col - stl, row);
-                draw(ab);
-                BigRational y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
-                    s = "0";
-                } else {
-                    s = Math_BigRational.round(y, oomy, rm).toString();
-                }
-                tw = getTextWidth(s);
-                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
-                drawString(s, col - sd1 - stl - tw, row + (th / 3));
-            }
-        }
-         */
-        // Draw below the origin.
-        y = BigRational.ZERO;
-        while (y.compareTo(minYr) != -1) {
-            if (y.compareTo(maxYr) != 1) {
-                row = getRow(y);
-                if (row >= dataStartRow && row <= dataEndRow) {
-                    ab = new Line2D.Double(col, row, col - stl, row);
-                    draw(ab);
-                    if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
-                        s = "0";
-                    } else {
-                        s = Math_BigRational.round(y, oomy, rm).toString();
-                    }
-                    tw = getTextWidth(s);
-                    yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
-                    drawString(s, col - sd1 - stl - tw, row + (th / 3));
-                }
-            }
-            y = y.subtract(inc);
-        }
-        /*
-        for (row = originRow; row <= dataEndRow; row += increment) {
-            if (row <= dataEndRow) {
-                ab = new Line2D.Double(col, row, col - stl, row);
-                draw(ab);
-                BigRational y = imageRowToYCoordinate(row);
-                if (y.compareTo(BigRational.ZERO) == 0 || row == originRow) {
-                    s = "0";
-                } else {
-                    s = Math_BigRational.round(y, oomy, rm).toString();
-                }
-                tw = getTextWidth(s);
-                yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, tw);
-                drawString(s, col - sd1 - stl - tw, row + (th / 3));
-            }
-        }
-         */
-        yAxisExtraWidthLeft += stl + sd1 + yAxisMaxLabelWidth;
-        // Add the Y axis label.
-        setPaint(Color.BLACK);
-        s = yAxisLabel;
-        tw = getTextWidth(s);
-        yAxisExtraWidthLeft += (th * 2) + ptg;
-        double angle = 3.0d * Math.PI / 2.0d;
-        writeText(s, angle, 3 * th / 2,
-                dataMiddleRow + (tw / 2));
-        // Draw line on origin
-        if (isDrawOriginLinesOnPlot()) {
-            if (originCol <= dataEndCol && originCol >= dataStartCol) {
-                setPaint(Color.LIGHT_GRAY);
-                ab = new Line2D.Double(originCol, dataStartRow, originCol, dataEndRow);
-                draw(ab);
-            }
-        }
-        r[0] = yAxisExtraWidthLeft;
         return r;
     }
 

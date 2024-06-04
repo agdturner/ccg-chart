@@ -28,12 +28,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 //import org.apache.commons.math.stat.regression.SimpleRegression;
 import uk.ac.leeds.ccg.chart.data.Chart_ID;
 import uk.ac.leeds.ccg.chart.data.Chart_Point;
 import uk.ac.leeds.ccg.chart.data.Chart_ScatterData;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 
 /**
@@ -57,7 +59,8 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
      * @param xAxisLabel The x axis label.
      * @param yAxisLabel The y axis label.
      * @param drawOriginLinesOnPlot If {@code true} origin lines are drawn.
-     * @param oom The Order of Magnitude for rounding precision.
+     * @param oomx The Order of Magnitude for rounding x axis values.
+     * @param oomy The Order of Magnitude for rounding y axis values.
      * @param rm The RoundingMode.
      */
     public Chart_ScatterAndLinearRegressionExample(Generic_Environment e,
@@ -101,13 +104,17 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
             int oomy = -1;
             RoundingMode rm = RoundingMode.HALF_UP;
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Chart_ScatterAndLinearRegressionExample plot;
-            plot = new Chart_ScatterAndLinearRegressionExample(e, es, file, format,
+            Chart_ScatterAndLinearRegressionExample chart;
+            chart = new Chart_ScatterAndLinearRegressionExample(e, es, file, format,
                     title, dataWidth, dataHeight, xAxisLabel, yAxisLabel,
                     drawOriginLinesOnPlot, oomx, oomy, rm);
-            plot.setData(plot.getDefaultData());
-            plot.vis.getHeadlessEnvironment();
-            plot.run();
+            chart.setData(chart.getDefaultData());
+            chart.vis.getHeadlessEnvironment();
+            chart.addLegend = true;
+            chart.run();
+            Future future = chart.future;
+            Generic_Execution exec = new Generic_Execution(e);
+            exec.shutdownExecutorService(es, future, chart);
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -118,7 +125,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
         double[][] dataD;
         dataD = getDataAsDoubleArray(getData().data);
         drawYEqualsXLineData(dataD);
-        /*
+        /**
          * rp[0] is the y axis intercept;
          * rp[1] is the change in y relative to x (gradient or slope);
          * rp[2] is the rank correlation coefficient (RSquare);
@@ -138,318 +145,23 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
         drawOutline();
         drawTitle(title);
         //System.out.println("dataStartCol " + dataStartCol);
-        drawAxes(0, 0);
+        drawAxes();
         if (data == null) {
             data = getDefaultData();
         }
         Chart_ScatterData d = getData();
         drawPoints(Color.DARK_GRAY, d);
-        double[][] dataAsDoubleArray = getDataAsDoubleArray(getData().data);
-        drawYEqualsXLineData(dataAsDoubleArray);
-        /*
-         * rp[0] is the y axis intercept;
-         * rp[1] is the change in y relative to x (gradient or
-         * slope); rp[2] is the rank correlation coefficient
-         * (RSquare); rp[3] is data[0].length.
-         */
-        double[] rp;
-        rp = getSimpleRegressionParameters(dataAsDoubleArray);
-        drawRegressionLine(rp, dataAsDoubleArray);
-        if (addLegend) {
-            drawLegend(rp);
-        }
+        drawData();
         Dimension newDim = new Dimension(imageWidth, imageHeight);
         return newDim;
     }
 
-//    /**
-//     * Draws the X axis returns the height
-//     */
-//    @Override
-//    public int[] drawXAxis(
-//            int textHeight,
-//            int scaleTickLength,
-//            int scaleTickAndTextSeparation,
-//            int partTitleGap) {
-//        int[] result = new int[3];
-//
-//        int xAxisExtraWidthLeft = 0;
-//        int xAxisExtraWidthRight = 0;
-//        //int seperationDistanceOfAxisAndData = partTitleGap;
-//        //int seperationDistanceOfAxisAndData = partTitleGap * 2;
-//        int seperationDistanceOfAxisAndData = textHeight;
-//        int xAxisExtraHeightBottom = scaleTickLength + scaleTickAndTextSeparation + seperationDistanceOfAxisAndData;
-////                    row + scaleTickLength + (textHeight / 3));;
-//
-//        setPaint(Color.LIGHT_GRAY);
-//        Line2D ab = new Line2D.Double(
-//                dataStartCol,
-//                originRow,
-//                dataEndCol,
-//                originRow);
-//        draw(ab);
-//        // Draw X axis scale below the data
-//        setPaint(Color.GRAY);
-//        //int row = dataEndRow - text_Height;
-//        //int row = dataEndRow - partTitleGap;
-//        int row = dataEndRow + seperationDistanceOfAxisAndData;
-//        ab = new Line2D.Double(
-//                dataStartCol,
-//                row,
-//                dataEndCol,
-//                row);
-//        draw(ab);
-//        int increment = textHeight;
-//        while (((dataWidth * textHeight) + 4) / increment > dataWidth) {
-//            increment += textHeight;
-//        }
-//        int xAxisMaxLabelHeight = 0;
-//        String text_String;
-//        int textWidth;
-//        double angle;
-//        // From the origin right
-//        for (int col = this.originCol; col <= this.dataEndCol; col += increment) {
-//            ab = new Line2D.Double(
-//                    col,
-//                    row,
-//                    col,
-//                    row + scaleTickLength);
-//            draw(ab);
-//            BigDecimal x = imageColToXCoordinate(col);
-//            if (x.compareTo(BigDecimal.ZERO) == 0 || col == this.originCol) {
-//                text_String = "0";
-//            } else {
-//                //text_String = "" + x.stripTrailingZeros().toPlainString();
-//                //text_String = "" + x.round(mc).stripTrailingZeros().toString();
-//                //text_String = "" + x.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-//                        x,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
-//                        _RoundingMode).toString();
-//            }
-//            textWidth = getTextWidth(text_String);
-//            xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
-//            angle = Math.PI / 2;
-//            writeText(
-//                    text_String,
-//                    angle,
-//                    col - (textHeight / 3),
-//                    row + scaleTickAndTextSeparation + scaleTickLength);
-////                    row + scaleTickLength + (textHeight / 3));
-//        }
-//        // From the origin left
-//        for (int col = this.originCol; col >= this.dataStartCol; col -= increment) {
-//            ab = new Line2D.Double(
-//                    col,
-//                    row,
-//                    col,
-//                    row + scaleTickLength);
-//            draw(ab);
-//            BigDecimal x = imageColToXCoordinate(col);
-//            if (x.compareTo(BigDecimal.ZERO) == 0 || col == this.originCol) {
-//                text_String = "0";
-//            } else {
-//                //text_String = "" + x.stripTrailingZeros().toPlainString();
-//                //text_String = "" + x.round(mc).stripTrailingZeros().toString();
-//                //text_String = "" + x.stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-//                        x,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(x, significantDigits),
-//                        _RoundingMode).toString();
-//            }
-//            textWidth = getTextWidth(text_String);
-//            xAxisMaxLabelHeight = Math.max(xAxisMaxLabelHeight, textWidth);
-//            angle = Math.PI / 2;
-//            writeText(
-//                    text_String,
-//                    angle,
-//                    col - (textHeight / 3),
-//                    row + scaleTickAndTextSeparation + scaleTickLength);
-////                    row + scaleTickLength + (textHeight / 3));
-//        }
-//        xAxisExtraHeightBottom += xAxisMaxLabelHeight;
-//        //xAxisExtraHeightBottom += scaleTickAndTextSeparation + scaleTickLength + seperationDistanceOfAxisAndData;
-//        xAxisExtraWidthRight += textHeight * 2;
-//        xAxisExtraWidthLeft += textHeight / 2;
-//
-//        // Add the X axis label
-//        setPaint(Color.BLACK);
-//        text_String = xAxisLabel;
-//        //textWidth = getTextWidth(text_String);
-//
-//        xAxisExtraHeightBottom += partTitleGap;
-//
-//        drawString(
-//                text_String,
-//                dataStartCol + (dataWidth / 2),
-//                row + xAxisExtraHeightBottom);
-//
-//        if (!addLegend) {
-//            xAxisExtraHeightBottom += textHeight;
-//        }
-//
-//        result[0] = xAxisExtraWidthLeft;
-//        result[1] = xAxisExtraWidthRight;
-//        result[2] = xAxisExtraHeightBottom;
-//
-//        return result;
-//
-//    }
-//
-//    @Override
-//    public int[] drawYAxis(
-//            int interval, // ignored
-//            int textHeight,
-//            int startAgeOfEndYearInterval, // ignored
-//            int scaleTickLength,
-//            int scaleTickAndTextSeparation,
-//            int partTitleGap) {
-//        int[] result = new int[1];
-//        //int seperationDistanceOfAxisAndData = partTitleGap * 2;
-//        int seperationDistanceOfAxisAndData = textHeight;
-//        int yAxisExtraWidthLeft = scaleTickLength + scaleTickAndTextSeparation + seperationDistanceOfAxisAndData;
-//
-//        Line2D ab;
-//        int text_Height = getTextHeight();
-//        String text_String;
-//        int text_Width;
-//        int row;
-//        int increment;
-//
-//        // Draw Y axis
-//        //setOriginCol();
-//        setPaint(Color.GRAY);
-//        ab = new Line2D.Double(
-//                originCol,
-//                dataStartRow,
-//                originCol,
-//                dataEndRow);
-//        draw(ab);
-//
-//        // Draw Y axis labels
-//        setPaint(Color.GRAY);
-//        //int col = dataStartCol - text_Height;
-//        //int col = dataStartCol - partTitleGap;
-//        int col = dataStartCol - seperationDistanceOfAxisAndData;
-//        ab = new Line2D.Double(
-//                col,
-//                dataEndRow,
-//                col,
-//                dataStartRow);
-//        draw(ab);
-//        increment = text_Height;
-//        while (((dataHeight * text_Height) + 4) / increment > dataHeight) {
-//            increment += text_Height;
-//        }
-//        int yAxisMaxLabelWidth = 0;
-//        // From the origin up
-//        for (row = this.originRow; row >= this.dataStartRow; row -= increment) {
-//            ab = new Line2D.Double(
-//                    col,
-//                    row,
-//                    col - scaleTickLength,
-//                    row);
-//            draw(ab);
-//            BigDecimal y = imageRowToYCoordinate(row);
-//            if (y.compareTo(BigDecimal.ZERO) == 0 || row == this.originRow) {
-//                text_String = "0";
-//            } else {
-//                //text_String = "" + y.stripTrailingZeros().toPlainString();
-//                //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-//                        y,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
-//                        _RoundingMode).toString();
-//            }
-//            text_Width = getTextWidth(text_String);
-//            yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, text_Width);
-//            drawString(
-//                    text_String,
-//                    col - scaleTickAndTextSeparation - scaleTickLength - text_Width,
-//                    row + (textHeight / 3));
-//        }
-//        // From the origin down
-//        for (row = this.originRow; row <= this.dataEndRow; row += increment) {
-//            ab = new Line2D.Double(
-//                    col,
-//                    row,
-//                    col - scaleTickLength,
-//                    row);
-//            draw(ab);
-//            BigDecimal y = imageRowToYCoordinate(row);
-//            if (y.compareTo(BigDecimal.ZERO) == 0 || row == this.originRow) {
-//                text_String = "0";
-//            } else {
-//                //text_String = "" + y.stripTrailingZeros().toPlainString();
-//                //text_String = "" + y.round(mc).stripTrailingZeros().toString();
-//                text_String = "" + Generic_BigDecimal.roundStrippingTrailingZeros(
-//                        y,
-//                        Generic_BigDecimal.getDecimalPlacePrecision(y, significantDigits),
-//                        _RoundingMode).toString();
-//            }
-//            text_Width = getTextWidth(text_String);
-//            yAxisMaxLabelWidth = Math.max(yAxisMaxLabelWidth, text_Width);
-//            drawString(
-//                    text_String,
-//                    col - scaleTickAndTextSeparation - scaleTickLength - text_Width,
-//                    row + (textHeight / 3));
-//        }
-//        yAxisExtraWidthLeft += scaleTickLength + scaleTickAndTextSeparation + yAxisMaxLabelWidth;
-//
-//        // Add the Y axis label
-//        setPaint(Color.BLACK);
-//        text_String = yAxisLabel;
-//        text_Width = getTextWidth(text_String);
-//        yAxisExtraWidthLeft += (textHeight * 2) + partTitleGap;
-//        double angle = 3.0d * Math.PI / 2.0d;
-//        writeText(
-//                text_String,
-//                angle,
-//                3 * textHeight / 2,
-//                dataMiddleRow + (text_Width / 2));
-//        // Draw Y axis
-//        setPaint(Color.LIGHT_GRAY);
-//        ab = new Line2D.Double(
-//                originCol,
-//                dataStartRow,
-//                originCol,
-//                dataEndRow);
-//
-//        draw(ab);
-//
-//
-//        result[0] = yAxisExtraWidthLeft;
-//        return result;
-//
-//    }
-//
-//    @Override
-//    public void setOriginCol() {
-//        originCol = getCol(BigDecimal.ZERO);
-//        System.out.println("originCol " + originCol);
-////        if (minX.compareTo(BigDecimal.ZERO) == 0) {
-////            originCol = dataStartCol;
-////            //originCol = dataStartCol - dataEndCol / 2;
-////        } else {
-////            if (cellWidth.compareTo(BigDecimal.ZERO) == 0) {
-////                originCol = dataStartCol;
-////            } else {
-////                originCol = Generic_BigDecimal.divideRoundIfNecessary(
-////                        minX,
-////                        cellWidth,
-////                        0,
-////                        _RoundingMode).intValueExact()
-////                        + dataStartCol;
-////            }
-////        }
-//    }
     /**
      * @param rp rp[0] is the y axis intercept; rp[1] is the change in y
      * relative to x (gradient or slope); rp[2] is the rank correlation
      * coefficient (RSquare); rp[3] is data[0].length.
      */
-    protected void drawLegend(
-            double[] rp) {
+    protected void drawLegend(double[] rp) {
 //        int[] result = new int[3];
 
         int newLegendWidth = 0;

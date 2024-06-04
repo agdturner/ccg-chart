@@ -56,18 +56,25 @@ public abstract class Chart_AgeGender extends Chart {
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval, int oomx, int oomy, RoundingMode rm) {
-        setAgeInterval(ageInterval);
-        setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
 
+    protected BigRational getStartAgeOfEndYearInterval(){
+        return BigRational.ZERO;                
+    }
+
+    protected BigRational ageInterval;
+    protected BigRational getAgeInterval(){
+        return ageInterval;
+    }
+    
     @Override
     public void initialiseParameters(Chart_Data data) {
         Chart_AgeGenderData d = (Chart_AgeGenderData) data;
         maxX = d.maxX;
         minX = maxX.negate();
-        maxY = BigRational.valueOf(getStartAgeOfEndYearInterval() + getAgeInterval());
+        maxY = getStartAgeOfEndYearInterval().add(getAgeInterval());
         minY = BigRational.ZERO;
         setCellHeight();
         setCellWidth();
@@ -109,7 +116,6 @@ public abstract class Chart_AgeGender extends Chart {
      * @return an int[] result for setting display parameters where: result[0] =
      * yAxisExtraWidthLeft;
      */
-    @Override
     public int[] drawYAxis(int interval, int textHeight,
             int startAgeOfEndYearInterval, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,

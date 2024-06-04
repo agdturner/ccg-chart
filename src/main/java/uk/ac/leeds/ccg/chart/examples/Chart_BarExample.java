@@ -131,7 +131,9 @@ public class Chart_BarExample extends Chart_Bar {
                 title = "Example Bar Chart";
                 System.out.println("Use default title: " + title);
                 Path outdir = e.files.getOutputDir();
-                file = Paths.get(outdir.toString(), title.replace(" ", "_") + "." + format);
+                file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
+                        title.replace(" ", "_") + "." + format);
                 System.out.println("Use default Path: " + file.toString());
             } else {
                 title = args[0];
@@ -246,38 +248,39 @@ public class Chart_BarExample extends Chart_Bar {
     public Chart_BarData getDefaultData() {
         Chart_BarData r = new Chart_BarData();
         r.intervalWidth = BigRational.valueOf(xAxisIncrement);
-        TreeMap<String, BigRational> map = new TreeMap<>();
-        map.put("A", BigRational.valueOf(0));
-        map.put("B", BigRational.valueOf(1.0d));
-        map.put("C", BigRational.valueOf(2.0d));
-        map.put("D", BigRational.valueOf(3.0d));
-        map.put("E", BigRational.valueOf(4.0d));
-        map.put("F", BigRational.valueOf(5.0d));
-        map.put("G", BigRational.valueOf(6.0d));
-        map.put("H", BigRational.valueOf(7.0d));
-        map.put("I", BigRational.valueOf(8.0d));
-        map.put("J", BigRational.valueOf(9.0d));
-        map.put("K", BigRational.valueOf(10.0d));
-        map.put("L", BigRational.valueOf(11.0d));
-        map.put("M", BigRational.valueOf(12.0d));
-        map.put("N", BigRational.valueOf(13.0d));
-        map.put("O", BigRational.valueOf(14.0d));
-        map.put("P", BigRational.valueOf(15.0d));
-        map.put("Q", BigRational.valueOf(16.0d));
-        map.put("R", BigRational.valueOf(2.0d));
-        map.put("S", BigRational.valueOf(4.0d));
-        map.put("T", BigRational.valueOf(6.0d));
-        map.put("U", BigRational.valueOf(8.0d));
-        map.put("V", BigRational.valueOf(10.0d));
-        map.put("W", BigRational.valueOf(12.0d));
-        map.put("X", BigRational.valueOf(14.0d));
-        map.put("Y", BigRational.valueOf(16.0d));
-        map.put("Z", BigRational.valueOf(4.0d));
-        ArrayList<BigRational> minMax = Math_Collections.getMinMax(map);
-        r.min = minMax.get(0);
-        r.max = minMax.get(1);
+        r.map.put("A", BigRational.valueOf(0));
+        r.map.put("B", BigRational.valueOf(1.0d));
+        r.map.put("C", BigRational.valueOf(2.0d));
+        r.map.put("D", BigRational.valueOf(3.0d));
+        r.map.put("E", BigRational.valueOf(4.0d));
+        r.map.put("F", BigRational.valueOf(5.0d));
+        r.map.put("G", BigRational.valueOf(6.0d));
+        r.map.put("H", BigRational.valueOf(7.0d));
+        r.map.put("I", BigRational.valueOf(8.0d));
+        r.map.put("J", BigRational.valueOf(9.0d));
+        r.map.put("K", BigRational.valueOf(10.0d));
+        r.map.put("L", BigRational.valueOf(11.0d));
+        r.map.put("M", BigRational.valueOf(12.0d));
+        r.map.put("N", BigRational.valueOf(13.0d));
+        r.map.put("O", BigRational.valueOf(14.0d));
+        r.map.put("P", BigRational.valueOf(15.0d));
+        r.map.put("Q", BigRational.valueOf(16.0d));
+        r.map.put("R", BigRational.valueOf(2.0d));
+        r.map.put("S", BigRational.valueOf(4.0d));
+        r.map.put("T", BigRational.valueOf(6.0d));
+        r.map.put("U", BigRational.valueOf(8.0d));
+        r.map.put("V", BigRational.valueOf(10.0d));
+        r.map.put("W", BigRational.valueOf(12.0d));
+        r.map.put("X", BigRational.valueOf(14.0d));
+        r.map.put("Y", BigRational.valueOf(16.0d));
+        r.map.put("Z", BigRational.valueOf(4.0d));
+        ArrayList<BigRational> minMax = Math_Collections.getMinMax(r.map);
+        r.minY = minMax.get(0);
+        r.maxY = minMax.get(1);
+        r.minX = BigRational.ZERO;
+        r.maxX = BigRational.valueOf(r.map.size()).multiply(r.intervalWidth);
         CountsLabelsMins intervalCountsLabelsMins = Math_Collections.getIntervalCountsLabelsMins(
-                r.min, r.intervalWidth, map);
+                r.minY, r.intervalWidth, r.map);
         r.counts = intervalCountsLabelsMins.counts;
         return r;
     }
@@ -285,12 +288,8 @@ public class Chart_BarExample extends Chart_Bar {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
-        extraHeightTop += barHeight;
-    }
-
-    @Override
-    public int[] drawYAxis(int interval, int textHeight, int startOfEndInterval, int scaleTickLength, int scaleTickAndTextSeparation, int partTitleGap, int seperationDistanceOfAxisAndData) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        //extraHeightTop += barHeight;
+        extraHeightTop += maxY.divide(getCellHeight()).integerPart().toBigDecimal().intValue();
     }
 }

@@ -95,6 +95,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
                 title = "Age Gender Population Line Chart";
                 System.out.println("Use default title: " + title);
                 file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
                         title.replace(" ", "_") + "." + format);
                 System.out.println("Use default Path: " + file.toString());
             } else {
@@ -132,7 +133,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
     }
 
     public void drawLineChartUsingMeanAndStandardDeviation() {
-        int ageInterval = getAgeInterval();
+        int ageInterval = getAgeInterval().intValue();
         Line2D abLine2D;
         Chart_AgeGenderLineData d = (Chart_AgeGenderLineData) getData();
         boolean firstPoint = true;
@@ -243,7 +244,7 @@ public class Chart_AgeGenderLineExample extends Chart_AgeGender {
     }
 
     public void drawLineChartUsingMinQ1MedianQ3Max() {
-        int ageInterval = getAgeInterval();
+        int ageInterval = getAgeInterval().intValue();
         Line2D abLine2D;
         Chart_AgeGenderLineData d = (Chart_AgeGenderLineData) getData();
         boolean firstPoint = true;

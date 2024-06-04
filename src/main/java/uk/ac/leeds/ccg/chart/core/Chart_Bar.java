@@ -65,8 +65,6 @@ public abstract class Chart_Bar extends Chart {
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
             Integer startAgeOfEndYearInterval, int oomx, int oomy, RoundingMode rm) {
-        setAgeInterval(ageInterval);
-        setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
         super.init(es, f, format, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
@@ -74,8 +72,7 @@ public abstract class Chart_Bar extends Chart {
     @Override
     public void initialiseParameters(Chart_Data data) {
         Chart_BarData d = (Chart_BarData) data;
-        minX = data.minX;
-        maxX = BigRational.valueOf(d.map.lastKey()).multiply(d.intervalWidth);
+        maxX = BigRational.valueOf(d.map.size()).multiply(d.intervalWidth);
         minY = BigRational.ZERO;
         maxY = data.maxY;
         setCellHeight();
@@ -312,8 +309,7 @@ public abstract class Chart_Bar extends Chart {
         int previousCol = col;
         boolean first = true;
         Chart_BarData d = getData();
-        Iterator<Integer> ite2;
-        ite2 = d.counts.keySet().iterator();
+        Iterator<Integer> ite2 = d.counts.keySet().iterator();
         while (ite2.hasNext()) {
             Integer value = ite2.next();
             String label = d.labels.get(value);

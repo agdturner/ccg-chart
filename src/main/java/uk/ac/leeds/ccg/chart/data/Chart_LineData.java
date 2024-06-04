@@ -33,7 +33,7 @@ public class Chart_LineData extends Chart_Data {
     /**
      * Keys are labels, values are plot coordinates. 
      */
-    public TreeMap<String, TreeMap<BigDecimal, BigDecimal>> maps;
+    public TreeMap<String, TreeMap<BigRational, BigRational>> maps;
     
     public TreeMap<String, Boolean> nonZero;
     

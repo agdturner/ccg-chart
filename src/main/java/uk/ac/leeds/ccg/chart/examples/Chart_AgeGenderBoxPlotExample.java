@@ -89,7 +89,9 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
                 title = "Age Gender Population Box Plot";
                 System.out.println("Use default title: " + title);
                 Path outdir = e.files.getOutputDir();
-                file = Paths.get(outdir.toString(), title.replace(" ", "_") + "." + format);
+                file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
+                        title.replace(" ", "_") + "." + format);
                 System.out.println("Use default Path: " + file.toString());
             } else {
                 title = args[0];
@@ -135,7 +137,7 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
     }
 
     public void drawBoxplots() {
-        int ageInterval = getAgeInterval();
+        int ageInterval = getAgeInterval().intValue();
         Line2D abLine2D;
         Chart_AgeGenderBoxPlotData d = getData();
 //        TreeMap<Integer, Stats_BigDecimal2> fdata;
@@ -585,7 +587,8 @@ public class Chart_AgeGenderBoxPlotExample extends Chart_AgeGender {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
-        extraHeightTop += barHeight;
+        //int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        //extraHeightTop += barHeight;
+        extraHeightTop += maxY.divide(getCellHeight()).integerPart().toBigDecimal().intValue();
     }
 }

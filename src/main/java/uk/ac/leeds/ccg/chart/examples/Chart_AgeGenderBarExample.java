@@ -76,7 +76,7 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
 
     @Override
     public void drawData() {
-        drawBarChart(getAgeInterval());
+        drawBarChart(getAgeInterval().intValue());
     }
 
     /**
@@ -189,6 +189,7 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
                 title = "Age Gender Population Bar Chart";
                 System.out.println("Use default title: " + title);
                 file = Paths.get(System.getProperty("user.dir"),
+                        "data", "output",
                         title.replace(" ", "_") + "." + format);
                 System.out.println("Use default Path: " + file.toString());
             } else {
@@ -397,8 +398,9 @@ public class Chart_AgeGenderBarExample extends Chart_AgeGender {
     @Override
     public void drawTitle(String title) {
         super.drawTitle(title);
-        int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
-        extraHeightTop += barHeight;
+        //int barHeight = BigRational.valueOf(getAgeInterval()).divide(getCellHeight()).integerPart().toBigDecimal().intValue();
+        //extraHeightTop += barHeight;
+        extraHeightTop += maxY.divide(getCellHeight()).integerPart().toBigDecimal().intValue();
     }
 
     @Override

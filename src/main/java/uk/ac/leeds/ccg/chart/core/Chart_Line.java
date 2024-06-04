@@ -101,10 +101,7 @@ public abstract class Chart_Line extends Chart {
     protected final void init(ExecutorService es, Path f, String fmt,
             String title, int dataWidth, int dataHeight, String xAxisLabel,
             String yAxisLabel, boolean drawAxesOnPlot, int ageInterval,
-            Integer startAgeOfEndYearInterval, int oomx, int oomy, 
-            RoundingMode rm) {
-        setAgeInterval(ageInterval);
-        setStartAgeOfEndYearInterval(startAgeOfEndYearInterval);
+            int oomx, int oomy, RoundingMode rm) {
         super.init(es, f, fmt, title, dataWidth, dataHeight, xAxisLabel,
                 yAxisLabel, drawAxesOnPlot, oomx, oomy, rm);
     }
@@ -141,7 +138,7 @@ public abstract class Chart_Line extends Chart {
      * yAxisExtraWidthLeft;
      */
     //@Override
-    public int[] drawYAxis(int textHeight, int scaleTickLength,
+    /*public int[] drawYAxis(int textHeight, int scaleTickLength,
             int scaleTickAndTextSeparation, int partTitleGap,
             int seperationDistanceOfAxisAndData) {
         RoundingMode rm = RoundingMode.HALF_UP;
@@ -200,7 +197,7 @@ public abstract class Chart_Line extends Chart {
         /**
          * If yIncrement is not set, then set it. If it is set, then set
          * numberOfYAxisTicksGT0 and numberOfXAxisTicksGT0
-         */
+         *
         if (yIncrement == null) {
 //            if (numberOfYAxisTicksGT0 + numberOfYAxisTicksLT0 == 0) {
 //                if (numberOfYAxisTicks == 0) {
