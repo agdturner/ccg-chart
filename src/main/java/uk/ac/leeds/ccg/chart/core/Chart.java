@@ -1,6 +1,5 @@
 package uk.ac.leeds.ccg.chart.core;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,12 +29,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.print.StreamPrintService;
 import javax.print.StreamPrintServiceFactory;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JFrame;
+
+import ch.obermuhlner.math.big.BigRational;
 import uk.ac.leeds.ccg.chart.data.Chart_Data;
 import uk.ac.leeds.ccg.chart.execution.Chart_Runnable;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
@@ -239,7 +241,7 @@ public abstract class Chart extends Chart_Runnable
 
     protected transient ExecutorService executorService;
     public Chart_Canvas Canvas;
-    public Future future;
+    public Future<?> future;
 
     public Chart(Generic_Environment e) {
         this(e, 0);

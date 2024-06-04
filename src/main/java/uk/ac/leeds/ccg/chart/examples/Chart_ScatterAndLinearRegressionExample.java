@@ -112,7 +112,7 @@ public class Chart_ScatterAndLinearRegressionExample extends Chart_ScatterExampl
             chart.vis.getHeadlessEnvironment();
             chart.addLegend = true;
             chart.run();
-            Future future = chart.future;
+            Future<?> future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);
             exec.shutdownExecutorService(es, future, chart);
         } catch (Exception ex) {

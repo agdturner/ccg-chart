@@ -134,9 +134,7 @@ public class Chart_LineExample extends Chart_Line {
         int col0 = 0;
         setPaint(c);
         boolean first = true;
-        Iterator<BigRational> ite = map.keySet().iterator();
-        while (ite.hasNext()) {
-            BigRational x = ite.next();
+        for (BigRational x : map.keySet()) {
             BigRational y = map.get(x);
             int row = getRow(y);
             int col = getCol(x);
@@ -191,7 +189,6 @@ public class Chart_LineExample extends Chart_Line {
                 // Use defaults
                 title = "Example Line Graph";
                 System.out.println("Use default title: " + title);
-                Path outdir = e.files.getOutputDir();
                 file = Paths.get(System.getProperty("user.dir"),
                         "data", "output",
                         title.replace(" ", "_") + "." + format);
@@ -226,7 +223,7 @@ public class Chart_LineExample extends Chart_Line {
             chart.setData(chart.getDefaultData());
             chart.vis.getHeadlessEnvironment();
             chart.run();
-            Future future = chart.future;
+            Future<?> future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);
             exec.shutdownExecutorService(es, future, chart);
         } catch (Exception ex) {
@@ -313,7 +310,7 @@ public class Chart_LineExample extends Chart_Line {
     }
 
     /**
-     * @return default data for this type of chart. 
+     * @return default data for this type of chart.
      */
     public Chart_LineData getDefaultData() {
         Chart_LineData r = new Chart_LineData();

@@ -115,7 +115,7 @@ public class Chart_ScatterExample extends Chart {
             chart.setData(chart.getDefaultData());
             chart.vis.getHeadlessEnvironment();
             chart.run();
-            Future future = chart.future;
+            Future<?> future = chart.future;
             Generic_Execution exec = new Generic_Execution(e);
             exec.shutdownExecutorService(es, future, chart);
         } catch (Exception ex) {
